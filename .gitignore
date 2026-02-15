@@ -1,0 +1,8 @@
+data/
+picture/
+sound/
+x64/
+TimeSupporter.vcxproj.user
+Log.txt
+.vs/
+savedata/
