@@ -10,6 +10,7 @@
 #include "CharacterController.h"
 #include "CharacterLoader.h"
 #include "ObjectLoader.h"
+#include "TimeSupporter.h"
 #include "Brain.h"
 #include "PausePage.h"
 #include "DxLib.h"
@@ -173,11 +174,12 @@ Game::Game(const char* saveFilePath) {
 
 	m_soundPlayer->stopBGM();
 
-	int storyNum = m_gameData->getCompleteStageSum();
+	m_story = nullptr;
+
 	if (TEST_MODE) {
-		storyNum = 0;
+		m_gameData->setCompleteStageSum(28);
 	}
-	m_story = new Story(storyNum, m_gameData, m_soundPlayer);
+	m_selectStagePage = new SelectStagePage(m_gameData->getCompleteStageSum());
 
 	// 一時停止関連
 	m_battleOption = nullptr;
@@ -242,24 +244,35 @@ bool Game::play() {
 		m_soundPlayer->play();
 		return false;
 	}
-	// ストーリー進行
-	EVENT_RESULT result = m_story->play();
-	if (result == EVENT_RESULT::SUCCESS) {
-		if (m_story->getStoryNum() > m_gameData->getCompleteStageSum()) {
-			m_gameData->setCompleteStageSum(m_story->getStoryNum());
+	if (m_story == nullptr) {
+		GetMousePoint(&m_handX, &m_handY);
+		if (m_selectStagePage->play(m_handX, m_handY)) {
+			int targetStoryNum = m_selectStagePage->getFocusStage();
+			if (TEST_MODE) {
+				targetStoryNum = 0;
+			}
+			m_story = new Story(targetStoryNum, m_gameData, m_soundPlayer);
 		}
-		m_gameData->updateStory(m_story);
-		// セーブ (バックアップは更新されない)
-		m_gameData->save();
-		delete m_story;
+	}
+	else {
+		// ストーリー進行
+		EVENT_RESULT result = m_story->play();
+		if (result == EVENT_RESULT::SUCCESS) {
+			if (m_story->getStoryNum() > m_gameData->getCompleteStageSum()) {
+				m_gameData->setCompleteStageSum(m_story->getStoryNum());
+				m_selectStagePage->setCompleteStageSum(m_gameData->getCompleteStageSum());
+			}
+			m_gameData->updateStory(m_story);
+			// セーブ (バックアップは更新されない)
+			m_gameData->save();
+			delete m_story;
+		}
 	}
 
 	// セーブ完了通知の処理
 	m_gameData->setNoticeSaveDone(max(0, m_gameData->getNoticeSaveDone() - 1));
 
-	if (m_story->getWorld()->getWorldFreezeTime() == 0) {
-		m_soundPlayer->play();
-	}
+	m_soundPlayer->play();
 
 	return false;
 }
@@ -267,5 +280,5 @@ bool Game::play() {
 
 // 描画していいならtrue
 bool Game::ableDraw() {
-	return !m_story->getInitDark();
+	return m_story == nullptr || !m_story->getInitDark();
 }
