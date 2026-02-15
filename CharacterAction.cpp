@@ -164,7 +164,7 @@ void CharacterAction::finishBoost() {
 }
 
 void CharacterAction::setStep(bool leftDirection) {
-	if (!m_character_p->haveSlidingGraph()) { return; }
+	if (!m_character_p->haveStepGraph()) { return; }
 	if (m_state != CHARACTER_STATE::SQUAT || m_stepDone != 0 || m_slidingCnt > 0) { return; }
 	m_stepCnt = STEP_TIME;
 	if (leftDirection && !m_leftLock) {
@@ -193,7 +193,7 @@ void CharacterAction::finishStep() {
 }
 
 void CharacterAction::setSliding(bool leftDirection) {
-	if (!m_character_p->haveStepGraph()) { return; }
+	if (!m_character_p->haveSlidingGraph()) { return; }
 	if (m_state != CHARACTER_STATE::SQUAT || m_slidingDone != 0 || m_stepCnt > 0) { return; }
 	m_slidingCnt = SLIDING_SPEED;
 	if (leftDirection) {
