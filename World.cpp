@@ -787,8 +787,8 @@ void World::controlObject() {
 	// 攻撃当たり判定の動き
 	actionObject(m_attackObjects);
 
-	// エネルギーの放出
-	createAttackEnergy();
+	// エネルギーの放出 TODO: 不要なら削除
+	// createAttackEnergy();
 
 	// 壁や床<->攻撃の当たり判定
 	atariStageAndAttack();

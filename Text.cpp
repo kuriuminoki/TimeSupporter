@@ -150,8 +150,9 @@ Conversation::Conversation(int textNum, World* world, SoundPlayer* soundPlayer) 
 	m_world_p = world;
 	m_soundPlayer_p = soundPlayer;
 	m_speakerName = "サエル";
-	setSpeakerGraph("通常");
-	m_noFace = true;
+	m_speakerGraph_p = nullptr;
+	//setSpeakerGraph("にやけ");
+	m_noImage = true;
 	m_text = "";
 	m_textNow = 0;
 	m_cnt = 0;
@@ -200,6 +201,15 @@ Conversation::~Conversation() {
 	delete m_textFinishGraph;
 	if (m_sound != -1) {
 		DeleteSoundMem(m_sound);
+	}
+
+	auto ite = m_faceHandles.begin();
+	while (ite != m_faceHandles.end()) {
+		string faceName = ite->first;
+		if (m_faceHandles[faceName] != nullptr) {
+			delete m_faceHandles[faceName];
+		}
+		ite++;
 	}
 }
 
@@ -554,15 +564,30 @@ void Conversation::loadNextBlock() {
 		}
 		loadNextBlock();
 	}
+	else if (str == "@preLoadFace") {
+		FileRead_gets(buff, size, m_fp);
+		string speakerName = buff;
+		while (speakerName != "") {
+			FileRead_gets(buff, size, m_fp);
+			if (m_faceHandles.find(speakerName) != m_faceHandles.end()) {
+				m_faceHandles[speakerName]->addFace(buff);
+			}
+			else {
+				m_faceHandles[speakerName] = new FaceGraphHandle(speakerName.c_str(), buff, 1.0);
+			}
+			FileRead_gets(buff, size, m_fp);
+			speakerName = buff;
+		}
+	}
 	else { // 発言
 		if (str == "@null") {
 			// ナレーション
 			m_speakerName = "";
-			m_noFace = true;
+			m_noImage = true;
 		}
 		else if (str[0] == '*') {
 			m_speakerName = str.substr(1, str.size());
-			m_noFace = true;
+			m_noImage = true;
 		}
 		else {
 			// 発言者
@@ -570,7 +595,7 @@ void Conversation::loadNextBlock() {
 			// 画像
 			FileRead_gets(buff, size, m_fp);
 			setSpeakerGraph(buff);
-			m_noFace = false;
+			m_noImage = false;
 		}
 		setNextText(size, buff);
 	}
@@ -602,13 +627,10 @@ void Conversation::setNextText(const int size, char* buff) {
 
 
 void Conversation::setSpeakerGraph(const char* faceName) {
-	Character* c = m_world_p->getCharacterWithName(m_speakerName);
-	if (c == nullptr) {
+	if (m_faceHandles.find(m_speakerName) == m_faceHandles.end()) {
 		m_speakerGraph_p = nullptr;
 	}
-	else {
-		m_speakerGraph_p = c->getFaceHandle()->getGraphHandle(faceName);
-	}
+	m_speakerGraph_p = m_faceHandles[m_speakerName]->getGraphHandle(faceName);
 }
 
 // セッタ

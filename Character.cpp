@@ -245,7 +245,6 @@ Character::Character(int hp, int x, int y, int groupId) {
 	m_characterInfo = nullptr;
 	m_attackInfo = nullptr;
 	m_graphHandle = nullptr;
-	m_faceHandle = nullptr;
 	m_duplicationFlag = false;
 
 	m_stopCnt = 0;
@@ -263,10 +262,6 @@ Character::~Character() {
 	// GraphHandleの削除
 	if (m_graphHandle != nullptr) {
 		delete m_graphHandle;
-	}
-	// FaceHandleの削除
-	if (m_faceHandle != nullptr) {
-		delete m_faceHandle;
 	}
 }
 
@@ -486,7 +481,6 @@ Heart::Heart(const char* name, int hp, int x, int y, int groupId) :
 
 	// 各画像のロード
 	m_graphHandle = new CharacterGraphHandle(name, m_characterInfo->handleEx());
-	m_faceHandle = new FaceGraphHandle(name, 1.0);
 	// 画像の反転
 	setLeftDirection(m_leftDirection);
 
@@ -509,7 +503,6 @@ Heart::Heart(const char* name, int hp, int x, int y, int groupId, AttackInfo* at
 	m_prevHp = m_hp;
 	// 各画像のロード
 	m_graphHandle = new CharacterGraphHandle(name, m_characterInfo->handleEx());
-	m_faceHandle = new FaceGraphHandle(name, 1.0);
 	// 画像の反転
 	setLeftDirection(m_leftDirection);
 

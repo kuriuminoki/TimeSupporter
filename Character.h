@@ -12,7 +12,6 @@ class SlashObject;
 class GraphHandle;
 class GraphHandles;
 class CharacterGraphHandle;
-class FaceGraphHandle;
 class SoundPlayer;
 
 
@@ -260,9 +259,6 @@ protected:
 	// ƒLƒƒƒ‰‰æ‘œ
 	CharacterGraphHandle* m_graphHandle;
 
-	// Šç‰æ‘œ
-	FaceGraphHandle* m_faceHandle;
-
 	// Šl“¾‚µ‚½‚¨‹à World‚É“n‚µ‚½‚ç0‚É‚·‚é
 	int m_money;
 
@@ -295,7 +291,6 @@ public:
 	inline bool getLeftDirection() const { return m_leftDirection; }
 	inline bool getFreeze() const { return m_freeze; }
 	inline bool getBossFlag() const { return m_bossFlag; }
-	FaceGraphHandle* getFaceHandle() const { return m_faceHandle; }
 	inline CharacterGraphHandle* getCharacterGraphHandle() const { return m_graphHandle; }
 	inline AttackInfo* getAttackInfo() const { return m_attackInfo; }
 	inline CharacterInfo* getCharacterInfo() const { return m_characterInfo; }

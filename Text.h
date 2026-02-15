@@ -2,6 +2,7 @@
 #define TEXT_H_INCLUDED
 
 
+#include <map>
 #include <string>
 #include <vector>
 
@@ -12,6 +13,7 @@ class World;
 class GraphHandle;
 class GraphHandles;
 class Button;
+class FaceGraphHandle;
 
 
 /*
@@ -162,11 +164,14 @@ private:
 	// ”­Œ¾ŽÒ‚Ì–¼‘O
 	std::string m_speakerName;
 
-	// ”­Œ¾ŽÒ‚ÌŠç‰æ‘œ‚ª‚È‚¢
-	bool m_noFace;
+	// ”­Œ¾ŽÒ‚Ì‰æ‘œ‚ª‚È‚¢
+	bool m_noImage;
 
-	// ”­Œ¾ŽÒ‚ÌŠç‰æ‘œ
+	// ”­Œ¾ŽÒ‚Ì‰æ‘œ
 	GraphHandles* m_speakerGraph_p;
+
+	// Šç‰æ‘œ <‰æ‘œ–¼, ‰æ‘œƒnƒ“ƒhƒ‹>
+	std::map<std::string, FaceGraphHandle*> m_faceHandles;
 
 	// ”­Œ¾
 	std::string m_text;
@@ -217,7 +222,7 @@ public:
 	inline std::string getFullText() const { return m_text; }
 	int getTextSize() const;
 	GraphHandle* getGraph() const;
-	inline bool getNoFace() const { return m_noFace; }
+	inline bool getNoImage() const { return m_noImage; }
 	inline 	std::string getSpeakerName() const { return m_speakerName; }
 	inline int getFinishCnt() const { return m_finishCnt; }
 	inline int getSkipCnt() const { return m_skipCnt; }
