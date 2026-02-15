@@ -20,6 +20,8 @@ SelectStagePage::SelectStagePage(int completeStageSum) {
 	m_fontSize = (int)(50 * m_exX);
 	m_font = CreateFontToHandle(nullptr, m_fontSize, 3);
 
+	m_chapterGraphDx = CHAPTER_GRAPH_MAX_DX;
+
 	const char* CHAPTER_TITLE[7] = {
 		"サポーティング　　　　　　　　",
 		"量産型クズ　　　　　　　　　　",
@@ -39,6 +41,11 @@ SelectStagePage::SelectStagePage(int completeStageSum) {
 		oss << "ステージ" << i + 1;
 		m_stageButton.push_back(new Button(oss.str().c_str(), 200, 700 + (70 * i), 500, 60, WHITE, RED, m_font, BLACK));
 	}
+	for (int i = 0; i < CHAPTER_SUM; i++) {
+		ostringstream oss;
+		oss << "picture/system/chapter" << i + 1 << ".png";
+		m_chapterGraphHandles.push_back(LoadGraph(oss.str().c_str()));
+	}
 }
 
 
@@ -50,6 +57,9 @@ SelectStagePage::~SelectStagePage() {
 		delete m_stageButton[i];
 	}
 	DeleteFontToHandle(m_font);
+	for (int i = 0; i < CHAPTER_SUM; i++) {
+		DeleteGraph(m_chapterGraphHandles[i]);
+	}
 }
 
 
@@ -69,21 +79,41 @@ bool SelectStagePage::play(int handX, int handY) {
 		}
 
 		int distChapterSum = selectableChapterSum();
+		bool clickAnyButtonFlag = false;
 		for (int i = 0; i < distChapterSum; i++) {
 			if (m_chapterButton[i]->overlap(handX, handY)) {
+				if (m_focusChapter != -1) {
+					m_chapterButton[m_focusChapter]->changeFlag(true, WHITE);
+				}
 				m_focusChapter = i;
+				m_chapterButton[i]->changeFlag(false, GRAY);
+				m_chapterGraphDx = CHAPTER_GRAPH_MAX_DX;
+				clickAnyButtonFlag = true;
 				break;
 			}
+		}
+		if (!clickAnyButtonFlag && m_focusChapter != -1) {
 			// 何もないところをクリックした場合チャプターフォーカスをやめる
+			m_chapterButton[m_focusChapter]->changeFlag(true, WHITE);
 			m_focusChapter = -1;
+			m_chapterGraphDx = CHAPTER_GRAPH_MAX_DX;
 		}
 
+	}
+
+	if (m_focusChapter != -1) {
+		m_chapterGraphDx = max(0, m_chapterGraphDx / 2);
 	}
 
 	return false;
 }
 
 void SelectStagePage::draw(int handX, int handY) const {
+
+	if (m_focusChapter != -1) {
+		DrawRotaGraph(GAME_WIDE - 300 + m_chapterGraphDx, GAME_HEIGHT - 500, 0.5 * m_exX, 0.0, m_chapterGraphHandles[m_focusChapter], TRUE);
+	}
+
 	int distChapterSum = selectableChapterSum();
 	for (int i = 0; i < distChapterSum; i++) {
 		m_chapterButton[i]->draw(handX, handY);
@@ -94,6 +124,7 @@ void SelectStagePage::draw(int handX, int handY) const {
 			m_stageButton[i]->draw(handX, handY);
 		}
 	}
+	DrawFormatStringToHandle(10, 10, WHITE, m_font, "ステージ選択");
 }
 
 
