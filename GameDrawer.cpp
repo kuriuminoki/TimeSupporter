@@ -1,7 +1,6 @@
 #include "GameDrawer.h"
 #include "Game.h"
 #include "Story.h"
-#include "Timer.h"
 #include "World.h"
 #include "WorldDrawer.h"
 #include "PausePage.h"
@@ -24,20 +23,11 @@ GameDrawer::GameDrawer(const Game* game) {
 	m_worldDrawer = new WorldDrawer(nullptr);
 
 	m_skillHandle = CreateFontToHandle(nullptr, (int)(SKILL_SIZE * m_exX), 10);
-	m_quickModeFontHandle = CreateFontToHandle(nullptr, (int)(QUICK_SIZE * m_exX), 5);
 
 	m_skillInfoHandle = LoadGraph("picture/battleMaterial/skillInfo.png");
 	m_skillInfoBackHandle = LoadGraph("picture/battleMaterial/skillInfoBack.png");
 
-	m_timeBarNoonHandle = LoadGraph("picture/battleMaterial/timeBarNoon.png");
-	m_timeBarEveningHandle = LoadGraph("picture/battleMaterial/timeBarEvening.png");
-	m_timeBarNightHandle = LoadGraph("picture/battleMaterial/timeBarNight.png");
-	m_needleHandle = LoadGraph("picture/battleMaterial/needle.png");
-
 	m_gameoverHandle = LoadGraph("picture/system/gameover.png");
-
-	m_quickModeHandle = LoadGraph("picture/battleMaterial/quickMode.png");
-	m_quickModeCnt = 0;
 
 	m_noticeSaveDataHandle = LoadGraph("picture/system/noticeSaveDone.png");
 	m_noticeEx = 0.7;
@@ -55,16 +45,10 @@ GameDrawer::GameDrawer(const Game* game) {
 GameDrawer::~GameDrawer() {
 	delete m_worldDrawer;
 	DeleteFontToHandle(m_skillHandle);
-	DeleteFontToHandle(m_quickModeFontHandle);
 	DeleteGraph(m_screenEffectHandle);
 	DeleteGraph(m_skillInfoHandle);
 	DeleteGraph(m_skillInfoBackHandle);
-	DeleteGraph(m_timeBarNoonHandle);
-	DeleteGraph(m_timeBarEveningHandle);
-	DeleteGraph(m_timeBarNightHandle);
-	DeleteGraph(m_needleHandle);
 	DeleteGraph(m_gameoverHandle);
-	DeleteGraph(m_quickModeHandle);
 	DeleteGraph(m_noticeSaveDataHandle);
 	DeleteGraph(m_tmpScreenR);
 	DeleteGraph(m_tmpScreenG);
@@ -84,39 +68,10 @@ void GameDrawer::draw(int screen) {
 	}
 
 	// 世界を描画
-	m_worldDrawer->setWorld(m_game->getWorld());
-	m_worldDrawer->draw(m_game->afterSkillUsableLoop());
-
-	// 経過時間
-	if (m_worldDrawer->getWorld()->getBrightValue() == 255 && !m_game->getStory()->eventNow()) {
-		int date = m_game->getStory()->getDate();
-		int barHandle = m_timeBarNoonHandle;
-		if (date == 1) { barHandle = m_timeBarEveningHandle; }
-		else if (date == 2) { barHandle = m_timeBarNightHandle; }
-		int x = (int)(1350 * m_exX);
-		int y = (int)(40 * m_exY);
-		double ex = 0.08 * min(m_exX, m_exY);
-		DrawRotaGraph(x, y, ex, 0.0, barHandle, TRUE);
-
-		int time = m_game->getStory()->getTimer()->getTime();
-		int lifespan = m_game->WORLD_LIFESPAN;
-		int wide = (int)(390 * m_exX);
-		int height = (int)(50 * m_exY);
-		int leftX = (int)(1185 * m_exX);
-		DrawRotaGraph(leftX + (time * wide / lifespan), y + height / 2, ex, 0.0, m_needleHandle, TRUE);
-	}
+	m_worldDrawer->setWorld(m_game->getStory()->getWorld());
+	m_worldDrawer->draw(false); // TODO: 必殺技バーをスキルバーにするなら引数にロジックを入れる
 
 	// filterRetroDisp(screen);
-
-	if (m_game->quickModeNow()) {
-		m_quickModeCnt++;
-		double angle = PI / 180 * m_quickModeCnt;
-		DrawRotaGraph(GAME_WIDE / 2, GAME_HEIGHT / 2, min(m_exX, m_exY) * 0.2, angle, m_quickModeHandle, TRUE);
-		DrawStringToHandle((int)(20 * m_exX), GAME_HEIGHT - (int)(70 * m_exY), "Ｑキーでスピードアップを解除", YELLOW, m_quickModeFontHandle);
-	}
-	else {
-		m_quickModeCnt = 0;
-	}
 
 	// セーブ完了通知
 	int noticeSaveDone = m_game->getGameData()->getNoticeSaveDone();

@@ -12,7 +12,6 @@ class Character;
 class CharacterController;
 class Camera;
 class SoundPlayer;
-class CharacterData;
 
 
 class CharacterLoader {
@@ -36,9 +35,6 @@ public:
 
 	// 特定のエリアの追加キャラのvectorを取得<Character, Controller>
 	std::pair<std::vector<Character*>, std::vector<CharacterController*> > getCharacters(Camera* camera_p, SoundPlayer* soundPlayer_p, int areaNum = -1);
-
-	// キャラのエリアと座標をセーブする
-	void saveCharacterData(CharacterData* characterData);
 };
 
 

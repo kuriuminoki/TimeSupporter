@@ -43,14 +43,8 @@ private:
 	// 使用するセーブデータのインデックス
 	int m_useSaveDataIndex;
 
-	// 開始するループ番号
-	ControlBar* m_startLoop[GAME_DATA_SUM];
-
 	// 背景
 	TitleBackGround* m_haikei;
-
-	// チャプター名
-	std::vector<std::string> m_chapterNames;
 
 public:
 
@@ -63,9 +57,6 @@ public:
 	// セーブデータが1つでも存在するか
 	bool saveDataExist();
 
-	// 最大のLoop
-	int getLatestLoop();
-
 	// セーブデータ選択画面の処理
 	bool play(int handX, int handY);
 
@@ -74,9 +65,6 @@ public:
 
 	// 使用するセーブデータのディレクトリ名
 	const char* useDirName();
-
-	// 始めるループ 指定がないなら-1
-	int startLoop();
 
 	// 全セーブデータ共通のデータをセーブ(タイトル画面のオプション用)
 	void saveCommon(int soundVolume);
@@ -145,11 +133,6 @@ public:
 	// 使用するセーブデータのフォルダ名
 	inline const char* useSaveFile() { 
 		return m_selectSaveData->useDirName();
-	}
-
-	// 始めるループ番号 指定がないなら-1
-	inline int startLoop() {
-		return m_selectSaveData->startLoop();
 	}
 
 };

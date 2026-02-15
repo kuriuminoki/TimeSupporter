@@ -188,14 +188,6 @@ private:
 	Button* m_titleButton;
 	bool m_titleFlag;
 
-	// 時間を高速で進める機能
-	const int QUICK_X1 = 70;
-	const int QUICK_Y1 = 150;
-	const int QUICK_X2 = 600;
-	const int QUICK_Y2 = 250;
-	Button* m_quickButton;
-	bool m_quickFlag;
-
 	// 操作説明
 	TutorialDisp* m_tutorialDisp;
 
@@ -209,10 +201,6 @@ public:
 
 	// ゲッタ
 	inline bool getTitleFlag() { return m_titleFlag; }
-	inline bool getQuickFlag() { return m_quickFlag; }
-
-	// セッタ
-	inline bool setQuickFlag(bool quickFlag) { m_quickFlag = quickFlag; }
 };
 
 

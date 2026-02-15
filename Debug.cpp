@@ -9,7 +9,6 @@
 #include "Animation.h"
 #include "Define.h"
 #include "Text.h"
-#include "Timer.h"
 #include "Event.h"
 #include "Story.h"
 #include "Brain.h"
@@ -23,12 +22,12 @@
 // Gameクラスのデバッグ
 void Game::debug(int x, int y, int color) const {
 	DrawFormatString(x, y, color, "**GAME**");
-	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "timer=%d, Loop=%d, doorSum=%d, version=%d", m_story->getTimer()->getTime(), m_gameData->getLoop(), m_gameData->getDoorSum(), m_story->getVersion());
+	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE, color, "storyNum=%d", m_story->getStoryNum());
 	//for (int i = 0; i < m_gameData->getDoorSum(); i++) {
 	//	DrawFormatString(x, y + DRAW_FORMAT_STRING_SIZE + ((i + 1) * DRAW_FORMAT_STRING_SIZE), color, "from=%d, to=%d", m_gameData->getFrom(i), m_gameData->getTo(i));
 	//}
 	m_story->debug(x + DRAW_FORMAT_STRING_SIZE, y + DRAW_FORMAT_STRING_SIZE * 2, color);
-	m_world->debug(1000, y + DRAW_FORMAT_STRING_SIZE * 3, color);
+	m_story->getWorld()->debug(1000, y + DRAW_FORMAT_STRING_SIZE * 3, color);
 }
 
 
