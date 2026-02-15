@@ -425,7 +425,7 @@ string World::getControlCharacterName() const {
 	return m_playerChanger->getNowPlayer()->getCharacterInfo()->name();
 }
 
-// スキル発動：複製のハート追加用
+// キャラ追加イベント用
 void World::pushCharacter(Character* character, CharacterController* controller) {
 	m_characters.push_back(character);
 	m_characterControllers.push_back(controller);
