@@ -12,7 +12,6 @@
 #include "Item.h"
 #include "Text.h"
 #include "Brain.h"
-#include "ControllerRecorder.h"
 #include "CharacterLoader.h"
 #include "ObjectLoader.h"
 #include "Game.h"
@@ -136,8 +135,6 @@ void penetrationCharacterAndObject(CharacterController* controller, vector<Objec
 World::World() {
 	m_worldFreezeTime = 0;
 
-	m_duplicationFlag = false;
-
 	m_dispHpInfoFlag = false;
 
 	m_brightValue = 255;
@@ -152,9 +149,6 @@ World::World() {
 
 	// ムービー
 	m_movie_p = nullptr;
-
-	// スキル発動中
-	m_skillFlag = false;
 
 	// カメラの倍率の最大・最小値を解像度から決定
 	getGameEx(m_exX, m_exY);
@@ -258,22 +252,6 @@ World::~World() {
 	}
 
 	delete m_playerChanger;
-
-	// 背景
-	if (!m_duplicationFlag) {
-		DeleteGraph(m_backGroundGraph);
-		delete m_energyGetGraph;
-		delete m_characterDeadGraph;
-		delete m_skillFinishGraph;
-		delete m_characterDamageGraph;
-		delete m_bombGraph;
-		DeleteSoundMem(m_characterDeadSound);
-		DeleteSoundMem(m_bombSound);
-		DeleteSoundMem(m_doorSound);
-		DeleteSoundMem(m_characterChangeSound);
-		DeleteSoundMem(m_cameraInSound);
-		DeleteSoundMem(m_cameraOutSound);
-	}
 
 	if (m_objectConversation != nullptr) {
 		delete m_objectConversation;
@@ -447,81 +425,10 @@ string World::getControlCharacterName() const {
 	return m_playerChanger->getNowPlayer()->getCharacterInfo()->name();
 }
 
-
-// スキル発動：ハートをFreezeにする
-void World::setSkillFlag(bool skillFlag) { 
-	m_skillFlag = skillFlag;
-	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
-		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == "ハート") {
-			m_characterControllers[i]->setCharacterFreeze(skillFlag);
-		}
-	}
-}
-
 // スキル発動：複製のハート追加用
 void World::pushCharacter(Character* character, CharacterController* controller) {
 	m_characters.push_back(character);
 	m_characterControllers.push_back(controller);
-}
-
-// スキル発動：複製のハート削除用
-void World::popCharacterController(int id) {
-	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
-		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == "ハート") {
-			continue;
-		}
-		if (m_characterControllers[i]->getAction()->getCharacter()->getId() == id) {
-			const Character* character = m_characterControllers[i]->getAction()->getCharacter();
-			int targetX1 = 0, targetY1 = 0, targetX2 = 0, targetY2 = 0;
-			character->getAtariArea(&targetX1, &targetY1, &targetX2, &targetY2);
-			// エフェクト作成
-			int x = (targetX1 + targetX2) / 2;
-			int y = (targetY1 + targetY2) / 2;
-			m_animations.push_back(new Animation(x, y, 3, m_skillFinishGraph));
-			delete m_characterControllers[i];
-			m_characterControllers[i] = m_characterControllers.back();
-			m_characterControllers.pop_back();
-			i--;
-		}
-	}
-	// TargetにしているAIは外してもらいたいのでHP=0にする。
-	for (unsigned int i = 0; i < m_characters.size(); i++) {
-		if (m_characters[i]->getName() == "ハート") {
-			continue;
-		}
-		if (m_characters[i]->getId() == id) {
-			m_characters[i]->setHp(0);
-		}
-	}
-}
-
-// スキル発動：レコーダを作成し使用を開始
-void World::createRecorder() {
-	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
-		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == "ハート") { continue; }
-		m_characterControllers[i]->setStickRecorder(new ControllerRecorder(0));
-		m_characterControllers[i]->setJumpRecorder(new ControllerRecorder(0));
-		m_characterControllers[i]->setSquatRecorder(new ControllerRecorder(0));
-		m_characterControllers[i]->setSlashRecorder(new ControllerRecorder(0));
-		m_characterControllers[i]->setBulletRecorder(new ControllerRecorder(0));
-		m_characterControllers[i]->setDamageRecorder(new ControllerRecorder(0));
-	}
-}
-
-// スキル発動：レコーダの時間を最初に戻す
-void World::initRecorder() {
-	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
-		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == "ハート") { continue; }
-		m_characterControllers[i]->initRecorder();
-	}
-}
-
-// スキル発動：レコーダの使用をやめて削除する
-void World::eraseRecorder() {
-	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
-		if (m_characterControllers[i]->getAction()->getCharacter()->getName() == "ハート") { continue; }
-		m_characterControllers[i]->eraseRecorder();
-	}
 }
 
 // データ管理：キャラの状態を変更する いないなら作成する
@@ -804,9 +711,7 @@ void World::battle() {
 
 	m_dispHpInfoFlag = true;
 
-	if (!m_skillFlag) {
-		playBGM();
-	}
+	playBGM();
 
 	// 世界のフリーズ処理
 	if (m_worldFreezeTime > 0) {
@@ -863,9 +768,7 @@ void World::battle() {
 	updateAnimation();
 
 	// キャラ変更
-	if (!m_duplicationFlag && !m_skillFlag) {
-		changePlayer(m_playerChanger->play(m_soundPlayer_p, m_characterControllers));
-	}
+	changePlayer(m_playerChanger->play(m_soundPlayer_p, m_characterControllers));
 
 }
 
@@ -1004,11 +907,9 @@ void World::controlCharacter() {
 			atariCharacterAndDoor(controller, m_doorObjects);
 		}
 
-		// 操作 originalのハートはフリーズ
-		if (!m_duplicationFlag || m_characterControllers[i]->getAction()->getCharacter()->getId() != m_playerId) {
-			controller->control();
-			controller->setPlayerDirection(m_player_p);
-		}
+		// 操作
+		controller->control();
+		controller->setPlayerDirection(m_player_p);
 
 		// 射撃攻撃
 		vector<Object*>* bulletAttack = controller->bulletAttack();
@@ -1040,10 +941,8 @@ void World::controlCharacter() {
 		}
 
 		// 反映 originalのハートはフリーズ
-		if (!m_duplicationFlag || m_characterControllers[i]->getAction()->getCharacter()->getId() != m_playerId) {
-			if (m_worldFreezeTime == 0) { 
-				controller->action();
-			}
+		if (m_worldFreezeTime == 0) {
+			controller->action();
 		}
 
 		// オブジェクトとの貫通判定
@@ -1060,9 +959,7 @@ void World::controlObject() {
 	actionObject(m_attackObjects);
 
 	// エネルギーの放出
-	if (!m_duplicationFlag) {
-		createAttackEnergy();
-	}
+	createAttackEnergy();
 
 	// 壁や床<->攻撃の当たり判定
 	atariStageAndAttack();
@@ -1141,12 +1038,6 @@ void World::atariCharacterAndCharacter() {
 			CharacterController* controllerA = m_characterControllers[i];
 			CharacterController* controllerB = m_characterControllers[j];
 
-			if (m_duplicationFlag && controllerA->getAction()->getCharacter()->getId() == m_playerId) {
-				continue;
-			}
-			if (m_duplicationFlag && controllerB->getAction()->getCharacter()->getId() == m_playerId) {
-				continue;
-			}
 			// HPが0ならスキップ
 			if (controllerA->getAction()->getCharacter()->noDispForDead() || controllerA->getAction()->getCharacter()->getBossFlag()) {
 				continue;
@@ -1224,7 +1115,7 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 						m_animations.push_back(new Animation(x, y, 3, m_characterDeadGraph));
 						m_camera->shakingStart(20, 20);
 						m_soundPlayer_p->pushSoundQueue(m_characterDeadSound, panPal);
-						if (!m_duplicationFlag && character->getGroupId() != m_player_p->getGroupId() && !character->getBossFlag()) {
+						if ( character->getGroupId() != m_player_p->getGroupId() && !character->getBossFlag()) {
 							int r = GetRand(100);
 							// スキル発動中でなければ雑魚キャラは確率でアイテムが落ちる
 							if (r < 20) {
@@ -1241,7 +1132,7 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 						}
 					}
 				}
-				if (!m_duplicationFlag && (character->haveDeadGraph() || character->getBossFlag() || character->getId() == m_playerId)) {
+				if (character->haveDeadGraph() || character->getBossFlag() || character->getId() == m_playerId) {
 					// フリーズさせる
 					m_worldFreezeTime = 30;
 					m_camera->setGPoint(character->getCenterX(), character->getCenterY());
@@ -1253,9 +1144,6 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 
 //  Battle：キャラクターと扉オブジェクトの当たり判定
 void World::atariCharacterAndDoor(CharacterController* controller, vector<Object*>& objects) {
-
-	// スキル発動中は扉に入れない
-	if (m_skillFlag) { return; }
 
 	// 壁や床オブジェクトの処理 (当たり判定と動き)
 	for (unsigned int i = 0; i < objects.size(); i++) {
@@ -1447,11 +1335,9 @@ bool World::moveGoalCharacter() {
 			atariCharacterAndObject(controller, m_attackObjects, false);
 		}
 
-		// 目標地点へ移動する操作 originalのハートはフリーズ
-		if (!m_duplicationFlag || m_characterControllers[i]->getAction()->getCharacter()->getId() != m_playerId) {
-			allCharacterAlreadyGoal &= controller->moveGoal();
-			controller->setPlayerDirection(m_player_p);
-		}
+		// 目標地点へ移動する操作
+		allCharacterAlreadyGoal &= controller->moveGoal();
+		controller->setPlayerDirection(m_player_p);
 	}
 
 	// キャラ間の当たり判定
@@ -1465,10 +1351,8 @@ bool World::moveGoalCharacter() {
 			continue;
 		}
 
-		// 反映 originalのハートはフリーズ
-		if (!m_duplicationFlag || m_characterControllers[i]->getAction()->getCharacter()->getId() != m_playerId) {
-			controller->action();
-		}
+		// 反映
+		controller->action();
 
 		// オブジェクトとの貫通判定
 		penetrationCharacterAndObject(controller, m_stageObjects);

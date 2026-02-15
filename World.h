@@ -67,9 +67,6 @@ private:
 	// 解像度の倍率
 	double m_exX, m_exY;
 
-	// 複製ならtrue 背景をデリートしないため
-	bool m_duplicationFlag;
-
 	// サウンドプレイヤー
 	SoundPlayer* m_soundPlayer_p;
 
@@ -80,9 +77,6 @@ private:
 
 	// ムービー EventElementクラスからもらう
 	Movie* m_movie_p;
-
-	// スキル発動中はエリア間の移動できない
-	bool m_skillFlag;
 
 	// 画面の明るさ
 	int m_brightValue;
@@ -232,7 +226,6 @@ public:
 	inline int getBombSound() const { return m_bombSound; }
 	inline int getDoorSound() const { return m_doorSound; }
 	inline int getCharacterChangeSound() const { return m_characterChangeSound; }
-	inline bool getSkillFlag() const { return m_skillFlag; }
 	inline int getBossDeadEffextCnt() const { return m_bossDeadEffectCnt; }
 	inline int getMoney() const { return m_money; }
 	inline bool getAreaLock() const { return m_areaLock; }
@@ -293,23 +286,8 @@ public:
 	// 今操作しているキャラがハートか
 	std::string getControlCharacterName() const;
 
-	// スキル発動：ハートをFreezeにする
-	void setSkillFlag(bool skillFlag);
-
-	// スキル発動：複製のハート追加用
+	// キャラ追加イベント用
 	void pushCharacter(Character* character, CharacterController* controller);
-
-	// スキル発動：複製のハート削除用
-	void popCharacterController(int id);
-
-	// スキル発動：レコーダを作成し使用を開始
-	void createRecorder();
-
-	// スキル発動：レコーダの時間を最初に戻す
-	void initRecorder();
-
-	// スキル発動：レコーダの使用をやめて削除する
-	void eraseRecorder();
 
 	// データ管理：キャラの状態を変更する いないなら作成する
 	void asignedCharacterData(const char* name, CharacterData* data);

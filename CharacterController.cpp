@@ -4,7 +4,6 @@
 #include "Camera.h"
 #include "Control.h"
 #include "Brain.h"
-#include "ControllerRecorder.h"
 #include "Sound.h"
 #include "Define.h"
 #include "DxLib.h"
@@ -40,16 +39,6 @@ CharacterController::CharacterController(Brain* brain, CharacterAction* characte
 	// BrainにActionを注入
 	m_brain->setCharacterAction(m_characterAction);
 
-	// レコーダはデフォルトで使わない
-	m_stickRecorder = nullptr;
-	m_jumpRecorder = nullptr;
-	m_squatRecorder = nullptr;
-	m_slashRecorder = nullptr;
-	m_bulletRecorder = nullptr;
-	m_damageRecorder = nullptr;
-
-	m_duplicationFlag = false;
-
 }
 
 CharacterController::CharacterController() :
@@ -66,50 +55,6 @@ CharacterController::~CharacterController() {
 	if (m_brain != nullptr) {
 		delete m_brain;
 	}
-	if (m_stickRecorder != nullptr && !m_duplicationFlag) {
-		delete m_stickRecorder;
-		delete m_jumpRecorder;
-		delete m_squatRecorder;
-		delete m_slashRecorder;
-		delete m_bulletRecorder;
-	}
-	if (m_damageRecorder != nullptr && !m_duplicationFlag) {
-		delete m_damageRecorder;
-	}
-}
-
-// レコーダを初期化
-void CharacterController::initRecorder() {
-	if (m_stickRecorder != nullptr) {
-		m_stickRecorder->init();
-		m_jumpRecorder->init();
-		m_squatRecorder->init();
-		m_slashRecorder->init();
-		m_bulletRecorder->init();
-	}
-	if (m_damageRecorder != nullptr) {
-		m_damageRecorder->init();
-	}
-}
-
-// レコードをやめる
-void CharacterController::eraseRecorder() { 
-	if (m_stickRecorder != nullptr) { 
-		delete m_stickRecorder;
-		delete m_jumpRecorder;
-		delete m_squatRecorder;
-		delete m_slashRecorder;
-		delete m_bulletRecorder;
-		m_stickRecorder = nullptr;
-		m_jumpRecorder = nullptr;
-		m_squatRecorder = nullptr;
-		m_slashRecorder = nullptr;
-		m_bulletRecorder = nullptr;
-	}
-	if (m_damageRecorder != nullptr) {
-		delete m_damageRecorder;
-		m_damageRecorder = nullptr;
-	}
 }
 
 // 話しかけたり扉に入ったりするボタンがtrueか
@@ -124,26 +69,6 @@ void CharacterController::setBrain(Brain* brain) {
 	delete m_brain;
 	m_brain = brain;
 	m_brain->setCharacterAction(m_characterAction);
-}
-
-// レコーダのセッタ
-void CharacterController::setStickRecorder(ControllerRecorder* recorder) {
-	m_stickRecorder = recorder;
-}
-void CharacterController::setJumpRecorder(ControllerRecorder* recorder) {
-	m_jumpRecorder = recorder;
-}
-void CharacterController::setSquatRecorder(ControllerRecorder* recorder) {
-	m_squatRecorder = recorder;
-}
-void CharacterController::setSlashRecorder(ControllerRecorder* recorder) {
-	m_slashRecorder = recorder;
-}
-void CharacterController::setBulletRecorder(ControllerRecorder* recorder) {
-	m_bulletRecorder = recorder;
-}
-void CharacterController::setDamageRecorder(ControllerRecorder* recorder) {
-	m_damageRecorder = recorder;
 }
 
 void CharacterController::setTarget(Character* character) { 
@@ -281,55 +206,11 @@ NormalController::NormalController(Brain* brain, CharacterAction* characterActio
 }
 
 void NormalController::control() {
-	// ダメージのレコード（もし記録と現状が違えば以降のレコードを削除）
-	if (m_damageRecorder != nullptr) {
-		// 現状
-		bool flag = (m_characterAction->getState() == CHARACTER_STATE::DAMAGE);
-		if (m_damageRecorder->existRecord()) {
-			// 記録と比較
-			if ((bool)m_damageRecorder->checkInput() != flag) {
-				m_stickRecorder->discardRecord();
-				m_jumpRecorder->discardRecord();
-				m_squatRecorder->discardRecord();
-				m_slashRecorder->discardRecord();
-				m_bulletRecorder->discardRecord();
-				m_damageRecorder->discardRecord();
-				m_damageRecorder->writeRecord((int)flag);
-			}
-		}
-		else {
-			m_damageRecorder->writeRecord((int)flag);
-		}
-		m_damageRecorder->addTime();
-	}
 
 	// 移動 stickなどの入力状態を更新する
 	int rightStick = 0, leftStick = 0, upStick = 0, downStick = 0;
 	if (m_characterAction->getCharacter()->getHp() == 0) {
 		// やられているから何もしない
-	}
-	else if (m_stickRecorder != nullptr) {
-		if (m_stickRecorder->existRecord()) {
-			int input = m_stickRecorder->checkInput();
-			if (((input >> 0) & 1) == 1) { 
-				rightStick = 1;
-			}
-			if (((input >> 1) & 1) == 1) { 
-				leftStick = 1;
-			}
-			if (((input >> 2) & 1) == 1) { upStick = 1; }
-			if (((input >> 3) & 1) == 1) { downStick = 1; }
-		}
-		else {
-			m_brain->moveOrder(rightStick, leftStick, upStick, downStick);
-			int bit = 0;
-			if (rightStick > 0) { bit |= (1 << 0); }
-			if (leftStick > 0) { bit |= (1 << 1); }
-			if (upStick > 0) { bit |= (1 << 2); }
-			if (downStick > 0) { bit |= (1 << 3); }
-			m_stickRecorder->writeRecord(bit);
-		}
-		m_stickRecorder->addTime();
 	}
 	else {
 		m_brain->moveOrder(rightStick, leftStick, upStick, downStick);
@@ -342,16 +223,6 @@ void NormalController::control() {
 	int jump = 0;
 	if (m_characterAction->getCharacter()->getHp() == 0) {
 		// やられているから何もしない
-	}
-	else if (m_jumpRecorder != nullptr) {
-		if (m_jumpRecorder->existRecord()) {
-			jump = m_jumpRecorder->checkInput();
-		}
-		else {
-			jump = m_brain->jumpOrder();
-			m_jumpRecorder->writeRecord(jump);
-		}
-		m_jumpRecorder->addTime();
 	}
 	else {
 		jump = m_brain->jumpOrder();
@@ -367,16 +238,6 @@ void NormalController::control() {
 	int squat = 0;
 	if (m_characterAction->getCharacter()->getHp() == 0) {
 		// やられているから何もしない
-	}
-	else if (m_squatRecorder != nullptr) {
-		if (m_squatRecorder->existRecord()) {
-			squat = m_squatRecorder->checkInput();
-		}
-		else {
-			squat = m_brain->squatOrder();
-			m_squatRecorder->writeRecord(squat);
-		}
-		m_squatRecorder->addTime();
 	}
 	else {
 		squat = m_brain->squatOrder();
@@ -400,29 +261,7 @@ vector<Object*>* NormalController::bulletAttack() {
 	m_brain->bulletTargetPoint(targetX, targetY);
 
 	// 命令
-	int order = 0;
-	if (m_bulletRecorder != nullptr) {
-		if (m_bulletRecorder->existRecord()) {
-			order = m_bulletRecorder->checkInput();
-			// 攻撃目標を取得
-			m_bulletRecorder->getGoal(targetX, targetY);
-			targetX += m_characterAction->getCharacter()->getCenterX();
-			targetY += m_characterAction->getCharacter()->getCenterY();
-		}
-		else {
-			order = m_brain->bulletOrder();
-			m_bulletRecorder->writeRecord(order);
-			// 攻撃目標を書き込み
-			m_bulletRecorder->setGoal(
-				targetX - m_characterAction->getCharacter()->getCenterX(),
-				targetY - m_characterAction->getCharacter()->getCenterY()
-			);
-		}
-		m_bulletRecorder->addTime();
-	}
-	else {
-		order = m_brain->bulletOrder();
-	}
+	int order = m_brain->bulletOrder();
 
 	// 遠距離攻撃の命令がされているなら
 	if (order > 0 || m_characterAction->getBulletCnt() > 0) {
@@ -443,29 +282,7 @@ vector<Object*>* NormalController::slashAttack() {
 	m_brain->slashTargetPoint(targetX, targetY);
 
 	// 命令
-	int order = 0;
-	if (m_slashRecorder != nullptr) {
-		if (m_slashRecorder->existRecord()) {
-			order = m_slashRecorder->checkInput();
-			// 攻撃目標を取得
-			m_slashRecorder->getGoal(targetX, targetY);
-			targetX += m_characterAction->getCharacter()->getCenterX();
-			targetY += m_characterAction->getCharacter()->getCenterY();
-		}
-		else {
-			order = m_brain->slashOrder();
-			m_slashRecorder->writeRecord(order);
-			// 攻撃目標を書き込み
-			m_slashRecorder->setGoal(
-				targetX - m_characterAction->getCharacter()->getCenterX(),
-				targetY - m_characterAction->getCharacter()->getCenterY()
-			);
-		}
-		m_slashRecorder->addTime();
-	}
-	else {
-		order = m_brain->slashOrder();
-	}
+	int order = m_brain->slashOrder();
 
 	// スライディング
 	if (order == 1) {

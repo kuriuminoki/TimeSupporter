@@ -178,9 +178,6 @@ void Event::createElement(vector<string> param, World* world, SoundPlayer* sound
 	else if (param0 == "Wait") {
 		element = new WaitEvent(world, param);
 	}
-	else if (param0 == "WaitSkill") {
-		element = new WaitSkillEvent(world, param);
-	}
 	else if (param0 == "SetBgm") {
 		element = new SetBgmEvent(world, param);
 	}
@@ -774,25 +771,6 @@ WaitEvent::WaitEvent(World* world, std::vector<std::string> param) :
 EVENT_RESULT WaitEvent::play() {
 	m_world_p->moveGoalCharacter();
 	if (m_cnt++ == m_time) {
-		return EVENT_RESULT::SUCCESS;
-	}
-	return EVENT_RESULT::NOW;
-}
-
-
-// スキル発動まで待つイベント
-WaitSkillEvent::WaitSkillEvent(World* world, std::vector<std::string> param) :
-	EventElement(world)
-{
-	m_skillFlag = false;
-}
-EVENT_RESULT WaitSkillEvent::play() {
-	m_world_p->battle();
-	if (m_world_p->getSkillFlag()) {
-		m_skillFlag = true;
-	}
-	// 発動し、今は発動中でないなら終了（発動が終わったとみなせるため）
-	if (m_skillFlag && !m_world_p->getSkillFlag()) {
 		return EVENT_RESULT::SUCCESS;
 	}
 	return EVENT_RESULT::NOW;

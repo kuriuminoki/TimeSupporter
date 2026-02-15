@@ -11,7 +11,6 @@
 #include "CharacterLoader.h"
 #include "ObjectLoader.h"
 #include "Brain.h"
-#include "ControllerRecorder.h"
 #include "PausePage.h"
 #include "DxLib.h"
 

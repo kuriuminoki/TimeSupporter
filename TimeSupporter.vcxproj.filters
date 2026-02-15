@@ -1,249 +1,243 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<ItemGroup>
-		<Filter Include="ソース ファイル">
-			<UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-			<Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-		</Filter>
-		<Filter Include="ヘッダー ファイル">
-			<UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-			<Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-		</Filter>
-		<Filter Include="リソース ファイル">
-			<UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-			<Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-		</Filter>
-		<Filter Include="ヘッダー ファイル\Domain">
-			<UniqueIdentifier>{8685b8a3-5a51-4fad-aa69-0d6840c5e442}</UniqueIdentifier>
-		</Filter>
-		<Filter Include="ソース ファイル\Domain">
-			<UniqueIdentifier>{7b8b83f6-fff8-4c5d-b827-2db2ae89d09e}</UniqueIdentifier>
-		</Filter>
-		<Filter Include="ヘッダー ファイル\ui">
-			<UniqueIdentifier>{b43d6885-1f2e-4bf4-b2f5-7f70517a9d51}</UniqueIdentifier>
-		</Filter>
-		<Filter Include="ソース ファイル\ui">
-			<UniqueIdentifier>{61fdfc5b-7eeb-40bd-a876-4a4ee95c01a5}</UniqueIdentifier>
-		</Filter>
-		<Filter Include="ヘッダー ファイル\api">
-			<UniqueIdentifier>{46b60107-7b6b-4f6b-826d-9863fc8197dd}</UniqueIdentifier>
-		</Filter>
-		<Filter Include="ソース ファイル\api">
-			<UniqueIdentifier>{90673ed7-0489-46f2-9ea0-a008e3b9cd13}</UniqueIdentifier>
-		</Filter>
-		<Filter Include="ソース ファイル\Loader">
-			<UniqueIdentifier>{04faa9ca-0181-4eec-9208-eb95a6455dbe}</UniqueIdentifier>
-		</Filter>
-		<Filter Include="ヘッダー ファイル\Loader">
-			<UniqueIdentifier>{ed248952-e8e8-41aa-bff0-b4ac934a8e07}</UniqueIdentifier>
-		</Filter>
-		<Filter Include="ヘッダー ファイル\pages">
-			<UniqueIdentifier>{dc0df2ee-2308-4450-835a-c887e7892cc9}</UniqueIdentifier>
-		</Filter>
-		<Filter Include="ソース ファイル\pages">
-			<UniqueIdentifier>{4f6a2357-f2bf-45ed-b9ad-c42312feccfb}</UniqueIdentifier>
-		</Filter>
-	</ItemGroup>
-	<ItemGroup>
-		<ClCompile Include="Main.cpp">
-			<Filter>ソース ファイル</Filter>
-		</ClCompile>
-		<ClCompile Include="Control.cpp">
-			<Filter>ソース ファイル</Filter>
-		</ClCompile>
-		<ClCompile Include="Character.cpp">
-			<Filter>ソース ファイル\Domain</Filter>
-		</ClCompile>
-		<ClCompile Include="CharacterDrawer.cpp">
-			<Filter>ソース ファイル\ui</Filter>
-		</ClCompile>
-		<ClCompile Include="CharacterController.cpp">
-			<Filter>ソース ファイル\api</Filter>
-		</ClCompile>
-		<ClCompile Include="Camera.cpp">
-			<Filter>ソース ファイル\Domain</Filter>
-		</ClCompile>
-		<ClCompile Include="CharacterAction.cpp">
-			<Filter>ソース ファイル\api</Filter>
-		</ClCompile>
-		<ClCompile Include="World.cpp">
-			<Filter>ソース ファイル\api</Filter>
-		</ClCompile>
-		<ClCompile Include="Game.cpp">
-			<Filter>ソース ファイル\api</Filter>
-		</ClCompile>
-		<ClCompile Include="Debug.cpp">
-			<Filter>ソース ファイル\api</Filter>
-		</ClCompile>
-		<ClCompile Include="Object.cpp">
-			<Filter>ソース ファイル\api</Filter>
-		</ClCompile>
-		<ClCompile Include="GraphHandle.cpp">
-			<Filter>ソース ファイル\Domain</Filter>
-		</ClCompile>
-		<ClCompile Include="WorldDrawer.cpp">
-			<Filter>ソース ファイル\ui</Filter>
-		</ClCompile>
-		<ClCompile Include="GameDrawer.cpp">
-			<Filter>ソース ファイル\ui</Filter>
-		</ClCompile>
-		<ClCompile Include="ObjectDrawer.cpp">
-			<Filter>ソース ファイル\ui</Filter>
-		</ClCompile>
-		<ClCompile Include="Animation.cpp">
-			<Filter>ソース ファイル\Domain</Filter>
-		</ClCompile>
-		<ClCompile Include="Sound.cpp">
-			<Filter>ソース ファイル\Domain</Filter>
-		</ClCompile>
-		<ClCompile Include="AnimationDrawer.cpp">
-			<Filter>ソース ファイル\ui</Filter>
-		</ClCompile>
-		<ClCompile Include="Story.cpp">
-			<Filter>ソース ファイル\api</Filter>
-		</ClCompile>
-		<ClCompile Include="Event.cpp">
-			<Filter>ソース ファイル\api</Filter>
-		</ClCompile>
-		<ClCompile Include="Text.cpp">
-			<Filter>ソース ファイル\api</Filter>
-		</ClCompile>
-		<ClCompile Include="TextDrawer.cpp">
-			<Filter>ソース ファイル\ui</Filter>
-		</ClCompile>
-		<ClCompile Include="Brain.cpp">
-			<Filter>ソース ファイル\api</Filter>
-		</ClCompile>
-		<ClCompile Include="ControllerRecorder.cpp">
-			<Filter>ソース ファイル\api</Filter>
-		</ClCompile>
-		<ClCompile Include="CharacterLoader.cpp">
-			<Filter>ソース ファイル\Loader</Filter>
-		</ClCompile>
-		<ClCompile Include="CsvReader.cpp">
-			<Filter>ソース ファイル\Loader</Filter>
-		</ClCompile>
-		<ClCompile Include="ObjectLoader.cpp">
-			<Filter>ソース ファイル\Loader</Filter>
-		</ClCompile>
-		<ClCompile Include="Button.cpp">
-			<Filter>ソース ファイル\Domain</Filter>
-		</ClCompile>
-		<ClCompile Include="PausePage.cpp">
-			<Filter>ソース ファイル\pages</Filter>
-		</ClCompile>
-		<ClCompile Include="Define.cpp">
-			<Filter>ソース ファイル</Filter>
-		</ClCompile>
-		<ClCompile Include="Title.cpp">
-			<Filter>ソース ファイル\pages</Filter>
-		</ClCompile>
-		<ClCompile Include="Item.cpp">
-			<Filter>ソース ファイル\Domain</Filter>
-		</ClCompile>
-		<ClCompile Include="DrawTool.cpp">
-			<Filter>ソース ファイル\ui</Filter>
-		</ClCompile>
-		<ClCompile Include="Timer.cpp">
-			<Filter>ソース ファイル\api</Filter>
-		</ClCompile>
-	</ItemGroup>
-	<ItemGroup>
-		<ClInclude Include="Define.h">
-			<Filter>ヘッダー ファイル</Filter>
-		</ClInclude>
-		<ClInclude Include="Control.h">
-			<Filter>ヘッダー ファイル</Filter>
-		</ClInclude>
-		<ClInclude Include="Character.h">
-			<Filter>ヘッダー ファイル\Domain</Filter>
-		</ClInclude>
-		<ClInclude Include="CharacterDrawer.h">
-			<Filter>ヘッダー ファイル\ui</Filter>
-		</ClInclude>
-		<ClInclude Include="CharacterController.h">
-			<Filter>ヘッダー ファイル\api</Filter>
-		</ClInclude>
-		<ClInclude Include="Camera.h">
-			<Filter>ヘッダー ファイル\Domain</Filter>
-		</ClInclude>
-		<ClInclude Include="CharacterAction.h">
-			<Filter>ヘッダー ファイル\api</Filter>
-		</ClInclude>
-		<ClInclude Include="World.h">
-			<Filter>ヘッダー ファイル\api</Filter>
-		</ClInclude>
-		<ClInclude Include="Game.h">
-			<Filter>ヘッダー ファイル\api</Filter>
-		</ClInclude>
-		<ClInclude Include="Object.h">
-			<Filter>ヘッダー ファイル\api</Filter>
-		</ClInclude>
-		<ClInclude Include="GraphHandle.h">
-			<Filter>ヘッダー ファイル\Domain</Filter>
-		</ClInclude>
-		<ClInclude Include="GameDrawer.h">
-			<Filter>ヘッダー ファイル\ui</Filter>
-		</ClInclude>
-		<ClInclude Include="WorldDrawer.h">
-			<Filter>ヘッダー ファイル\ui</Filter>
-		</ClInclude>
-		<ClInclude Include="ObjectDrawer.h">
-			<Filter>ヘッダー ファイル\ui</Filter>
-		</ClInclude>
-		<ClInclude Include="Animation.h">
-			<Filter>ヘッダー ファイル\Domain</Filter>
-		</ClInclude>
-		<ClInclude Include="Sound.h">
-			<Filter>ヘッダー ファイル\Domain</Filter>
-		</ClInclude>
-		<ClInclude Include="AnimationDrawer.h">
-			<Filter>ヘッダー ファイル\ui</Filter>
-		</ClInclude>
-		<ClInclude Include="Story.h">
-			<Filter>ヘッダー ファイル\api</Filter>
-		</ClInclude>
-		<ClInclude Include="Event.h">
-			<Filter>ヘッダー ファイル\api</Filter>
-		</ClInclude>
-		<ClInclude Include="Text.h">
-			<Filter>ヘッダー ファイル\api</Filter>
-		</ClInclude>
-		<ClInclude Include="TextDrawer.h">
-			<Filter>ヘッダー ファイル\ui</Filter>
-		</ClInclude>
-		<ClInclude Include="ControllerRecorder.h">
-			<Filter>ヘッダー ファイル\api</Filter>
-		</ClInclude>
-		<ClInclude Include="Brain.h">
-			<Filter>ヘッダー ファイル\api</Filter>
-		</ClInclude>
-		<ClInclude Include="CharacterLoader.h">
-			<Filter>ヘッダー ファイル\Loader</Filter>
-		</ClInclude>
-		<ClInclude Include="CsvReader.h">
-			<Filter>ヘッダー ファイル\Loader</Filter>
-		</ClInclude>
-		<ClInclude Include="ObjectLoader.h">
-			<Filter>ヘッダー ファイル\Loader</Filter>
-		</ClInclude>
-		<ClInclude Include="Button.h">
-			<Filter>ヘッダー ファイル\Domain</Filter>
-		</ClInclude>
-		<ClInclude Include="PausePage.h">
-			<Filter>ヘッダー ファイル\pages</Filter>
-		</ClInclude>
-		<ClInclude Include="Title.h">
-			<Filter>ヘッダー ファイル\pages</Filter>
-		</ClInclude>
-		<ClInclude Include="Item.h">
-			<Filter>ヘッダー ファイル\Domain</Filter>
-		</ClInclude>
-		<ClInclude Include="DrawTool.h">
-			<Filter>ヘッダー ファイル\ui</Filter>
-		</ClInclude>
-		<ClInclude Include="Timer.h">
-			<Filter>ヘッダー ファイル\api</Filter>
-		</ClInclude>
-	</ItemGroup>
+  <ItemGroup>
+    <Filter Include="ソース ファイル">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="ヘッダー ファイル">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="リソース ファイル">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Domain">
+      <UniqueIdentifier>{8685b8a3-5a51-4fad-aa69-0d6840c5e442}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Domain">
+      <UniqueIdentifier>{7b8b83f6-fff8-4c5d-b827-2db2ae89d09e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\ui">
+      <UniqueIdentifier>{b43d6885-1f2e-4bf4-b2f5-7f70517a9d51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\ui">
+      <UniqueIdentifier>{61fdfc5b-7eeb-40bd-a876-4a4ee95c01a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\api">
+      <UniqueIdentifier>{46b60107-7b6b-4f6b-826d-9863fc8197dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\api">
+      <UniqueIdentifier>{90673ed7-0489-46f2-9ea0-a008e3b9cd13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\Loader">
+      <UniqueIdentifier>{04faa9ca-0181-4eec-9208-eb95a6455dbe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\Loader">
+      <UniqueIdentifier>{ed248952-e8e8-41aa-bff0-b4ac934a8e07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\pages">
+      <UniqueIdentifier>{dc0df2ee-2308-4450-835a-c887e7892cc9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\pages">
+      <UniqueIdentifier>{4f6a2357-f2bf-45ed-b9ad-c42312feccfb}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Main.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Control.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Character.cpp">
+      <Filter>ソース ファイル\Domain</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterDrawer.cpp">
+      <Filter>ソース ファイル\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterController.cpp">
+      <Filter>ソース ファイル\api</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>ソース ファイル\Domain</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterAction.cpp">
+      <Filter>ソース ファイル\api</Filter>
+    </ClCompile>
+    <ClCompile Include="World.cpp">
+      <Filter>ソース ファイル\api</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>ソース ファイル\api</Filter>
+    </ClCompile>
+    <ClCompile Include="Debug.cpp">
+      <Filter>ソース ファイル\api</Filter>
+    </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>ソース ファイル\api</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphHandle.cpp">
+      <Filter>ソース ファイル\Domain</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldDrawer.cpp">
+      <Filter>ソース ファイル\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="GameDrawer.cpp">
+      <Filter>ソース ファイル\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectDrawer.cpp">
+      <Filter>ソース ファイル\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>ソース ファイル\Domain</Filter>
+    </ClCompile>
+    <ClCompile Include="Sound.cpp">
+      <Filter>ソース ファイル\Domain</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationDrawer.cpp">
+      <Filter>ソース ファイル\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="Story.cpp">
+      <Filter>ソース ファイル\api</Filter>
+    </ClCompile>
+    <ClCompile Include="Event.cpp">
+      <Filter>ソース ファイル\api</Filter>
+    </ClCompile>
+    <ClCompile Include="Text.cpp">
+      <Filter>ソース ファイル\api</Filter>
+    </ClCompile>
+    <ClCompile Include="TextDrawer.cpp">
+      <Filter>ソース ファイル\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="Brain.cpp">
+      <Filter>ソース ファイル\api</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterLoader.cpp">
+      <Filter>ソース ファイル\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="CsvReader.cpp">
+      <Filter>ソース ファイル\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectLoader.cpp">
+      <Filter>ソース ファイル\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="Button.cpp">
+      <Filter>ソース ファイル\Domain</Filter>
+    </ClCompile>
+    <ClCompile Include="PausePage.cpp">
+      <Filter>ソース ファイル\pages</Filter>
+    </ClCompile>
+    <ClCompile Include="Define.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Title.cpp">
+      <Filter>ソース ファイル\pages</Filter>
+    </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>ソース ファイル\Domain</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawTool.cpp">
+      <Filter>ソース ファイル\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>ソース ファイル\api</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Define.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Control.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Character.h">
+      <Filter>ヘッダー ファイル\Domain</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterDrawer.h">
+      <Filter>ヘッダー ファイル\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterController.h">
+      <Filter>ヘッダー ファイル\api</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>ヘッダー ファイル\Domain</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterAction.h">
+      <Filter>ヘッダー ファイル\api</Filter>
+    </ClInclude>
+    <ClInclude Include="World.h">
+      <Filter>ヘッダー ファイル\api</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>ヘッダー ファイル\api</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.h">
+      <Filter>ヘッダー ファイル\api</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphHandle.h">
+      <Filter>ヘッダー ファイル\Domain</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDrawer.h">
+      <Filter>ヘッダー ファイル\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldDrawer.h">
+      <Filter>ヘッダー ファイル\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectDrawer.h">
+      <Filter>ヘッダー ファイル\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>ヘッダー ファイル\Domain</Filter>
+    </ClInclude>
+    <ClInclude Include="Sound.h">
+      <Filter>ヘッダー ファイル\Domain</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationDrawer.h">
+      <Filter>ヘッダー ファイル\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Story.h">
+      <Filter>ヘッダー ファイル\api</Filter>
+    </ClInclude>
+    <ClInclude Include="Event.h">
+      <Filter>ヘッダー ファイル\api</Filter>
+    </ClInclude>
+    <ClInclude Include="Text.h">
+      <Filter>ヘッダー ファイル\api</Filter>
+    </ClInclude>
+    <ClInclude Include="TextDrawer.h">
+      <Filter>ヘッダー ファイル\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Brain.h">
+      <Filter>ヘッダー ファイル\api</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterLoader.h">
+      <Filter>ヘッダー ファイル\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="CsvReader.h">
+      <Filter>ヘッダー ファイル\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectLoader.h">
+      <Filter>ヘッダー ファイル\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>ヘッダー ファイル\Domain</Filter>
+    </ClInclude>
+    <ClInclude Include="PausePage.h">
+      <Filter>ヘッダー ファイル\pages</Filter>
+    </ClInclude>
+    <ClInclude Include="Title.h">
+      <Filter>ヘッダー ファイル\pages</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.h">
+      <Filter>ヘッダー ファイル\Domain</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawTool.h">
+      <Filter>ヘッダー ファイル\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>ヘッダー ファイル\api</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>

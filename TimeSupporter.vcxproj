@@ -150,7 +150,6 @@
     <ClCompile Include="CharacterDrawer.cpp" />
     <ClCompile Include="CharacterLoader.cpp" />
     <ClCompile Include="Control.cpp" />
-    <ClCompile Include="ControllerRecorder.cpp" />
     <ClCompile Include="CsvReader.cpp" />
     <ClCompile Include="Debug.cpp" />
     <ClCompile Include="Define.cpp" />
@@ -186,7 +185,6 @@
     <ClInclude Include="CharacterDrawer.h" />
     <ClInclude Include="CharacterLoader.h" />
     <ClInclude Include="Control.h" />
-    <ClInclude Include="ControllerRecorder.h" />
     <ClInclude Include="CsvReader.h" />
     <ClInclude Include="Define.h" />
     <ClInclude Include="DrawTool.h" />

@@ -11,7 +11,6 @@ class CharacterAction;
 class Object;
 class Camera;
 class Brain;
-class ControllerRecorder;
 class SoundPlayer;
 
 
@@ -20,24 +19,12 @@ class SoundPlayer;
 */
 class CharacterController {
 protected:
-	// 複製ならtrue Recorderをデリートしないため
-	bool m_duplicationFlag;
 
 	// こいつが操作を命令してくる Controllerがデリートする
 	Brain* m_brain;
 
 	// 操作対象 Controllerがデリートする
 	CharacterAction* m_characterAction;
-
-	// 操作の記録 使わないならnullptr
-	ControllerRecorder* m_stickRecorder;
-	ControllerRecorder* m_jumpRecorder;
-	ControllerRecorder* m_squatRecorder;
-	ControllerRecorder* m_slashRecorder;
-	ControllerRecorder* m_bulletRecorder;
-
-	// ダメージの記録 変化したらそれ以降のレコードを削除する
-	ControllerRecorder* m_damageRecorder;
 
 	// 操作対象に攻撃を与えたObjectのID(2重で攻撃を与えない用)
 	std::vector<int> m_damagedObjectIds;
@@ -57,30 +44,12 @@ public:
 	// ゲッタ
 	inline const CharacterAction* getAction() const { return m_characterAction; }
 	inline const Brain* getBrain() const { return m_brain; }
-	inline const ControllerRecorder* getStickRecorder() const { return m_stickRecorder; }
-	inline const ControllerRecorder* getJumpRecorder() const { return m_jumpRecorder; }
-	inline const ControllerRecorder* getSquatRecorder() const { return m_squatRecorder; }
-	inline const ControllerRecorder* getSlashRecorder() const { return m_slashRecorder; }
-	inline const ControllerRecorder* getBulletRecorder() const { return m_bulletRecorder; }
-	inline const ControllerRecorder* getDamageRecorder() const { return m_damageRecorder; }
 
 	// セッタ
 	void setAction(CharacterAction* action);
 	void setBrain(Brain* brain);
-	void setStickRecorder(ControllerRecorder* recorder);
-	void setJumpRecorder(ControllerRecorder* recorder);
-	void setSquatRecorder(ControllerRecorder* recorder);
-	void setSlashRecorder(ControllerRecorder* recorder);
-	void setBulletRecorder(ControllerRecorder* recorder);
-	void setDamageRecorder(ControllerRecorder* recorder);
 	void setTarget(Character* character);
-	void setDuplicationFlag(bool flag) { m_duplicationFlag = flag; }
 	inline void setDamagedObjectIds(std::vector<int>& list) { for (unsigned int i = 0; i < list.size(); i++) { m_damagedObjectIds.push_back(list[i]); } }
-
-	// レコーダを初期化
-	void initRecorder();
-	// レコードをやめる
-	void eraseRecorder();
 
 	// 話しかけたり扉に入ったりするボタンがtrueか
 	virtual bool getActionKey() const;

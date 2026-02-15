@@ -705,24 +705,6 @@ public:
 	EVENT_RESULT play();
 };
 
-// スキル発動まで戦闘を続けるイベント
-class WaitSkillEvent :
-	public EventElement
-{
-private:
-
-	bool m_skillFlag;
-
-public:
-	WaitSkillEvent(World* world, std::vector<std::string> param);
-
-	// プレイ
-	EVENT_RESULT play();
-
-	// ハートのスキル発動が可能かどうか
-	bool skillAble() { return true; }
-};
-
 class SetBgmEvent :
 	public EventElement
 {
