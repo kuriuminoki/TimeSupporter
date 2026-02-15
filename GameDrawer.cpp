@@ -1,5 +1,6 @@
 #include "GameDrawer.h"
 #include "Game.h"
+#include "TimeSupporter.h"
 #include "Story.h"
 #include "World.h"
 #include "WorldDrawer.h"
@@ -57,21 +58,26 @@ GameDrawer::~GameDrawer() {
 
 void GameDrawer::draw(int screen) {
 
-	// ゲームオーバー
-	int gameoverCnt = m_game->getGameoverCnt();
-	if (gameoverCnt > 0) {
-		if ((gameoverCnt < FPS_N && gameoverCnt / 2 % 2 == 0) || gameoverCnt > FPS_N) {
-			DrawRotaGraph(GAME_WIDE / 2, GAME_HEIGHT / 2, min(m_exX, m_exY) * 0.7, 0.0, m_gameoverHandle, TRUE);
+	if (m_game->getStory() == nullptr) {
+		int handX = 0, handY = 0;
+		GetMousePoint(&handX, &handY);
+		m_game->getSelectStagePage()->draw(handX, handY);
+	}
+	else {
+		// ゲームオーバー
+		int gameoverCnt = m_game->getGameoverCnt();
+		if (gameoverCnt > 0) {
+			if ((gameoverCnt < FPS_N && gameoverCnt / 2 % 2 == 0) || gameoverCnt > FPS_N) {
+				DrawRotaGraph(GAME_WIDE / 2, GAME_HEIGHT / 2, min(m_exX, m_exY) * 0.7, 0.0, m_gameoverHandle, TRUE);
+			}
+
+			return;
 		}
 
-		return;
+		// 世界を描画
+		m_worldDrawer->setWorld(m_game->getStory()->getWorld());
+		m_worldDrawer->draw(false); // TODO: 必殺技バーをスキルバーにするなら引数にロジックを入れる
 	}
-
-	// 世界を描画
-	m_worldDrawer->setWorld(m_game->getStory()->getWorld());
-	m_worldDrawer->draw(false); // TODO: 必殺技バーをスキルバーにするなら引数にロジックを入れる
-
-	// filterRetroDisp(screen);
 
 	// セーブ完了通知
 	int noticeSaveDone = m_game->getGameData()->getNoticeSaveDone();
@@ -99,33 +105,4 @@ void GameDrawer::draw(int screen) {
 	else{
 		SetMouseDispFlag(MOUSE_DISP);//マウス表示
 	}
-}
-
-
-// レトロゲーム風の画面加工を行う
-void GameDrawer::filterRetroDisp(int screen) {
-	int fixThin = THIN * m_exX;
-	SetDrawScreen(m_tmpScreenR);
-	SetDrawBright(255, 0, 0);
-	DrawGraph(0, 0, screen, TRUE);
-
-	SetDrawScreen(m_tmpScreenG);
-	SetDrawBright(0, 255, 0);
-	DrawGraph(fixThin, fixThin / 2, screen, TRUE);
-	GraphBlend(m_tmpScreenR, m_tmpScreenG, 255, DX_GRAPH_BLEND_SCREEN);
-
-	SetDrawScreen(m_tmpScreenB);
-	SetDrawBright(0, 0, 255);
-	DrawGraph(fixThin / 2, fixThin, screen, TRUE);
-	GraphBlend(m_tmpScreenR, m_tmpScreenB, 255, DX_GRAPH_BLEND_SCREEN);
-
-	SetDrawScreen(screen);
-	SetDrawBright(255, 255, 255);
-	DrawGraph(0, 0, m_tmpScreenR, TRUE);
-	GraphBlend(screen, m_screenEffectHandle, 100, DX_GRAPH_BLEND_OVERLAY);
-
-	DrawBox(0, 0, fixThin, GAME_HEIGHT, BLACK, TRUE);
-	DrawBox(0, 0, GAME_WIDE, fixThin, BLACK, TRUE);
-	DrawBox(GAME_WIDE - fixThin, 0, GAME_WIDE, GAME_HEIGHT, BLACK, TRUE);
-	DrawBox(0, GAME_HEIGHT - fixThin, GAME_WIDE, GAME_HEIGHT, BLACK, TRUE);
 }

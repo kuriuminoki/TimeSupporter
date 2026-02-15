@@ -6,6 +6,7 @@
 
 class SoundPlayer;
 class World;
+class SelectStagePage;
 class Story;
 class Character;
 class BattleOption;
@@ -90,6 +91,9 @@ private:
 	// ゲームオーバーの表示
 	int m_gameoverCnt;
 
+	// カーソルの座標
+	int m_handX, m_handY;
+
 	// ストーリー
 	Story* m_story;
 
@@ -102,11 +106,14 @@ private:
 	// ゲームの再起動（タイトルへ戻る）を要求
 	bool m_rebootFlag;
 
+	SelectStagePage* m_selectStagePage;
+
 public:
 	Game(const char* saveFilePath = "savedata/test/");
 	~Game();
 
 	// ゲッタ
+	SelectStagePage* const getSelectStagePage() const { return m_selectStagePage; }
 	Story* const getStory() const { return m_story; }
 	BattleOption* getGamePause() const { return m_battleOption; }
 	bool getRebootFlag() const { return m_rebootFlag; }
