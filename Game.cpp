@@ -180,6 +180,8 @@ Game::Game(const char* saveFilePath) {
 		m_gameData->setCompleteStageSum(28);
 	}
 	m_selectStagePage = new SelectStagePage(m_gameData->getCompleteStageSum());
+	m_soundPlayer->setBGM("sound/bgm/ステージ選択.mp3");
+	m_soundPlayer->playBGM();
 
 	// 一時停止関連
 	m_battleOption = nullptr;
@@ -266,6 +268,8 @@ bool Game::play() {
 			// セーブ (バックアップは更新されない)
 			m_gameData->save();
 			delete m_story;
+			m_soundPlayer->setBGM("sound/bgm/ステージ選択.mp3");
+			m_soundPlayer->playBGM();
 		}
 	}
 

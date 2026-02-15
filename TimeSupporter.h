@@ -30,6 +30,11 @@ private:
 
 	std::vector<Button*> m_chapterButton;
 	std::vector<Button*> m_stageButton;
+
+	std::vector<int> m_chapterGraphHandles;
+	const int CHAPTER_GRAPH_MAX_DX = 1000;
+	int m_chapterGraphDx;
+
 public:
 	SelectStagePage(int completeStageSum);
 	~SelectStagePage();
