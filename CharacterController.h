@@ -50,8 +50,6 @@ public:
 	CharacterController(Brain* brain, CharacterAction* characterAction);
 	~CharacterController();
 
-	virtual CharacterController* createCopy(std::vector<Character*> characters, const Camera* camera) = 0;
-
 	// デバッグ
 	void debugController(int x, int y, int color) const;
 	virtual void debug(int x, int y, int color) const = 0;
@@ -171,8 +169,6 @@ public:
 	const char* getControllerName() const { return this->CONTROLLER_NAME; }
 
 	NormalController(Brain* brain, CharacterAction* characterAction);
-
-	CharacterController* createCopy(std::vector<Character*> characters, const Camera* camera);
 
 	void debug(int x, int y, int color) const;
 

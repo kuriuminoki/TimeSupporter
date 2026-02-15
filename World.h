@@ -191,7 +191,6 @@ private:
 public:
 	World();
 	World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer);
-	World(const World* original);
 	~World();
 
 	//デバッグ

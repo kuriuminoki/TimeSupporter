@@ -23,8 +23,6 @@ public:
 	Brain();
 	virtual ~Brain(){}
 
-	virtual Brain* createCopy(std::vector<Character*> characters, const Camera* camera) = 0;
-
 	virtual void debug(int x, int y, int color) const = 0;
 
 	// 話しかけたり扉入ったり
@@ -112,8 +110,6 @@ public:
 
 	KeyboardBrain(const Camera* camera);
 
-	Brain* createCopy(std::vector<Character*> characters, const Camera* camera) { return new KeyboardBrain(camera); }
-
 	void debug(int x, int y, int color) const;
 
 	// セッタ
@@ -142,8 +138,6 @@ public:
 	const char* getBrainName() const { return this->BRAIN_NAME; }
 
 	Freeze() { }
-
-	Brain* createCopy(std::vector<Character*> characters, const Camera* camera) { return new Freeze(); }
 
 	void debug(int x, int y, int color) const { }
 
@@ -212,9 +206,6 @@ public:
 
 	NormalAI();
 
-	Brain* createCopy(std::vector<Character*> characters, const Camera* camera);
-	void setParam(NormalAI* brain);
-
 	void debug(int x, int y, int color) const;
 
 	// セッタ
@@ -282,8 +273,6 @@ public:
 
 	FollowNormalAI();
 
-	Brain* createCopy(std::vector<Character*> characters, const Camera* camera);
-
 	void debug(int x, int y, int color) const;
 
 	// 追跡対象の情報を取得（オーバーライド）
@@ -320,8 +309,6 @@ public:
 
 	ParabolaAI();
 
-	Brain* createCopy(std::vector<Character*> characters, const Camera* camera);
-
 	void bulletTargetPoint(int& x, int& y);
 };
 
@@ -338,8 +325,6 @@ public:
 
 	FollowParabolaAI();
 
-	Brain* createCopy(std::vector<Character*> characters, const Camera* camera);
-
 	void bulletTargetPoint(int& x, int& y);
 };
 
@@ -355,8 +340,6 @@ public:
 	const char* getBrainName() const { return this->BRAIN_NAME; }
 
 	ValkiriaAI();
-
-	Brain* createCopy(std::vector<Character*> characters, const Camera* camera);
 
 	int slashOrder();
 	int bulletOrder() { return 0; }
@@ -387,8 +370,6 @@ public:
 
 	FlightAI();
 
-	Brain* createCopy(std::vector<Character*> characters, const Camera* camera);
-
 	void moveOrder(int& right, int& left, int& up, int& down);
 
 	// 目標地点へ移動するだけ 達成済みならtrueで何もしない
@@ -413,8 +394,6 @@ public:
 
 	FollowFlightAI();
 
-	Brain* createCopy(std::vector<Character*> characters, const Camera* camera);
-
 	void moveOrder(int& right, int& left, int& up, int& down);
 
 	// 目標地点へ移動するだけ 達成済みならtrueで何もしない
@@ -434,8 +413,6 @@ public:
 	const char* getBrainName() const { return this->BRAIN_NAME; }
 
 	HierarchyAI();
-
-	Brain* createCopy(std::vector<Character*> characters, const Camera* camera);
 
 	int bulletOrder();
 	void bulletTargetPoint(int& x, int& y);
@@ -458,8 +435,6 @@ public:
 	const char* getBrainName() const { return this->BRAIN_NAME; }
 
 	FrenchAI();
-
-	Brain* createCopy(std::vector<Character*> characters, const Camera* camera);
 
 	int slashOrder();
 	int bulletOrder() { return 0; }
@@ -484,8 +459,6 @@ public:
 
 	CategoryZAI();
 
-	Brain* createCopy(std::vector<Character*> characters, const Camera* camera);
-
 	// 斬撃攻撃を振る最大距離
 	int getSlashReach() const { return 500; }
 };
@@ -504,8 +477,6 @@ public:
 	const char* getBrainName() const { return this->BRAIN_NAME; }
 
 	SunAI();
-
-	Brain* createCopy(std::vector<Character*> characters, const Camera* camera);
 
 	// 移動（上下左右の入力）
 	void moveOrder(int& right, int& left, int& up, int& down);

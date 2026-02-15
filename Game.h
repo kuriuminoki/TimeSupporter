@@ -282,71 +282,6 @@ public:
 };
 
 
-// ハートのスキル
-class HeartSkill {
-public:
-
-	// 何秒間か
-	const int DUPLICATION_TIME = 300;
-
-private:
-	// 複製の数
-	int m_loopNum;
-
-	// 今何ループ目か
-	int m_loopNow;
-
-	// 元の世界
-	World* m_world_p;
-
-	// 複製
-	World* m_duplicationWorld;
-
-	// DUPLICATION_TIMEまでカウントする
-	int m_cnt;
-
-	// 複製のキャラID スキル終了時に消すため
-	std::vector<int> m_duplicationId;
-
-	// サウンドプレイヤー(bgm用)
-	SoundPlayer* m_soundPlayer;
-
-	// サウンドプレイヤー
-	SoundPlayer* m_soundPlayer_p;
-
-	// 効果音
-	int m_sound;
-
-public:
-	HeartSkill(int loopNum, World* world, SoundPlayer* soundPlayer);
-	~HeartSkill();
-
-	// ゲッタ
-	inline int getLoopNum() const { return m_loopNum; }
-	inline int getLoopNow() const { return m_loopNow; }
-	inline World* getWorld() const { return m_loopNow < m_loopNum ? m_duplicationWorld : m_world_p; }
-	inline int getOriginalCnt() const { return m_cnt; }
-	inline double getCnt() const { return ((double)DUPLICATION_TIME / 60.0) - ((double)m_cnt / 60.0); }
-
-	// スキル進行中 スキル終了時にtrue
-	bool play();
-
-	// 戦わせる（操作記録をするという言い方が正しい）
-	void battle();
-
-	// 操作記録が終わったかどうかの判定
-	bool finishRecordFlag();
-
-	void controlBGM(bool on, int soundVolume = -1);
-
-private:
-	// 世界のコピーを作る コピーの変更はオリジナルに影響しない
-	World* createDuplicationWorld(const World* world);
-
-	void createDuplicationHeart();
-};
-
-
 class Game {
 public:
 	// 世界が終わるまでの時間 X分 * 60 * FPS 36000だと10min debug時1200とか
@@ -373,9 +308,6 @@ private:
 	// ストーリー
 	Story* m_story;
 
-	// スキル
-	HeartSkill* m_skill;
-
 	// 一時停止画面
 	BattleOption* m_battleOption;
 
@@ -397,7 +329,6 @@ public:
 	// ゲッタ
 	Story* const getStory() const { return m_story; }
 	World* getWorld() const { return m_world; }
-	HeartSkill* getSkill() const { return m_skill; }
 	BattleOption* getGamePause() const { return m_battleOption; }
 	bool getRebootFlag() const { return m_rebootFlag; }
 	inline int getGameoverCnt() const { return m_gameoverCnt; }
@@ -419,13 +350,6 @@ public:
 	bool afterSkillUsableLoop() const;
 
 	bool quickModeNow() const { return !(m_timeSpeed == DEFAULT_TIME_SPEED); }
-
-private:
-
-	// スキルの終了
-	void endSkill();
-
-	bool skillUsable();
 
 };
 

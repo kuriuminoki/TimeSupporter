@@ -267,21 +267,6 @@ Character::~Character() {
 	}
 }
 
-void Character::setParam(Character* character) {
-	character->setDeadFlag(m_deadFlag);
-	character->changeInfoVersion(m_version);
-	character->setY(m_y);
-	character->setId(m_id);
-	character->setLeftDirection(m_leftDirection);
-	character->setHp(m_hp);
-	character->setPrevHp(m_prevHp);
-	character->setSkillGage(m_skillGage);
-	character->setInvincible(m_invincible);
-	character->setBossFlag(m_bossFlag);
-	character->setStopCnt(m_stopCnt);
-	character->getCharacterGraphHandle()->setGraph(m_graphHandle->getDispGraphHandle(), m_graphHandle->getDispGraphIndex());
-}
-
 GraphHandle* Character::getGraphHandle() const {
 	return m_graphHandle->getHandle();
 }
@@ -531,12 +516,6 @@ Heart::~Heart() {
 	delete m_slidingInfo;
 }
 
-Character* Heart::createCopy() {
-	Character* res = new Heart(m_characterInfo->name().c_str(), m_hp, m_x, m_y, m_groupId, m_attackInfo);
-	setParam(res);
-	return res;
-}
-
 // 立ち画像をセット
 void Heart::switchStand(int cnt) {
 	countDrawCnt();
@@ -711,12 +690,6 @@ Siesta::Siesta(const char* name, int hp, int x, int y, int groupId, AttackInfo* 
 
 }
 
-Character* Siesta::createCopy() {
-	Character* res = new Siesta(m_characterInfo->name().c_str(), m_hp, m_x, m_y, m_groupId, m_attackInfo);
-	setParam(res);
-	return res;
-}
-
 // 立ち射撃画像をセット
 void Siesta::switchBullet(int cnt) {
 	if (m_graphHandle->getStandBulletHandle() == nullptr) { return; }
@@ -810,12 +783,6 @@ Hierarchy::Hierarchy(const char* name, int hp, int x, int y, int groupId, Attack
 
 }
 
-Character* Hierarchy::createCopy() {
-	Character* res = new Hierarchy(m_characterInfo->name().c_str(), m_hp, m_x, m_y, m_groupId, m_attackInfo);
-	setParam(res);
-	return res;
-}
-
 // 立ち射撃画像をセット
 void Hierarchy::switchBullet(int cnt) {
 	Character::switchBullet(cnt);
@@ -850,12 +817,6 @@ Valkyria::Valkyria(const char* name, int hp, int x, int y, int groupId, AttackIn
 	Heart(name, hp, x, y, groupId, attackInfo)
 {
 
-}
-
-Character* Valkyria::createCopy() {
-	Character* res = new Valkyria(m_characterInfo->name().c_str(), m_hp, m_x, m_y, m_groupId, m_attackInfo);
-	setParam(res);
-	return res;
 }
 
 // 立ち斬撃画像をセット
@@ -939,12 +900,6 @@ Troy::Troy(const char* name, int hp, int x, int y, int groupId, AttackInfo* atta
 	m_bulletColor = BLUE;
 }
 
-Character* Troy::createCopy() {
-	Character* res = new Troy(m_characterInfo->name().c_str(), m_hp, m_x, m_y, m_groupId, m_attackInfo);
-	setParam(res);
-	return res;
-}
-
 // 走り画像をセット
 void Troy::switchRun(int cnt) {
 	countDrawCnt();
@@ -991,12 +946,6 @@ Koharu::Koharu(const char* name, int hp, int x, int y, int groupId, AttackInfo* 
 
 }
 
-Character* Koharu::createCopy() {
-	Character* res = new Koharu(m_characterInfo->name().c_str(), m_hp, m_x, m_y, m_groupId, m_attackInfo);
-	setParam(res);
-	return res;
-}
-
 // 射撃攻撃をする
 vector<Object*>* Koharu::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) {
 	if (cnt != getBulletRapid()) { return nullptr; }
@@ -1025,12 +974,6 @@ BulletOnly::BulletOnly(const char* name, int hp, int x, int y, int groupId, Atta
 
 }
 
-Character* BulletOnly::createCopy() {
-	Character* res = new BulletOnly(m_characterInfo->name().c_str(), m_hp, m_x, m_y, m_groupId, m_attackInfo);
-	setParam(res);
-	return res;
-}
-
 // 上昇画像をセット
 void BulletOnly::switchJump(int cnt) {
 	countDrawCnt();
@@ -1049,12 +992,6 @@ SlashOnly::SlashOnly(const char* name, int hp, int x, int y, int groupId, Attack
 	Heart(name, hp, x, y, groupId, attackInfo)
 {
 
-}
-
-Character* SlashOnly::createCopy() {
-	Character* res = new SlashOnly(m_characterInfo->name().c_str(), m_hp, m_x, m_y, m_groupId, m_attackInfo);
-	setParam(res);
-	return res;
 }
 
 // 上昇画像をセット
@@ -1084,12 +1021,6 @@ ParabolaOnly::ParabolaOnly(const char* name, int hp, int x, int y, int groupId, 
 	m_bulletColor = GRAY;
 }
 
-Character* ParabolaOnly::createCopy() {
-	Character* res = new ParabolaOnly(m_characterInfo->name().c_str(), m_hp, m_x, m_y, m_groupId, m_attackInfo);
-	setParam(res);
-	return res;
-}
-
 // 射撃攻撃をする
 vector<Object*>* ParabolaOnly::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) {
 	if (cnt != getBulletRapid()) { return nullptr; }
@@ -1114,12 +1045,6 @@ Sun::Sun(const char* name, int hp, int x, int y, int groupId, AttackInfo* attack
 	Heart(name, hp, x, y, groupId, attackInfo)
 {
 
-}
-
-Character* Sun::createCopy() {
-	Character* res = new Sun(m_characterInfo->name().c_str(), m_hp, m_x, m_y, m_groupId, m_attackInfo);
-	setParam(res);
-	return res;
 }
 
 // ボスの初期アニメーションをセット
@@ -1158,12 +1083,6 @@ Archive::Archive(const char* name, int hp, int x, int y, int groupId, AttackInfo
 	Valkyria(name, hp, x, y, groupId, attackInfo)
 {
 
-}
-
-Character* Archive::createCopy() {
-	Character* res = new Archive(m_characterInfo->name().c_str(), m_hp, m_x, m_y, m_groupId, m_attackInfo);
-	setParam(res);
-	return res;
 }
 
 // 上昇画像をセット

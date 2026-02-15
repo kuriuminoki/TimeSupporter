@@ -112,43 +112,6 @@ CharacterAction::CharacterAction() :
 
 }
 
-void CharacterAction::setParam(CharacterAction* action) {
-	action->setCnt(m_cnt);
-	action->setState(m_state);
-	action->setCharacterVersion(m_characterVersion);
-	action->setCharacterMoveSpeed(m_characterMoveSpeed);
-	action->setSimpleGrand(m_grand);
-	action->setGrandLeftSlope(m_grandLeftSlope);
-	action->setGrandRightSlope(m_grandRightSlope);
-	action->setRunCnt(m_runCnt);
-	action->setPreJumpCnt(m_preJumpCnt);
-	action->setMoveRight(m_moveRight);
-	action->setMoveLeft(m_moveLeft);
-	action->setMoveUp(m_moveUp);
-	action->setMoveDown(m_moveDown);
-	action->setVx(m_vx);
-	action->setVy(m_vy);
-	action->setRunVx(m_runVx);
-	action->setRunVy(m_runVy);
-	action->setRightLock(m_rightLock);
-	action->setLeftLock(m_leftLock);
-	action->setUpLock(m_upLock);
-	action->setDownLock(m_downLock);
-	action->setBulletCnt(m_bulletCnt);
-	action->setSlashCnt(m_slashCnt);
-	action->setJumpCnt(m_jumpCnt);
-	action->setAttackLeftDirection(m_attackLeftDirection);
-	action->setLandCnt(m_landCnt);
-	action->setBoostCnt(m_boostCnt);
-	action->setBoostDone(m_boostDone);
-	action->setStepCnt(m_stepCnt);
-	action->setStepDone(m_stepDone);
-	action->setSlidingCnt(m_slidingCnt);
-	action->setSlidingDone(m_slidingDone);
-	action->setDamageCnt(m_damageCnt);
-	action->setHeavy(m_heavy);
-}
-
 void CharacterAction::setState(CHARACTER_STATE state) {
 	if (m_state == CHARACTER_STATE::DAMAGE || m_state == CHARACTER_STATE::INIT) { return; }
 	m_state = state;
@@ -644,19 +607,6 @@ StickAction::StickAction(Character* character, SoundPlayer* soundPlayer_p):
 
 }
 
-CharacterAction* StickAction::createCopy(vector<Character*> characters) {
-	CharacterAction* res = nullptr;
-	for (unsigned int i = 0; i < characters.size(); i++) {
-		if (m_character_p->getId() == characters[i]->getId()) {
-			res = new StickAction(characters[i], m_soundPlayer_p);
-			// コピーする
-			setParam(res);
-			break;
-		}
-	}
-	return res;
-}
-
 void StickAction::action() {
 	// 重力の処理
 	if (!m_grand) {
@@ -987,20 +937,6 @@ ValkiriaAction::ValkiriaAction(Character* character, SoundPlayer* soundPlayer_p)
 	m_slashNow = false;
 }
 
-CharacterAction* ValkiriaAction::createCopy(vector<Character*> characters) {
-	ValkiriaAction* res = nullptr;
-	for (unsigned int i = 0; i < characters.size(); i++) {
-		if (m_character_p->getId() == characters[i]->getId()) {
-			res = new ValkiriaAction(characters[i], m_soundPlayer_p);
-			res->setSlashNow(m_slashNow);
-			// コピーする
-			setParam(res);
-			break;
-		}
-	}
-	return res;
-}
-
 // 着地 ヴァルキリアは斬撃中に着地しても着地モーションにならない
 void ValkiriaAction::setGrand(bool grand) {
 	if (m_vy > 0) { // 着地モーションになる
@@ -1070,19 +1006,6 @@ FlightAction::FlightAction(Character* character, SoundPlayer* soundPlayer_p):
 	CharacterAction(character, soundPlayer_p)
 {
 
-}
-
-CharacterAction* FlightAction::createCopy(std::vector<Character*> characters) {
-	CharacterAction* res = nullptr;
-	for (unsigned int i = 0; i < characters.size(); i++) {
-		if (m_character_p->getId() == characters[i]->getId()) {
-			res = new FlightAction(characters[i], m_soundPlayer_p);
-			// コピーする
-			setParam(res);
-			break;
-		}
-	}
-	return res;
 }
 
 // キャラの画像を状態(state)に応じて変更
@@ -1358,19 +1281,6 @@ KoharuAction::KoharuAction(Character* character, SoundPlayer* soundPlayer_p) :
 
 }
 
-CharacterAction* KoharuAction::createCopy(vector<Character*> characters) {
-	CharacterAction* res = nullptr;
-	for (unsigned int i = 0; i < characters.size(); i++) {
-		if (m_character_p->getId() == characters[i]->getId()) {
-			res = new KoharuAction(characters[i], m_soundPlayer_p);
-			// コピーする
-			setParam(res);
-			break;
-		}
-	}
-	return res;
-}
-
 // 射撃攻撃
 vector<Object*>* KoharuAction::bulletAttack(int gx, int gy) {
 	if (damageFlag() && m_boostCnt == 0) {
@@ -1440,18 +1350,6 @@ BossFreezeAction::BossFreezeAction(Character* character, SoundPlayer* soundPlaye
 
 }
 
-CharacterAction* BossFreezeAction::createCopy(vector<Character*> characters) {
-	CharacterAction* res = nullptr;
-	for (unsigned int i = 0; i < characters.size(); i++) {
-		if (m_character_p->getId() == characters[i]->getId()) {
-			res = new BossFreezeAction(characters[i], m_soundPlayer_p);
-			// コピーする
-			setParam(res);
-			break;
-		}
-	}
-	return res;
-}
 void BossFreezeAction::switchHandle() {
 	m_character_p->switchSpecial1();
 }
@@ -1470,23 +1368,6 @@ SunAction::SunAction(Character* character, SoundPlayer* soundPlayer_p, bool dupl
 		m_character_p->setHp(min(1, m_initHp));
 	}
 	m_startAnimeCnt = 0;
-}
-
-CharacterAction* SunAction::createCopy(vector<Character*> characters) {
-	SunAction* res = nullptr;
-	for (unsigned int i = 0; i < characters.size(); i++) {
-		if (m_character_p->getId() == characters[i]->getId()) {
-			res = new SunAction(characters[i], m_soundPlayer_p, true);
-			// コピーする
-			setParam(res);
-			res->setInitHp(m_initHp);
-			res->setInitCnt(m_initCnt);
-			res->setHideFlag(m_hideFlag);
-			res->setStartAnimeCnt(m_startAnimeCnt);
-			break;
-		}
-	}
-	return res;
 }
 
 void SunAction::action() {
@@ -1590,22 +1471,6 @@ ArchiveAction::ArchiveAction(Character* character, SoundPlayer* soundPlayer_p, b
 	}
 	m_jumpCnt = 0;
 	m_slashVx = 0;
-}
-
-CharacterAction* ArchiveAction::createCopy(vector<Character*> characters) {
-	ArchiveAction* res = nullptr;
-	for (unsigned int i = 0; i < characters.size(); i++) {
-		if (m_character_p->getId() == characters[i]->getId()) {
-			res = new ArchiveAction(characters[i], m_soundPlayer_p, true);
-			// コピーする
-			setParam(res);
-			res->setInitCompFlag(m_initCompFlag);
-			res->setInitHp(m_initHp);
-			res->setSlashVx(m_slashVx);
-			break;
-		}
-	}
-	return res;
 }
 
 void ArchiveAction::action() {

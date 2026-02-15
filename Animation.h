@@ -47,8 +47,6 @@ private:
 public:
 	Animation(int x, int y, int frameCnt, GraphHandles* graphHandles);
 
-	Animation* createCopy();
-
 	// ƒQƒbƒ^
 	inline int getX() const { return m_x; }
 	inline int getY() const { return m_y; }

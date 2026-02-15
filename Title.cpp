@@ -196,11 +196,12 @@ Title::Title(int* screen) {
 	// セーブデータがあるなら音量セット
 	if (m_selectSaveData->saveDataExist()) { 
 		m_soundPlayer->setVolume(m_selectSaveData->getSoundVolume());
-		int s = m_selectSaveData->getLatestLoop();
-		if (s >= 2) {
-			// 初めてOPを見るのは1周目の最後なので、それ以降のセーブデータがあるならOP用意
-			m_movie = new OpMovieMp4(m_soundPlayer);
-		}
+		// TODO: OPを入れないなら削除
+		//int s = m_selectSaveData->getLatestLoop();
+		//if (s >= 2) {
+		//	// 初めてOPを見るのは1周目の最後なので、それ以降のセーブデータがあるならOP用意
+		//	m_movie = new OpMovieMp4(m_soundPlayer);
+		//}
 	}
 	else {
 		m_movie = nullptr;

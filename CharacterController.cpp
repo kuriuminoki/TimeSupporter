@@ -280,23 +280,6 @@ NormalController::NormalController(Brain* brain, CharacterAction* characterActio
 
 }
 
-CharacterController* NormalController::createCopy(std::vector<Character*> characters, const Camera* camera) {
-	CharacterAction* action = m_characterAction->createCopy(characters);
-	Brain* brain = m_brain->createCopy(characters, camera);
-	brain->setCharacterAction(action);
-	CharacterController* res = new NormalController(brain, action);
-	// 複製はレコーダをデリートしないためFlagをtrueにする
-	res->setDuplicationFlag(true);
-	res->setStickRecorder(m_stickRecorder);
-	res->setJumpRecorder(m_jumpRecorder);
-	res->setSquatRecorder(m_squatRecorder);
-	res->setSlashRecorder(m_slashRecorder);
-	res->setBulletRecorder(m_bulletRecorder);
-	res->setDamageRecorder(m_damageRecorder);
-	res->setDamagedObjectIds(m_damagedObjectIds);
-	return res;
-}
-
 void NormalController::control() {
 	// ダメージのレコード（もし記録と現状が違えば以降のレコードを削除）
 	if (m_damageRecorder != nullptr) {

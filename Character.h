@@ -275,9 +275,6 @@ public:
 	Character(int hp, int x, int y, int groupId);
 	virtual ~Character();
 
-	virtual Character* createCopy() = 0;
-	void setParam(Character* character);
-
 	// デバッグ
 	void debugCharacter(int x, int y, int color) const;
 	virtual void debug(int x, int y, int color) const = 0;
@@ -473,8 +470,6 @@ public:
 	// デストラクタ
 	~Heart();
 
-	Character* createCopy();
-
 	// デバッグ
 	void debug(int x, int y, int color) const;
 
@@ -532,8 +527,6 @@ public:
 	Siesta(const char* name, int hp, int x, int y, int groupId);
 	Siesta(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
 
-	Character* createCopy();
-
 	// 立ち射撃画像をセット
 	void switchBullet(int cnt = 0);
 
@@ -559,8 +552,6 @@ public:
 	Hierarchy(const char* name, int hp, int x, int y, int groupId);
 	Hierarchy(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
 
-	Character* createCopy();
-
 	// 立ち射撃画像をセット
 	void switchBullet(int cnt);
 
@@ -582,8 +573,6 @@ public:
 	// コンストラクタ
 	Valkyria(const char* name, int hp, int x, int y, int groupId);
 	Valkyria(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
-
-	Character* createCopy();
 
 	// 立ち斬撃画像をセット
 	void switchSlash(int cnt = 0);
@@ -612,8 +601,6 @@ public:
 	Troy(const char* name, int hp, int x, int y, int groupId);
 	Troy(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
 
-	Character* createCopy();
-
 	// 走り画像をセット
 	void switchRun(int cnt = 0);
 	// 走り射撃画像をセット
@@ -641,8 +628,6 @@ public:
 	Koharu(const char* name, int hp, int x, int y, int groupId);
 	Koharu(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
 
-	Character* createCopy();
-
 	// 射撃攻撃をする
 	std::vector<Object*>* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer);
 
@@ -659,8 +644,6 @@ public:
 	// コンストラクタ
 	BulletOnly(const char* name, int hp, int x, int y, int groupId);
 	BulletOnly(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
-
-	Character* createCopy();
 
 	// 上昇画像をセット
 	void switchJump(int cnt = 0);
@@ -680,8 +663,6 @@ public:
 	// コンストラクタ
 	SlashOnly(const char* name, int hp, int x, int y, int groupId);
 	SlashOnly(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
-
-	Character* createCopy();
 
 	// 上昇画像をセット
 	void switchJump(int cnt = 0);
@@ -704,8 +685,6 @@ public:
 	ParabolaOnly(const char* name, int hp, int x, int y, int groupId);
 	ParabolaOnly(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
 
-	Character* createCopy();
-
 	// 射撃攻撃をする
 	std::vector<Object*>* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer);
 };
@@ -721,8 +700,6 @@ public:
 	// コンストラクタ
 	Sun(const char* name, int hp, int x, int y, int groupId);
 	Sun(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
-
-	Character* createCopy();
 
 	// ボスの初期アニメーションをセット
 	void switchInit(int cnt);
@@ -746,8 +723,6 @@ public:
 	// コンストラクタ
 	Archive(const char* name, int hp, int x, int y, int groupId);
 	Archive(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
-
-	Character* createCopy();
 
 	void switchJump(int cnt);
 	void switchSlash(int cnt);

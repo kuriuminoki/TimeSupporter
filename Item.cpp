@@ -30,16 +30,6 @@ Item::~Item() {
 	delete m_animation;
 }
 
-// コピー
-void Item::setParam(Item* item) {
-	item->setCnt(m_cnt);
-	item->setGrand(m_grand);
-	item->setAnimation(m_animation->createCopy());
-	item->setVx(m_vx);
-	item->setVy(m_vy);
-	item->setExRate(m_exRate);
-}
-
 void Item::loadItemGraph() {
 	m_handles = new GraphHandles(("picture/item/" + m_itemName).c_str(), 1, 0.05 * m_exRate, 0.0, true);
 	m_animation = new Animation(m_x, m_y, 10, m_handles);
@@ -157,13 +147,6 @@ CureItem::CureItem(const char* itemName, int x, int y, int cureValue):
 	loadItemGraph();
 }
 
-// スキル発動用
-Item* CureItem::createCopy() {
-	CureItem* item = new CureItem(m_itemName.c_str(), m_x, m_y, m_cureValue);
-	setParam(item);
-	return item;
-}
-
 // プレイヤーに対するアクション
 void CureItem::arrangePlayer(Character* player) {
 	// HP回復
@@ -180,13 +163,6 @@ MoneyItem::MoneyItem(const char* itemName, int x, int y, int moneyValue) :
 	m_itemCode = ITEM_MONEY;
 	m_moneyValue = moneyValue;
 	loadItemGraph();
-}
-
-// スキル発動用
-Item* MoneyItem::createCopy() {
-	MoneyItem* item = new MoneyItem(m_itemName.c_str(), m_x, m_y, m_moneyValue);
-	setParam(item);
-	return item;
 }
 
 // プレイヤーに対するアクション
@@ -208,13 +184,6 @@ EnergyItem::EnergyItem(const char* itemName, int x, int y, int energyValue, int 
 	// 獲得量に応じてサイズアップ
 	m_exRate = 1.0 + energyValue / 10;
 	loadItemGraph();
-}
-
-// スキル発動用
-Item* EnergyItem::createCopy() {
-	EnergyItem* item = new EnergyItem(m_itemName.c_str(), m_x, m_y, m_energyValue, m_eraseTime);
-	setParam(item);
-	return item;
 }
 
 void EnergyItem::loadItemGraph() {

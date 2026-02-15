@@ -179,31 +179,6 @@ NormalAI::NormalAI() {
 	m_prevX = 0;
 }
 
-
-Brain* NormalAI::createCopy(std::vector<Character*> characters, const Camera* camera) {
-	NormalAI* res = new NormalAI();
-	copyTarget(characters, getTargetId(), res);
-	setParam(res);
-	return res;
-}
-
-void NormalAI::setParam(NormalAI* brain) {
-	// 移動用
-	brain->setRightKey(m_rightKey);
-	brain->setLeftKey(m_leftKey);
-	brain->setUpKey(m_upKey);
-	brain->setDownKey(m_downKey);
-	// ジャンプの長さ
-	brain->setJumpCnt(m_jumpCnt);
-	// しゃがむ長さ
-	brain->setSquatCnt(m_squatCnt);
-	// 移動目標
-	brain->setGx(m_gx);
-	brain->setGy(m_gy);
-	brain->setMoveCnt(m_moveCnt);
-	brain->setPrevX(m_prevX);
-}
-
 void NormalAI::setCharacterAction(const CharacterAction* characterAction) {
 	m_characterAction_p = characterAction;
 	// 目標地点は現在地に設定
@@ -534,28 +509,6 @@ FollowNormalAI::FollowNormalAI() :
 	m_follow_p = nullptr;
 }
 
-Brain* FollowNormalAI::createCopy(std::vector<Character*> characters, const Camera* camera) {
-	FollowNormalAI* res = new FollowNormalAI();
-	if (m_follow_p != nullptr) {
-		for (unsigned int i = 0; i < characters.size(); i++) {
-			if (m_follow_p->getId() == characters[i]->getId()) {
-				res->setFollow(characters[i]);
-				break;
-			}
-		}
-	}
-	if (m_target_p != nullptr) {
-		for (unsigned int i = 0; i < characters.size(); i++) {
-			if (m_target_p->getId() == characters[i]->getId()) {
-				res->setTarget(characters[i]);
-				break;
-			}
-		}
-	}
-	setParam(res);
-	return res;
-}
-
 int FollowNormalAI::getFollowId() const { 
 	return m_follow_p == nullptr ? -1 : m_follow_p->getId();
 }
@@ -649,13 +602,6 @@ ParabolaAI::ParabolaAI() :
 
 }
 
-Brain* ParabolaAI::createCopy(std::vector<Character*> characters, const Camera* camera) {
-	ParabolaAI* res = new ParabolaAI();
-	copyTarget(characters, getTargetId(), res);
-	setParam(res);
-	return res;
-}
-
 // 斜方投射の計算をする
 void setParabolaBulletTarget(int& x, int& y, const CharacterAction* characterAction_p, const Character* target_p) {
 	if (target_p == nullptr) {
@@ -712,13 +658,6 @@ FollowParabolaAI::FollowParabolaAI() :
 
 }
 
-Brain* FollowParabolaAI::createCopy(std::vector<Character*> characters, const Camera* camera) {
-	FollowParabolaAI* res = new FollowParabolaAI();
-	copyTarget(characters, getTargetId(), res);
-	copyFollow(characters, getFollowId(), res);
-	setParam(res);
-	return res;
-}
 void FollowParabolaAI::bulletTargetPoint(int& x, int& y) {
 	setParabolaBulletTarget(x, y, m_characterAction_p, m_target_p);
 }
@@ -731,14 +670,6 @@ ValkiriaAI::ValkiriaAI() :
 	FollowNormalAI()
 {
 
-}
-
-Brain* ValkiriaAI::createCopy(std::vector<Character*> characters, const Camera* camera) {
-	ValkiriaAI* res = new ValkiriaAI();
-	copyTarget(characters, getTargetId(), res);
-	copyFollow(characters, getFollowId(), res);
-	setParam(res);
-	return res;
 }
 
 int ValkiriaAI::slashOrder() {
@@ -827,13 +758,6 @@ FlightAI::FlightAI() :
 
 }
 
-Brain* FlightAI::createCopy(std::vector<Character*> characters, const Camera* camera) {
-	FlightAI* res = new FlightAI();
-	copyTarget(characters, getTargetId(), res);
-	setParam(res);
-	return res;
-}
-
 void FlightAI::moveOrder(int& right, int& left, int& up, int& down) {
 	// 現在地
 	int x = m_characterAction_p->getCharacter()->getCenterX();
@@ -897,14 +821,6 @@ FollowFlightAI::FollowFlightAI() :
 
 }
 
-Brain* FollowFlightAI::createCopy(std::vector<Character*> characters, const Camera* camera) {
-	FollowFlightAI* res = new FollowFlightAI();
-	copyTarget(characters, getTargetId(), res);
-	copyFollow(characters, getFollowId(), res);
-	setParam(res);
-	return res;
-}
-
 void FollowFlightAI::moveOrder(int& right, int& left, int& up, int& down) {
 
 	// ハートがスキル発動中で動かないなら無視
@@ -965,12 +881,6 @@ HierarchyAI::HierarchyAI() :
 {
 
 }
-Brain* HierarchyAI::createCopy(std::vector<Character*> characters, const Camera* camera) {
-	HierarchyAI* res = new HierarchyAI();
-	copyTarget(characters, getTargetId(), res);
-	setParam(res);
-	return res;
-}
 int HierarchyAI::bulletOrder() {
 	return m_characterAction_p->getBulletCnt() + 1;
 }
@@ -987,12 +897,6 @@ FrenchAI::FrenchAI() :
 	NormalAI()
 {
 
-}
-Brain* FrenchAI::createCopy(std::vector<Character*> characters, const Camera* camera) {
-	FrenchAI* res = new FrenchAI();
-	copyTarget(characters, getTargetId(), res);
-	setParam(res);
-	return res;
 }
 int FrenchAI::slashOrder() {
 	if (m_target_p == nullptr || m_target_p->getHp() == 0) {
@@ -1039,13 +943,6 @@ CategoryZAI::CategoryZAI() :
 
 }
 
-Brain* CategoryZAI::createCopy(std::vector<Character*> characters, const Camera* camera) {
-	CategoryZAI* res = new CategoryZAI();
-	copyTarget(characters, getTargetId(), res);
-	setParam(res);
-	return res;
-}
-
 
 /*
 * Boss1: サン
@@ -1054,13 +951,6 @@ SunAI::SunAI() :
 	FlightAI()
 {
 
-}
-
-Brain* SunAI::createCopy(std::vector<Character*> characters, const Camera* camera) {
-	SunAI* res = new SunAI();
-	copyTarget(characters, getTargetId(), res);
-	setParam(res);
-	return res;
 }
 
 // 移動（上下左右の入力）

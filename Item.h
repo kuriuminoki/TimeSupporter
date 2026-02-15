@@ -68,12 +68,6 @@ public:
 	// デストラクタ
 	virtual ~Item();
 
-	// スキル発動用
-	virtual Item* createCopy() = 0;
-
-	// コピー
-	void setParam(Item* item);
-
 	// ゲッタ
 	inline ITEM_CODE getItemCode() const { return m_itemCode; }
 	inline int getCnt() const { return m_cnt; }
@@ -139,9 +133,6 @@ public:
 	// コンストラクタ
 	CureItem(const char* itemName, int x, int y, int cureValue);
 
-	// スキル発動用
-	Item* createCopy();
-
 	// プレイヤーに対するアクション
 	void arrangePlayer(Character* player);
 
@@ -163,9 +154,6 @@ public:
 
 	// コンストラクタ
 	MoneyItem(const char* itemName, int x, int y, int moneyValue);
-
-	// スキル発動用
-	Item* createCopy();
 
 	// プレイヤーに対するアクション
 	void arrangePlayer(Character* player);
@@ -193,9 +181,6 @@ public:
 
 	// コンストラクタ
 	EnergyItem(const char* itemName, int x, int y, int energyValue, int eraseTime);
-
-	// スキル発動用
-	Item* createCopy();
 
 	// プレイヤーに対するアクション
 	void arrangePlayer(Character* player);

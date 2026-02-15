@@ -58,9 +58,6 @@ public:
 	Object(int x1, int y1, int x2, int y2, int hp = -1);
 	virtual ~Object() { }
 
-	virtual Object* createCopy() = 0;
-	void setParam(Object* object);
-
 	void debugObject(int x, int y, int color) const;
 	virtual void debug(int x, int y, int color) const = 0;
 
@@ -186,8 +183,6 @@ public:
 
 	~BoxObject();
 
-	Object* createCopy();
-
 	void debug(int x, int y, int color) const;
 
 	// 画像を敷き詰めて表示するならtrue
@@ -231,8 +226,6 @@ public:
 	TriangleObject(int x1, int y1, int x2, int y2, const char* fileName, int color, bool leftDown, int hp = -1);
 
 	~TriangleObject();
-
-	Object* createCopy();
 
 	void debug(int x, int y, int color) const;
 
@@ -310,9 +303,6 @@ public:
 	BulletObject(int x, int y, int color, int gx, int gy, int energyEraseTime);
 	BulletObject(int x, int y, GraphHandle* handle, int gx, int gy, int energyEraseTime, AttackInfo* attackInfo);
 
-	Object* createCopy();
-	void setBulletParam(BulletObject* obejct);
-
 	void debug(int x, int y, int color) const;
 
 	// オブジェクト描画（画像がないときに使う）
@@ -374,8 +364,6 @@ public:
 	ParabolaBullet(int x, int y, GraphHandle* handle, int gx, int gy, int energyEraseTime, AttackInfo* attackInfo);
 	ParabolaBullet(int x, int y, GraphHandle* handle, int gx, int gy, int energyEraseTime);
 
-	Object* createCopy();
-
 	void debug(int x, int y, int color) const;
 
 	inline void setGraphHandle(GraphHandle* handle) { m_handle = handle; }
@@ -433,10 +421,6 @@ public:
 
 	// 大きさを指定しない場合。画像からサイズ取得。生存時間、AttackInfo
 	SlashObject(int x, int y, GraphHandle* handle, int slashCountSum, int energyEraseTime, AttackInfo* attackInfo);
-
-	Object* createCopy();
-
-	void setSlashParam(SlashObject* object);
 
 	void debug(int x, int y, int color) const;
 
@@ -520,8 +504,6 @@ public:
 	void setCharacterId(int characterId) { m_characterId = characterId; }
 	void setGroupId(int groupId) { m_groupId = groupId; }
 
-	Object* createCopy();
-
 	void debug(int x, int y, int color) const;
 
 	// キャラとの当たり判定
@@ -566,8 +548,6 @@ public:
 	DoorObject(int x1, int y1, int x2, int y2, const char* fileName, int areaNum);
 	~DoorObject();
 
-	Object* createCopy();
-
 	void debug(int x, int y, int color) const;
 
 	// ゲッタ
@@ -594,8 +574,6 @@ public:
 
 	StageObject(int x1, int y1, int x2, int y2, const char* fileName, int textNum);
 	~StageObject();
-
-	Object* createCopy();
 
 };
 

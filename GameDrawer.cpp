@@ -84,37 +84,11 @@ void GameDrawer::draw(int screen) {
 	}
 
 	// ¢ŠE‚ð•`‰æ
-	const HeartSkill* skill = m_game->getSkill();
-	if (skill != nullptr) {
-		m_worldDrawer->setWorld(skill->getWorld());
-	}
-	else {
-		m_worldDrawer->setWorld(m_game->getWorld());
-	}
+	m_worldDrawer->setWorld(m_game->getWorld());
 	m_worldDrawer->draw(m_game->afterSkillUsableLoop());
 
-	// ƒXƒLƒ‹‚ÌŽžŠÔ“™‚ð•`‰æ
-	if (skill != nullptr) {
-		int num = skill->getLoopNum();
-		int now = skill->getLoopNow();
-		if (now < num) {
-			ostringstream oss;
-			int cnt1 = (int)skill->getCnt();
-			int cnt2 = (int)((skill->getCnt() * 10) - cnt1 * 10);
-			int x1 = (int)(850 * m_exX);
-			int y1 = (int)(10 * m_exY);
-			int x2 = (int)(1500 * m_exX);
-			int y2 = (int)(150 * m_exY);
-			int centerX = (x1 + x2) / 2;
-			int dx = (int)((1500 - 850) * (skill->DUPLICATION_TIME - skill->getOriginalCnt()) * m_exX) / skill->DUPLICATION_TIME / 2;
-			DrawExtendGraph(centerX - dx, y1, centerX + dx, y2, m_skillInfoBackHandle, TRUE);
-			DrawExtendGraph(x1, y1, x2, y2, m_skillInfoHandle, TRUE);
-			oss << now + 1 << "/" << num << "F" << cnt1 << "." << cnt2;
-			DrawStringToHandle((int)(900 * m_exX), (int)(30 * m_exY), oss.str().c_str(), BLACK, m_skillHandle);
-		}
-	}
 	// Œo‰ßŽžŠÔ
-	else if (m_worldDrawer->getWorld()->getBrightValue() == 255 && !m_game->getStory()->eventNow()) {
+	if (m_worldDrawer->getWorld()->getBrightValue() == 255 && !m_game->getStory()->eventNow()) {
 		int date = m_game->getStory()->getDate();
 		int barHandle = m_timeBarNoonHandle;
 		if (date == 1) { barHandle = m_timeBarEveningHandle; }

@@ -154,12 +154,6 @@ public:
 	CharacterAction(Character* character, SoundPlayer* soundPlayer_p);
 	virtual ~CharacterAction() {}
 
-	// コピー作成
-	virtual CharacterAction* createCopy(std::vector<Character*> characters) = 0;
-
-	// コピー作成用
-	void setParam(CharacterAction* action);
-
 	// デバッグ
 	void debugAction(int x, int y, int color) const;
 	virtual void debug(int x, int y, int color) const = 0;
@@ -339,8 +333,6 @@ public:
 
 	StickAction(Character* character, SoundPlayer* soundPlayer_p);
 
-	CharacterAction* createCopy(std::vector<Character*> characters);
-
 	void debug(int x, int y, int color) const;
 
 	// 物理演算 毎フレーム行う
@@ -384,8 +376,6 @@ public:
 
 	ValkiriaAction(Character* character, SoundPlayer* soundPlayer_p);
 
-	CharacterAction* createCopy(std::vector<Character*> characters);
-
 	void debug(int x, int y, int color) const;
 
 	int getPreJumpMax() const { return PRE_JUMP_MAX; }
@@ -425,8 +415,6 @@ public:
 	const char* getActionName() const { return this->ACTION_NAME; }
 
 	FlightAction(Character* character, SoundPlayer* soundPlayer_p);
-
-	CharacterAction* createCopy(std::vector<Character*> characters);
 
 	void debug(int x, int y, int color) const;
 
@@ -472,8 +460,6 @@ public:
 
 	KoharuAction(Character* character, SoundPlayer* soundPlayer_p);
 
-	CharacterAction* createCopy(std::vector<Character*> characters);
-
 	void debug(int x, int y, int color) const;
 
 	// 射撃攻撃
@@ -507,9 +493,6 @@ public:
 	virtual const char* getActionName() const { return this->ACTION_NAME; }
 
 	BossFreezeAction(Character* character, SoundPlayer* soundPlayer_p);
-
-	// コピー作成
-	CharacterAction* createCopy(std::vector<Character*> characters);
 
 	// デバッグ
 	void debug(int x, int y, int color) const { }
@@ -587,8 +570,6 @@ public:
 
 	SunAction(Character* character, SoundPlayer* soundPlayer_p, bool duplicationFlag);
 
-	CharacterAction* createCopy(std::vector<Character*> characters);
-
 	// セッタ
 	inline void setInitCnt(int initCnt) { m_initCnt = initCnt; }
 	inline void setInitHp(int initHp) { m_initHp = initHp; }
@@ -629,8 +610,6 @@ public:
 	const char* getActionName() const { return this->ACTION_NAME; }
 
 	ArchiveAction(Character* character, SoundPlayer* soundPlayer_p, bool duplicationFlag);
-
-	CharacterAction* createCopy(std::vector<Character*> characters);
 
 	// セッタ
 	inline void setInitCompFlag(bool initCompFlag) { m_initCompFlag = initCompFlag; }

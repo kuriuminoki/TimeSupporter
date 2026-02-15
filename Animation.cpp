@@ -30,17 +30,6 @@ Animation::Animation(int x, int y, int frameCnt, GraphHandles* graphHandles) {
 	init();
 }
 
-Animation* Animation::createCopy() {
-	Animation* res = new Animation(m_x, m_y, m_frameCnt, m_handles_p);
-	res->setVx(m_vx);
-	res->setVy(m_vy);
-	res->setMovable(m_movable);
-	res->setCnt(m_cnt);
-	res->setFinishCnt(m_finishCnt);
-	res->setFinishFlag(m_finishFlag);
-	return res;
-}
-
 void Animation::setCharacter(Character* character) {
 	m_character_p = character;
 	m_characterId = m_character_p->getId();

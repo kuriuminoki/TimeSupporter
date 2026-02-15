@@ -49,20 +49,6 @@ Object::Object(int x1, int y1, int x2, int y2, int hp) {
 	m_soundHandle_p = -1;
 }
 
-void Object::setParam(Object* object) {
-	object->setId(m_id);
-	object->setAtariIdList(m_atariIdList);
-	object->setX1(m_x1);
-	object->setY1(m_y1);
-	object->setX2(m_x2);
-	object->setY2(m_y2);
-	object->setHp(m_hp);
-	object->setDamageCnt(m_damageCnt);
-	object->setDeleteFlag(m_deleteFlag);
-	object->setEffectHandles(m_effectHandles_p);
-	object->setSoundHandle(m_soundHandle_p);
-}
-
 // HPを減らす
 bool Object::decreaseHp(int damageValue, int id) {
 	if (!getAbleDelete()) { return false; }
@@ -1087,84 +1073,6 @@ StageObject::StageObject(int x1, int y1, int x2, int y2, const char* fileName, i
 StageObject::~StageObject() {
 	// DoorObjectでdeleteされるので不要
 	//delete m_handle;
-}
-
-
-// コピー作成
-Object* BoxObject::createCopy() {
-	Object* res = new BoxObject(m_x1, m_y1, m_x2, m_y2, m_fileName.c_str(), m_color, m_hp);
-	setParam(res);
-	return res;
-}
-Object* TriangleObject::createCopy() {
-	Object* res = new TriangleObject(m_x1, m_y1, m_x2, m_y2, m_fileName.c_str(), m_color, m_leftDown, m_hp);
-	setParam(res);
-	return res;
-}
-Object* BulletObject::createCopy() {
-	BulletObject* res = new BulletObject(m_x1, m_y1, m_color, m_gx, m_gy, m_energyEraseTime);
-	setParam(res);
-	setBulletParam(res);
-	setEnergyCnt(m_energyCnt);
-	return res;
-}
-void BulletObject::setBulletParam(BulletObject* object) {
-	object->setCharacterId(m_characterId);
-	object->setGroupId(m_groupId);
-	object->setColor(m_color);
-	object->setRx(m_rx);
-	object->setRy(m_ry);
-	object->setV(m_v);
-	object->setVx(m_vx);
-	object->setVy(m_vy);
-	object->setGx(m_gx);
-	object->setGy(m_gy);
-	object->setD(m_d);
-	object->setDamage(m_damage);
-	object->setEffectHandles(m_effectHandles_p);
-	object->setGraphHandle(m_handle);
-	
-}
-Object* ParabolaBullet::createCopy() {
-	ParabolaBullet* res = new ParabolaBullet(m_x1, m_y1, m_handle, m_gx, m_gy, m_energyEraseTime);
-	setParam(res);
-	setBulletParam(res);
-	res->setGraphHandle(m_handle);
-	return res;
-}
-Object* SlashObject::createCopy() {
-	SlashObject* res = new SlashObject(m_x1, m_y1, m_x2, m_y2, m_handle, m_slashCountSum, m_energyEraseTime);
-	setParam(res);
-	setSlashParam(res);
-	return res;
-}
-void SlashObject::setSlashParam(SlashObject* object) {
-	object->setCharacterId(m_characterId);
-	object->setGroupId(m_groupId);
-	object->setDamage(m_damage);
-	object->setGraphHandle(m_handle);
-	object->setCnt(m_cnt);
-	object->setSlashImpactX(m_slashImpactX);
-	object->setSlashImpactY(m_slashImpactY);
-	object->setEffectHandles(m_effectHandles_p);
-}
-Object* BombObject::createCopy() {
-	BombObject* res = new BombObject(m_x, m_y, m_dx, m_dy, m_damage, m_animation->createCopy());
-	return res;
-}
-Object* DoorObject::createCopy() {
-	DoorObject* res = new DoorObject(m_x1, m_y1, m_x2, m_y2, m_fileName.c_str(), m_areaNum);
-	setParam(res);
-	res->setText(m_text.c_str());
-	res->setTextDisp(m_textDisp);
-	return res;
-}
-Object* StageObject::createCopy() {
-	StageObject* res = new StageObject(m_x1, m_y1, m_x2, m_y2, m_fileName.c_str(), m_textNum);
-	setParam(res);
-	res->setText(m_text.c_str());
-	res->setTextDisp(m_textDisp);
-	return res;
 }
 
 
