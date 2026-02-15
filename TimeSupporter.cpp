@@ -136,7 +136,7 @@ int SelectStagePage::selectableStageSum() const {
 	if (m_focusChapter == -1) {
 		return 0;
 	}
-	if (m_focusChapter * 4 <= m_completeStageSum) {
+	if ((m_focusChapter + 1) * 4 <= m_completeStageSum) {
 		return STAGE_PER_CHAPTER;
 	}
 	return m_completeStageSum % STAGE_PER_CHAPTER + 1;

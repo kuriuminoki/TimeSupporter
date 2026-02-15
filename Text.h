@@ -114,6 +114,8 @@ public:
 class Conversation {
 private:
 
+	bool m_initFlag;
+
 	// 終了時、少しだけ待機時間
 	const int FINISH_COUNT = 30;
 	// 0 -> FINISH_COUNTで発言終了
@@ -210,6 +212,7 @@ public:
 	~Conversation();
 
 	// ゲッタ
+	inline bool getInitFlag() const { return m_initFlag; }
 	std::string getText() const;
 	inline std::string getFullText() const { return m_text; }
 	int getTextSize() const;

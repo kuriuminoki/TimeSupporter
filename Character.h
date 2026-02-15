@@ -353,6 +353,7 @@ public:
 	int getCenterY() const;
 	int getWide() const;
 	int getHeight() const;
+	int getAtariHeight() const;
 	int getAtariCenterX() const;
 	int getAtariCenterY() const;
 	// ¡•`‰æ‚·‚é‰æ‘œ‚ğæ“¾

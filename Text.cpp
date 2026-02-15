@@ -133,6 +133,8 @@ void TextAction::play() {
 */
 Conversation::Conversation(int textNum, World* world, SoundPlayer* soundPlayer) {
 
+	m_initFlag = false;
+
 	double exX = 0, exY = 0;
 	getGameEx(exX, exY);
 
@@ -147,7 +149,7 @@ Conversation::Conversation(int textNum, World* world, SoundPlayer* soundPlayer) 
 	m_selectFlag = false;
 	m_world_p = world;
 	m_soundPlayer_p = soundPlayer;
-	m_speakerName = "ハート";
+	m_speakerName = "サエル";
 	setSpeakerGraph("通常");
 	m_noFace = true;
 	m_text = "";
@@ -357,6 +359,8 @@ bool Conversation::play() {
 	if (m_startCnt == 0 && m_finishCnt == 0) {
 		m_textAction.play();
 	}
+
+	m_initFlag = true;
 
 	return false;
 }
@@ -610,6 +614,6 @@ void Conversation::setSpeakerGraph(const char* faceName) {
 // セッタ
 void Conversation::setWorld(World* world) {
 	m_world_p = world;
-	m_speakerName = "ハート";
+	m_speakerName = "サエル";
 	setSpeakerGraph("通常");
 }

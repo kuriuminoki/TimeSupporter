@@ -40,6 +40,10 @@ ConversationDrawer::~ConversationDrawer() {
 
 void ConversationDrawer::draw() {
 
+	if (!m_conversation->getInitFlag()) {
+		return;
+	}
+
 	// アニメのみを表示してテキストは表示しないならtrue
 	bool animeOnly = false;
 

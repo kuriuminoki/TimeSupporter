@@ -10,7 +10,7 @@ class AnimationDrawer;
 
 class ConversationDrawer {
 private:
-	
+
 	// ‰ï˜b
 	const Conversation* m_conversation;
 

@@ -34,7 +34,7 @@ Story::Story(int storyNum, GameData* gameData, SoundPlayer* soundPlayer) {
 
 	m_storyNum = storyNum;
 
-	m_world = new World(-1, 0, soundPlayer);
+	m_world = new World(-1, m_storyNum + 1, soundPlayer);
 
 	// データを世界に反映
 	m_gameData_p = gameData;
@@ -55,13 +55,10 @@ Story::Story(int storyNum, GameData* gameData, SoundPlayer* soundPlayer) {
 	m_world->setDate(m_date);
 
 	// eventList.csvをロード
-	ostringstream oss;
-	oss << "data/story/" << "eventList.csv";
-	loadEventCsvData(oss.str().c_str(), m_world, m_soundPlayer_p);
+	m_eventList.push_back(new Event(m_storyNum + 1, m_world, soundPlayer));
 
 	// イベントの発火確認
 	checkFire();
-	m_soundPlayer_p->stopBGM();
 }
 
 Story::~Story() {
@@ -74,31 +71,6 @@ Story::~Story() {
 	}
 	delete m_characterLoader;
 	delete m_objectLoader;
-}
-
-// csvファイルを読み込む
-void Story::loadEventCsvData(const char* fileName, World* world, SoundPlayer* soundPlayer) {
-	CsvReader csvReader(fileName);
-	vector<map<string, string> > data = csvReader.getData();
-	for (int i = 0; i < data.size(); i++) {
-		int eventNum = stoi(data[i].find("eventNum")->second);
-		bool repeat = (bool)stoi(data[i].find("repeat")->second);
-
-		if (repeat) {
-
-			string conditions_str = data[i].find("conditions")->second;
-			vector<string> conditions = split(conditions_str, '|');
-			vector<int> requireEventNum;
-			if (conditions[0] != "") {
-				for (unsigned int i = 0; i < conditions.size(); i++) {
-					int n = stoi(conditions[i]);
-					requireEventNum.push_back(n);
-				}
-			}
-
-			m_eventList.push_back(new Event(eventNum, 0, 100000, requireEventNum, world, soundPlayer, 1));
-		}
-	}
 }
 
 EVENT_RESULT Story::play() {
@@ -132,10 +104,6 @@ EVENT_RESULT Story::play() {
 // イベントの発火確認
 void Story::checkFire() {
 	for (unsigned int i = 0; i < m_eventList.size(); i++) {
-		// タイミングの条件確認
-		if (!(0 >= m_eventList[i]->getStartTime() && 100000) < m_eventList[i]->getEndTime()) {
-			continue;
-		}
 		// 発火確認
 		if (m_eventList[i]->fire()) {
 			m_nowEvent = m_eventList[i];
@@ -159,10 +127,6 @@ void Story::setWorld(World* world) {
 	}
 }
 
-// 前のセーブポイントへ戻る必要があるか 戻るならいくつ分戻るか返す(>0)
-int Story::getBackPrevSave() const {
-	return m_nowEvent != nullptr ? m_nowEvent->getBackPrevSave() : false;
-}
 
 // 前のセーブポイントへ戻ったことを教えてもらう
 void Story::doneBackPrevSave() {

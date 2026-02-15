@@ -35,18 +35,14 @@ vector<string> mapParam2vector(map<string, string> paramMap) {
 /*
 * イベント
 */
-Event::Event(int eventNum, int startTime, int endTime, vector<int> requireEventNum, World* world, SoundPlayer* soundPlayer, int version) {
+Event::Event(int eventNum, World* world, SoundPlayer* soundPlayer) {
 
 	m_eventNum = eventNum;
-	m_startTime = startTime;
-	m_endTime = endTime;
-	m_requireEventNum = requireEventNum;
 	m_nowElement = 0;
 	m_eventElement = nullptr;
 
 	m_world_p = world;
 	m_soundPlayer_p = soundPlayer;
-	m_version = version;
 	m_backPrevSave = 0;
 
 	ostringstream oss;
@@ -160,9 +156,6 @@ void Event::createElement(vector<string> param, World* world, SoundPlayer* sound
 	else if (param0 == "Movie") {
 		element = new MovieEvent(world, soundPlayer, param);
 	}
-	else if (param0 == "PlayerDead") {
-		element = new PlayerDeadEvent(world, param);
-	}
 	else if (param0 == "MoveArea"){
 		element = new MoveAreaEvent(world, param);
 	}
@@ -211,9 +204,6 @@ EVENT_RESULT Event::play() {
 
 	// Elementが一つ成功した
 	if (elementResult == EVENT_RESULT::SUCCESS) {
-
-		// Storyに前のセーブポイントへ戻るよう要求
-		m_backPrevSave = m_eventElement->needBackPrevSave();
 
 		if (m_nowElement == m_elementsData.size()) { 
 			// EventElementが残っていないのでイベントおわり
@@ -601,11 +591,10 @@ DeadGroupEvent::DeadGroupEvent(World* world, std::vector<std::string> param) :
 	EventElement(world)
 {
 	m_groupId = stoi(param[1]);
-	m_areaNum = stoi(param[2]);
 }
 EVENT_RESULT DeadGroupEvent::play() {
 	m_world_p->battle();
-	if (m_world_p->getAreaNum() != m_areaNum || m_world_p->getBrightValue() < 255) {
+	if (m_world_p->getBrightValue() < 255) {
 		return EVENT_RESULT::NOW;
 	}
 	vector<const CharacterAction*> actions = m_world_p->getActions();
@@ -630,8 +619,11 @@ TalkEvent::~TalkEvent() {
 	delete m_conversation;
 }
 
-EVENT_RESULT TalkEvent::play() {
+void TalkEvent::init() {
 	m_world_p->setConversation(m_conversation);
+}
+
+EVENT_RESULT TalkEvent::play() {
 	m_world_p->talk();
 	if (m_conversation->getFinishFlag()) {
 		return EVENT_RESULT::SUCCESS;
@@ -671,24 +663,6 @@ EVENT_RESULT MovieEvent::play() {
 }
 
 
-// 特定のエリアでプレイヤーがやられるイベント
-PlayerDeadEvent::PlayerDeadEvent(World* world, std::vector<std::string> param) :
-	EventElement(world)
-{
-	m_areaNum = stoi(param[1]);
-	m_backPrevSave = stoi(param[2]);
-}
-EVENT_RESULT PlayerDeadEvent::play() {
-	m_world_p->battle();
-	// 対象のキャラのHPをチェックする
-	if (m_world_p->getAreaNum() == m_areaNum && m_world_p->playerDead() && m_world_p->getBrightValue() == 0) {
-		m_world_p->changePlayer(m_world_p->getCharacterWithId(m_world_p->getPlayerId()));
-		return EVENT_RESULT::SUCCESS;
-	}
-	return EVENT_RESULT::NOW;
-}
-
-
 // 特定のエリアへ強制的に移動する
 MoveAreaEvent::MoveAreaEvent(World* world, std::vector<std::string> param) :
 	EventElement(world)
@@ -713,8 +687,10 @@ BlindWorldEvent::BlindWorldEvent(World* world, std::vector<std::string> param) :
 {
 	m_flag = (bool)stoi(param[1]);
 }
-EVENT_RESULT BlindWorldEvent::play() {
+void BlindWorldEvent::init() {
 	m_world_p->setBlindFlag(m_flag);
+}
+EVENT_RESULT BlindWorldEvent::play() {
 	return EVENT_RESULT::SUCCESS;
 }
 

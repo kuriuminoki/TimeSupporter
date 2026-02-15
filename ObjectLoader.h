@@ -27,8 +27,6 @@ public:
 	// 特定のエリアの追加オブジェクトのvectorを取得
 	std::pair<std::vector<Object*>, std::vector<Object*> > getObjects(int areaNum = -1);
 
-	// キャラのエリアと座標をセーブする
-	void saveDoorData(std::vector<DoorData*>& doorData);
 };
 
 

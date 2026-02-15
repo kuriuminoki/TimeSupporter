@@ -333,6 +333,11 @@ int Character::getWide() const {
 int Character::getHeight() const {
 	return m_graphHandle->getHeight();
 }
+int Character::getAtariHeight() const {
+	int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+	getAtariArea(&x1, &y1, &x2, &y2);
+	return y2 - m_y;
+}
 int Character::getAtariCenterX() const {
 	int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
 	getAtariArea(&x1, &y1, &x2, &y2);
@@ -491,7 +496,7 @@ Heart::Heart(const char* name, int hp, int x, int y, int groupId) :
 
 	// とりあえず立ち画像でスタート
 	switchStand();
-	m_y -= getHeight();
+	m_y -= getAtariHeight();
 }
 
 Heart::Heart(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo) :

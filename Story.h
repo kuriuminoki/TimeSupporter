@@ -50,9 +50,6 @@ public:
 	Story(int storyNum, GameData* gameData, SoundPlayer* soundPlayer);
 	~Story();
 
-	// csvファイルを読み込む
-	void loadEventCsvData(const char* fileName, World* world, SoundPlayer* soundPlayer);
-
 	void debug(int x, int y, int color);
 
 	EVENT_RESULT play();
@@ -67,7 +64,6 @@ public:
 	inline CharacterLoader* getCharacterLoader() const { return m_characterLoader; }
 	inline ObjectLoader* getObjectLoader() const { return m_objectLoader; }
 	inline const World* getWorld() const { return m_world; }
-	int getBackPrevSave() const;
 
 	// セッタ
 	void setWorld(World* world);

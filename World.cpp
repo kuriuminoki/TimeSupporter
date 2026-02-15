@@ -1216,7 +1216,7 @@ bool World::dealBrightValue() {
 
 // ‰ï˜b‚³‚¹‚é
 void World::talk() {
-	moveGoalCharacter();
+	//moveGoalCharacter();
 	if (m_conversation_p != nullptr) {
 		m_conversation_p->play();
 		// ‰ï˜bI—¹
