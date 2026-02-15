@@ -141,7 +141,7 @@
     <ClCompile Include="DrawTool.cpp">
       <Filter>ソース ファイル\ui</Filter>
     </ClCompile>
-    <ClCompile Include="Timer.cpp">
+    <ClCompile Include="TimeSupporter.cpp">
       <Filter>ソース ファイル\api</Filter>
     </ClCompile>
   </ItemGroup>
@@ -236,7 +236,7 @@
     <ClInclude Include="DrawTool.h">
       <Filter>ヘッダー ファイル\ui</Filter>
     </ClInclude>
-    <ClInclude Include="Timer.h">
+    <ClInclude Include="TimeSupporter.h">
       <Filter>ヘッダー ファイル\api</Filter>
     </ClInclude>
   </ItemGroup>

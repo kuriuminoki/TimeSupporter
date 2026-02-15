@@ -92,7 +92,7 @@ public:
 	inline const World* getWorld() const { return m_world; }
 
 	// ƒZƒbƒ^
-	inline void setWorld(World* world) { m_world = world; }
+	inline void setWorld(const World* world) { m_world = world; }
 
 	// •`‰æ‚·‚é
 	void draw(bool drawSkillBar);

@@ -90,28 +90,3 @@ pair<vector<Character*>, vector<CharacterController*> > CharacterLoader::getChar
 
 	return res;
 }
-
-// キャラのエリアと座標をセーブする
-void CharacterLoader::saveCharacterData(CharacterData* characterData) {
-	for (auto it = m_characters.begin(); it != m_characters.end(); it++) {
-		int areaNum = it->first;
-		vector<map<string, string> > characters = it->second;
-		for (unsigned int i = 0; i < characters.size(); i++) {
-			if (characters[i]["name"] == characterData->name()) {
-				characterData->setAreaNum(areaNum);
-				characterData->setX(stoi(characters[i]["x"]));
-				characterData->setY(stoi(characters[i]["y"]));
-				characterData->setSoundFlag((bool)stoi(characters[i]["sound"]));
-				characterData->setActionName(characters[i]["action"].c_str());
-				characterData->setBrainName(characters[i]["brain"].c_str());
-				characterData->setControllerName(characters[i]["controller"].c_str());
-				if (characters[i].find("hp") != characters[i].end()) {
-					string s = characters[i]["hp"];
-					if (s == "0") { characterData->setHp(0); }
-					else if (s == "max") { characterData->setHp(-1); }
-				}
-				return;
-			}
-		}
-	}
-}

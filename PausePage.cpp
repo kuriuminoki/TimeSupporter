@@ -230,19 +230,11 @@ BattleOption::BattleOption(SoundPlayer* soundPlayer):
 	m_titleButton = new Button("Back to the title", x, y, wide, height, WHITE, RED, m_font, BLACK);
 	m_titleFlag = false;
 
-	x = (int)(QUICK_X1 * m_exX);
-	y = (int)(QUICK_Y1 * m_exY);
-	wide = (int)((QUICK_X2 - QUICK_X1) * m_exX);
-	height = (int)((QUICK_Y2 - QUICK_Y1) * m_exY);
-	m_quickButton = new Button("ŠÔ‚ğ‚P‚O”{‘¬‚É‚·‚é", x, y, wide, height, WHITE, RED, m_font, BLACK);
-	m_quickFlag = false;
-
 	m_tutorialDisp = new TutorialDisp(m_font, m_fontSize, m_exX, m_exY);
 	m_tutorialDisp->setPoint(GAME_WIDE / 2 - (int)(100 * m_exX), (int)(50 * m_exY), GAME_WIDE - (int)(50 * m_exX), GAME_HEIGHT - (int)(50 * m_exY));
 }
 BattleOption::~BattleOption() {
 	delete m_titleButton;
-	delete m_quickButton;
 	DeleteGraph(m_backgroundGraph);
 	DeleteFontToHandle(m_font);
 	delete m_tutorialDisp;
@@ -255,9 +247,6 @@ void BattleOption::play() {
 	if (leftClick() == 1) {
 		if (m_titleButton->overlap(m_handX, m_handY)) {
 			m_titleFlag = true;
-		}
-		if (m_quickButton->overlap(m_handX, m_handY)) {
-			m_quickFlag = true;
 		}
 	}
 
@@ -272,8 +261,6 @@ void BattleOption::draw() const {
 	GamePause::draw();
 
 	m_titleButton->draw(m_handX, m_handY);
-
-	m_quickButton->draw(m_handX, m_handY);
 
 	m_tutorialDisp->draw();
 

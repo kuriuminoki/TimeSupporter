@@ -12,10 +12,8 @@ class Camera;
 class Character;
 class CharacterAction;
 class CharacterController;
-class CharacterData;
 class CharacterLoader;
 class Conversation;
-class DoorData;
 class DoorObject;
 class GraphHandles;
 class Item;
@@ -289,18 +287,6 @@ public:
 	// キャラ追加イベント用
 	void pushCharacter(Character* character, CharacterController* controller);
 
-	// データ管理：キャラの状態を変更する いないなら作成する
-	void asignedCharacterData(const char* name, CharacterData* data);
-
-	// データ管理：キャラの状態を教える
-	void asignCharacterData(const char* name, CharacterData* data, int fromAreaNum, bool notCharacterPoint) const;
-
-	// データ管理：Doorの状態を変更する いないなら作成する
-	void asignedDoorData(DoorData* data);
-
-	// データ管理：Doorの状態を教える
-	void asignDoorData(std::vector<DoorData*>& data, int fromAreaNum) const;
-
 	// データ管理：プレイヤーをドアの前まで移動
 	void setPlayerOnDoor(int from);
 
@@ -309,9 +295,6 @@ public:
 
 	// Battle: 操作キャラの切り替え
 	void changePlayer(const Character* nextPlayer);
-
-	// プレイヤーを特定の座標へ移動
-	void setPlayerPoint(CharacterData* characterData);
 
 	// 仲間をプレイヤーの位置へ移動
 	void setPlayerFollowerPoint();
@@ -335,12 +318,6 @@ public:
 	void moviePlay();
 
 private:
-
-	// データ管理：キャラのセーブデータを自身に反映させる
-	void asignedCharacter(Character* character, CharacterData* data, bool changePosition);
-
-	// データ管理：コントローラ1個の情報を世界に反映
-	CharacterController* createControllerWithData(const Character* character, CharacterData* data);
 
 	// Battle：カメラの更新
 	void updateCamera();
