@@ -19,6 +19,9 @@ Character* createCharacter(const char* characterName, int hp, int x, int y, int 
 	if (name == "テスト") {
 		character = new Heart(name.c_str(), hp, x, y, groupId);
 	}
+	else if (name == "サエル") {
+		character = new Heart(name.c_str(), hp, x, y, groupId);
+	}
 	else if (name == "ハート") {
 		character = new Heart(name.c_str(), hp, x, y, groupId);
 	}
