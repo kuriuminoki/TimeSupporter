@@ -97,20 +97,22 @@ void WorldDrawer::draw(bool drawSkillBar) {
 	// カメラを取得
 	const Camera* camera = m_world->getCamera();
 
+	// ムービー
+	Movie* movie = m_world->getMovie();
+
+	// テキストイベント
+	const Conversation* conversation = m_world->getConversation();
+
 	// 戦場
-	if (!m_world->getBlindFlag()) {
+	if (!m_world->getBlindFlag() && conversation == nullptr) {
 		drawBattleField(camera, bright, drawSkillBar);
 	}
 
-	// ムービー
-	Movie* movie = m_world->getMovie();
 	if (movie != nullptr) {
 		DrawBox(0, 0, GAME_WIDE, GAME_HEIGHT, BLACK, TRUE);
 		movie->draw();
 	}
 
-	// テキストイベント
-	const Conversation* conversation = m_world->getConversation();
 	if (conversation != nullptr) {
 		m_conversationDrawer->setConversation(conversation);
 		m_conversationDrawer->draw();

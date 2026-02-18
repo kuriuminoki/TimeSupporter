@@ -62,9 +62,6 @@ public:
 	// ハートのスキル発動が可能かどうか
 	virtual bool skillAble() { return false; }
 
-	// クリア時に前のセーブポイントへ戻る必要があるか
-	virtual int needBackPrevSave() { return 0; }
-
 	// セッタ
 	virtual void setWorld(World* world) { m_world_p = world; }
 };
@@ -83,12 +80,6 @@ private:
 
 	// イベント番号
 	int m_eventNum;
-
-	int m_startTime;
-	int m_endTime;
-
-	// 前提としてクリアが必要なイベントの番号
-	std::vector<int> m_requireEventNum;
 
 	// イベントの発火条件
 	std::vector<EventFire*> m_eventFire;
@@ -109,14 +100,11 @@ private:
 	int m_version;
 
 public:
-	Event(int eventNum, int startTime, int endTime, std::vector<int> requireEventNum, World* world, SoundPlayer* soundPlayer, int version);
+	Event(int eventNum, World* world, SoundPlayer* soundPlayer);
 	~Event();
 
 	// ゲッタ
 	inline int getEventNum() const { return m_eventNum; }
-	inline int getStartTime() const { return m_startTime; }
-	inline int getEndTime() const { return m_endTime; }
-	inline const std::vector<int> getRequireEventNum() const { return m_requireEventNum; }
 	inline void setVersion(int version) { m_version = version; }
 
 	// 発火
@@ -549,9 +537,6 @@ private:
 	// 対象のグループ
 	int m_groupId;
 
-	// エリア番号
-	int m_areaNum;
-
 public:
 	DeadGroupEvent(World* world, std::vector<std::string> param);
 
@@ -573,6 +558,9 @@ private:
 public:
 	TalkEvent(World* world, SoundPlayer* soundPlayer, std::vector<std::string> param);
 	~TalkEvent();
+
+	// 初期処理
+	void init();
 
 	// プレイ
 	EVENT_RESULT play();
@@ -600,29 +588,6 @@ public:
 	EVENT_RESULT play();
 };
 
-// 特定のエリアでプレイヤーがやられるイベント
-class PlayerDeadEvent :
-	public EventElement
-{
-private:
-	
-	int m_areaNum;
-
-	int m_backPrevSave;
-
-public:
-	PlayerDeadEvent(World* world, std::vector<std::string> param);
-
-	// プレイ
-	EVENT_RESULT play();
-
-	// クリア時に前のセーブポイントへ戻る必要があるか
-	int needBackPrevSave() { return m_backPrevSave; }
-
-	// ハートのスキル発動が可能かどうか
-	bool skillAble() { return true; }
-};
-
 // 特定のエリアへ強制的に移動する
 class MoveAreaEvent :
 	public EventElement
@@ -648,6 +613,8 @@ private:
 
 public:
 	BlindWorldEvent(World* world, std::vector<std::string> param);
+
+	void init();
 
 	// プレイ
 	EVENT_RESULT play();

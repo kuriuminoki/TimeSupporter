@@ -343,8 +343,8 @@ void loadCharacterGraph(const char* dir, const char* characterName, GraphHandles
 		handles = nullptr;
 	}
 }
-void loadCharacterGraph(const char* dir, const char* characterName, GraphHandles*& handles, string stateName, map<string, string>& data, double ex) {
-	int n = stoi(data[stateName]);
+void loadCharacterGraph(const char* dir, const char* characterName, GraphHandles*& handles, string stateName, double ex) {
+	int n = 1;
 	if (n > 0) {
 		ostringstream oss;
 		oss << dir << characterName << "/" << stateName;
@@ -571,32 +571,14 @@ void CharacterGraphHandle::switchSpecial1(int index) {
 
 
 FaceGraphHandle::FaceGraphHandle():
-	FaceGraphHandle("テスト", 1.0)
+	FaceGraphHandle("テスト", "通常", 1.0)
 {
 
 }
-FaceGraphHandle::FaceGraphHandle(const char* characterName, double drawEx) {
+FaceGraphHandle::FaceGraphHandle(const char* characterName, const char* faceName, double drawEx) {
 	m_ex = drawEx;
-	
-	CsvReader reader("data/faceGraph.csv");
-	// キャラ名でデータを検索
-	map<string, string> data = reader.findOne("name", characterName);
-	// 見つからなかったらテストで再検索
-	if (data.size() == 0) { 
-		characterName = "テスト";
-		data = reader.findOne("name", characterName);
-	}
-
-	// ロード
-	const char* dir = "picture/face/";
-	auto ite = data.begin();
-	while (ite != data.end()) {
-		string faceName = ite->first;
-		if (faceName != "name") {
-			loadCharacterGraph(dir, characterName, m_faceHandles[faceName], faceName, data, m_ex);
-		}
-		ite++;
-	}
+	m_characterName = characterName;
+	addFace(faceName);
 
 }
 FaceGraphHandle::~FaceGraphHandle() {
@@ -610,5 +592,13 @@ FaceGraphHandle::~FaceGraphHandle() {
 	}
 }
 GraphHandles* FaceGraphHandle::getGraphHandle(const char* faceName) {
+	if (m_faceHandles.find(faceName) == m_faceHandles.end()) {
+		return nullptr;
+	}
 	return m_faceHandles[faceName];
+}
+void FaceGraphHandle::addFace(const char* faceName) {
+	// ロード
+	const char* dir = "picture/face/";
+	loadCharacterGraph(dir, m_characterName.c_str(), m_faceHandles[faceName], faceName, m_ex);
 }

@@ -260,16 +260,18 @@ bool Game::play() {
 		// ストーリー進行
 		EVENT_RESULT result = m_story->play();
 		if (result == EVENT_RESULT::SUCCESS) {
-			if (m_story->getStoryNum() > m_gameData->getCompleteStageSum()) {
-				m_gameData->setCompleteStageSum(m_story->getStoryNum());
+			if (m_story->getStoryNum() + 1 > m_gameData->getCompleteStageSum()) {
+				m_gameData->setCompleteStageSum(m_story->getStoryNum() + 1);
 				m_selectStagePage->setCompleteStageSum(m_gameData->getCompleteStageSum());
 			}
 			m_gameData->updateStory(m_story);
 			// セーブ (バックアップは更新されない)
 			m_gameData->save();
 			delete m_story;
+			m_story = nullptr;
 			m_soundPlayer->setBGM("sound/bgm/ステージ選択.mp3");
 			m_soundPlayer->playBGM();
+			return true;
 		}
 	}
 

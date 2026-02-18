@@ -2,6 +2,7 @@
 #define TEXT_H_INCLUDED
 
 
+#include <map>
 #include <string>
 #include <vector>
 
@@ -12,6 +13,7 @@ class World;
 class GraphHandle;
 class GraphHandles;
 class Button;
+class FaceGraphHandle;
 
 
 /*
@@ -114,6 +116,8 @@ public:
 class Conversation {
 private:
 
+	bool m_initFlag;
+
 	// 終了時、少しだけ待機時間
 	const int FINISH_COUNT = 30;
 	// 0 -> FINISH_COUNTで発言終了
@@ -160,11 +164,14 @@ private:
 	// 発言者の名前
 	std::string m_speakerName;
 
-	// 発言者の顔画像がない
-	bool m_noFace;
+	// 発言者の画像がない
+	bool m_noImage;
 
-	// 発言者の顔画像
+	// 発言者の画像
 	GraphHandles* m_speakerGraph_p;
+
+	// 顔画像 <画像名, 画像ハンドル>
+	std::map<std::string, FaceGraphHandle*> m_faceHandles;
 
 	// 発言
 	std::string m_text;
@@ -210,11 +217,12 @@ public:
 	~Conversation();
 
 	// ゲッタ
+	inline bool getInitFlag() const { return m_initFlag; }
 	std::string getText() const;
 	inline std::string getFullText() const { return m_text; }
 	int getTextSize() const;
 	GraphHandle* getGraph() const;
-	inline bool getNoFace() const { return m_noFace; }
+	inline bool getNoImage() const { return m_noImage; }
 	inline 	std::string getSpeakerName() const { return m_speakerName; }
 	inline int getFinishCnt() const { return m_finishCnt; }
 	inline int getSkipCnt() const { return m_skipCnt; }

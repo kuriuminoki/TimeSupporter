@@ -369,12 +369,16 @@ private:
 	// Šç‰æ‘œ <‰æ‘œ–¼, ‰æ‘œƒnƒ“ƒhƒ‹>
 	std::map<std::string, GraphHandles*> m_faceHandles;
 
+	std::string m_characterName;
+
 public:
 	FaceGraphHandle();
-	FaceGraphHandle(const char* characterName, double drawEx);
+	FaceGraphHandle(const char* characterName, const char* faceName, double drawEx);
 	~FaceGraphHandle();
 
 	GraphHandles* getGraphHandle(const char* faceName);
+
+	void addFace(const char* faceName);
 };
 
 

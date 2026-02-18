@@ -10,7 +10,7 @@ class AnimationDrawer;
 
 class ConversationDrawer {
 private:
-	
+
 	// 会話
 	const Conversation* m_conversation;
 
@@ -30,7 +30,7 @@ private:
 
 	// フォント（名前）
 	int m_nameHandle;
-	const int NAME_SIZE = 70;
+	const int NAME_SIZE = 32;
 
 	// フキダシ画像
 	int m_frameHandle;
