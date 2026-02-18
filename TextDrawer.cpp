@@ -97,13 +97,8 @@ void ConversationDrawer::draw() {
 			int dy = m_conversation->getTextAction().getDy();
 
 			// キャラの顔画像
-			GraphHandle* graph = m_conversation->getGraph();
-			if (graph != nullptr && !m_conversation->getNoImage()) {
-				int graphWide = 0, graphHeight = 0;
-				double ex = 0.4;
-				GetGraphSize(graph->getHandle(), &graphWide, &graphHeight);
-				graph->draw(graphWide / 2 * ex * m_exX + dx, GAME_HEIGHT - graphHeight / 2 * ex * m_exY + dy, m_exX * ex);
-			}
+			drawCharacter(m_conversation->getSpeakerGraph(), dx, dy, m_conversation->getSpeakerPosition(), 255);
+			drawCharacter(m_conversation->getListenerGraph(), dx, dy, m_conversation->getListenerPosition(), 150);
 
 			// 発言者の名前、セリフ顔画像
 			int now = 0;
@@ -115,6 +110,22 @@ void ConversationDrawer::draw() {
 			// 名前
 			DrawBox(EDGE_X + dx + 1, Y1 + 1 + dy, GAME_WIDE - EDGE_X - 1 + dx, Y1 + TEXT_GRAPH_EDGE + NAME_SIZE + dy, BLACK, TRUE);
 			DrawStringToHandle(x, Y1 + TEXT_GRAPH_EDGE - 10 * m_exY + dy, name.c_str(), WHITE, m_nameHandle);
+			if (!m_conversation->getNarrationFlag()) {
+				int triangleHeight = 50 * m_exY;
+				int triangleWide = 50 * m_exX;
+				int positionX = x;
+				switch (m_conversation->getSpeakerPosition()) {
+				case CHARACTER_POSITION::LEFT:
+					break;
+				case CHARACTER_POSITION::CENTER:
+					positionX += GAME_WIDE / 3;
+					break;
+				case CHARACTER_POSITION::RIGHT:
+					positionX += GAME_WIDE * 3 / 5;
+					break;
+				}
+				DrawTriangle(positionX + dx, Y1 + dy, positionX + triangleWide + dx, Y1 + dy, positionX + (GAME_WIDE / 30) + (triangleWide / 2) + dx, Y1 - triangleHeight, BLACK, TRUE);
+			}
 			// セリフ
 			int height = (int)(TEXT_SIZE * m_exX);
 			drawText(x, Y1 + TEXT_GRAPH_EDGE + height + dy, height + CHAR_EDGE, text, BLACK, m_textHandle);
@@ -150,6 +161,35 @@ void ConversationDrawer::draw() {
 	}
 
 }
+
+
+void ConversationDrawer::drawCharacter(GraphHandle* graph, int dx, int dy, CHARACTER_POSITION position, int bright) {
+	if (graph == nullptr) { return; }
+	SetDrawBright(bright, bright, bright);
+	int graphWide = 0, graphHeight = 0;
+	double ex = 0.4;
+	GetGraphSize(graph->getHandle(), &graphWide, &graphHeight);
+
+	int positionX = 0;
+	switch (position) {
+	case CHARACTER_POSITION::LEFT:
+		positionX = graphWide / 2 * ex;
+		graph->setReverseX(false);
+		break;
+	case CHARACTER_POSITION::CENTER:
+		positionX = GAME_WIDE / 2;
+		graph->setReverseX(false);
+		break;
+	case CHARACTER_POSITION::RIGHT:
+		positionX = GAME_WIDE - graphWide / 2 * ex;
+		graph->setReverseX(true);
+		break;
+	}
+
+	graph->draw(positionX * m_exX + dx, GAME_HEIGHT - graphHeight / 2 * ex * m_exY + dy, m_exX * ex);
+	SetDrawBright(255, 255, 255);
+}
+
 
 void ConversationDrawer::drawText(int x, int y,int height, const std::string text, int color, int font) {
 	int now = 0;

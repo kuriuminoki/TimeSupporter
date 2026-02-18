@@ -16,6 +16,13 @@ class Button;
 class FaceGraphHandle;
 
 
+enum class CHARACTER_POSITION {
+	LEFT,
+	CENTER,
+	RIGHT
+};
+
+
 /*
 * イベント中に挿入される画像
 */
@@ -164,13 +171,20 @@ private:
 	// 発言者の名前
 	std::string m_speakerName;
 
-	// 発言者の画像がない
-	bool m_noImage;
+	// ナレーション中(発言者がいない)
+	bool m_narrationFlag;
 
 	// 発言者の画像
 	GraphHandles* m_speakerGraph_p;
 
-	// 顔画像 <画像名, 画像ハンドル>
+	CHARACTER_POSITION m_speakerPosition;
+
+	// 発言していない人の画像
+	GraphHandles* m_listenerGraph_p;
+
+	CHARACTER_POSITION m_listenerPosition;
+
+	// 顔画像 <画像名, 画像ハンドル> 事前ロードする
 	std::map<std::string, FaceGraphHandle*> m_faceHandles;
 
 	// 発言
@@ -221,8 +235,9 @@ public:
 	std::string getText() const;
 	inline std::string getFullText() const { return m_text; }
 	int getTextSize() const;
-	GraphHandle* getGraph() const;
-	inline bool getNoImage() const { return m_noImage; }
+	GraphHandle* getSpeakerGraph() const;
+	GraphHandle* getListenerGraph() const;
+	inline bool getNarrationFlag() const { return m_narrationFlag; }
 	inline 	std::string getSpeakerName() const { return m_speakerName; }
 	inline int getFinishCnt() const { return m_finishCnt; }
 	inline int getSkipCnt() const { return m_skipCnt; }
@@ -242,6 +257,8 @@ public:
 	inline const TextAction getTextAction() const { return m_textAction; }
 	inline const Button* getYesButton() const { return m_selectFlag ? m_yesButton : nullptr; }
 	inline const Button* getNoButton() const { return m_selectFlag ? m_noButton : nullptr; }
+	inline CHARACTER_POSITION getSpeakerPosition() const { return m_speakerPosition; }
+	inline CHARACTER_POSITION getListenerPosition() const { return m_listenerPosition; }
 
 	// セッタ
 	void setWorld(World* world);
@@ -261,7 +278,7 @@ public:
 private:
 	void loadNextBlock();
 	void setNextText(const int size, char* buff);
-	void setSpeakerGraph(const char* faceName);
+	void setSpeakerGraph(GraphHandles*& graph_p, std::string characterName, const char* faceName);
 };
 
 

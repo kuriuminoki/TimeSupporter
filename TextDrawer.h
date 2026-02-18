@@ -6,6 +6,9 @@
 
 class Conversation;
 class AnimationDrawer;
+class GraphHandle;
+
+enum class CHARACTER_POSITION;
 
 
 class ConversationDrawer {
@@ -42,6 +45,8 @@ public:
 	void setConversation(const Conversation* conversation) { m_conversation = conversation; }
 
 	void draw();
+
+	void drawCharacter(GraphHandle* graph, int dx, int dy, CHARACTER_POSITION position, int bright);
 
 	void drawText(int x, int y, int height, const std::string text, int color, int font);
 };
