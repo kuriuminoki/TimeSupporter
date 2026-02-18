@@ -151,8 +151,10 @@ Conversation::Conversation(int textNum, World* world, SoundPlayer* soundPlayer) 
 	m_soundPlayer_p = soundPlayer;
 	m_speakerName = "サエル";
 	m_speakerGraph_p = nullptr;
-	//setSpeakerGraph("にやけ");
-	m_noImage = true;
+	m_speakerPosition = CHARACTER_POSITION::LEFT;
+	m_listenerGraph_p = nullptr;
+	m_listenerPosition = CHARACTER_POSITION::RIGHT;
+	m_narrationFlag = true;
 	m_text = "";
 	m_textNow = 0;
 	m_cnt = 0;
@@ -219,7 +221,7 @@ std::string Conversation::getText() const {
 }
 
 // 画像を返す（描画用）
-GraphHandle* Conversation::getGraph() const {
+GraphHandle* Conversation::getSpeakerGraph() const {
 	if (m_speakerGraph_p == nullptr) { return nullptr; }
 	int size = (int)m_speakerGraph_p->getSize();
 	int index = size - (m_textNow / 2 % size) - 1;
@@ -233,6 +235,11 @@ GraphHandle* Conversation::getGraph() const {
 		}
 	}
 	return m_speakerGraph_p->getGraphHandle(index);
+}
+
+GraphHandle* Conversation::getListenerGraph() const {
+	if (m_listenerGraph_p == nullptr) { return nullptr; }
+	return m_listenerGraph_p->getGraphHandle(0);
 }
 
 // セリフの長さ
@@ -579,23 +586,69 @@ void Conversation::loadNextBlock() {
 			speakerName = buff;
 		}
 	}
+	else if (str == "@resetGraph") {
+		m_speakerGraph_p = nullptr;
+		m_speakerPosition = CHARACTER_POSITION::LEFT;
+		m_listenerGraph_p = nullptr;
+		m_listenerPosition = CHARACTER_POSITION::RIGHT;
+	}
 	else { // 発言
 		if (str == "@null") {
 			// ナレーション
 			m_speakerName = "";
-			m_noImage = true;
+			m_narrationFlag = true;
 		}
 		else if (str[0] == '*') {
 			m_speakerName = str.substr(1, str.size());
-			m_noImage = true;
+			m_narrationFlag = true;
 		}
-		else {
+		else { // 発言
+			if (str == "@left_l") {
+				FileRead_gets(buff, size, m_fp);
+				string listenerName = buff;
+				FileRead_gets(buff, size, m_fp);
+				m_listenerPosition = CHARACTER_POSITION::LEFT;
+				setSpeakerGraph(m_listenerGraph_p, listenerName, buff);
+				FileRead_gets(buff, size, m_fp);
+				str = buff;
+			}
+			else if (str == "@center_l") {
+				FileRead_gets(buff, size, m_fp);
+				string listenerName = buff;
+				FileRead_gets(buff, size, m_fp);
+				m_listenerPosition = CHARACTER_POSITION::CENTER;
+				setSpeakerGraph(m_listenerGraph_p, listenerName, buff);
+				FileRead_gets(buff, size, m_fp);
+				str = buff;
+			}
+			else if (str == "@right_l") {
+				FileRead_gets(buff, size, m_fp);
+				string listenerName = buff;
+				FileRead_gets(buff, size, m_fp);
+				m_listenerPosition = CHARACTER_POSITION::RIGHT;
+				setSpeakerGraph(m_listenerGraph_p, listenerName, buff);
+				FileRead_gets(buff, size, m_fp);
+				str = buff;
+			}
+
+			if (str == "@left") {
+				FileRead_gets(buff, size, m_fp);
+				m_speakerPosition = CHARACTER_POSITION::LEFT;
+			}
+			else if (str == "@center") {
+				FileRead_gets(buff, size, m_fp);
+				m_speakerPosition = CHARACTER_POSITION::CENTER;
+			}
+			else if (str == "@right") {
+				FileRead_gets(buff, size, m_fp);
+				m_speakerPosition = CHARACTER_POSITION::RIGHT;
+			}
 			// 発言者
 			m_speakerName = buff;
 			// 画像
 			FileRead_gets(buff, size, m_fp);
-			setSpeakerGraph(buff);
-			m_noImage = false;
+			setSpeakerGraph(m_speakerGraph_p, m_speakerName, buff);
+			m_narrationFlag = false;
 		}
 		setNextText(size, buff);
 	}
@@ -626,16 +679,17 @@ void Conversation::setNextText(const int size, char* buff) {
 }
 
 
-void Conversation::setSpeakerGraph(const char* faceName) {
-	if (m_faceHandles.find(m_speakerName) == m_faceHandles.end()) {
-		m_speakerGraph_p = nullptr;
+void Conversation::setSpeakerGraph(GraphHandles*& graph_p, string characterName, const char* faceName) {
+	if (m_faceHandles.find(characterName) == m_faceHandles.end()) {
+		graph_p = nullptr;
 	}
-	m_speakerGraph_p = m_faceHandles[m_speakerName]->getGraphHandle(faceName);
+	graph_p = m_faceHandles[characterName]->getGraphHandle(faceName);
 }
+
 
 // セッタ
 void Conversation::setWorld(World* world) {
 	m_world_p = world;
 	m_speakerName = "サエル";
-	setSpeakerGraph("通常");
+	setSpeakerGraph(m_speakerGraph_p, m_speakerName, "通常");
 }
