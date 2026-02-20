@@ -140,13 +140,22 @@ void WorldDrawer::draw(bool drawSkillBar) {
 void WorldDrawer::drawBattleField(const Camera* camera, int bright, bool drawSkillBar) {
 	// ”wŒi
 	int groundGraph = m_world->getBackGroundGraph();
+	int wide = 0, height = 0;
+	double ex = 1.0;
 	if (groundGraph != -1) {
+		GetGraphSize(groundGraph, &wide, &height);
+		ex = (double)GAME_HEIGHT / height;
+		wide *= ex;
 
+		int x = m_world->getCharacterWithId(m_world->getPlayerId())->getCenterX() / 10;
+		x = x % (wide / 2);
+
+		for (int i = x; i < GAME_WIDE + (wide / 2); i += wide) {
+			DrawRotaGraph(i, GAME_HEIGHT / 2, ex, 0.0, groundGraph, TRUE);
+		}
 	}
 	else {
 		int date = m_world->getDate();
-		int wide = 0, height = 0;
-		double ex = 1.0;
 		switch (date) {
 		case 0:
 			GetGraphSize(m_noonHaikei, &wide, &height);

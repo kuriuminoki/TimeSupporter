@@ -50,13 +50,13 @@ pair<vector<Object*>, vector<Object*> > ObjectLoader::getObjects(int areaNum) {
 		if (object != nullptr) { res.first.push_back(object); }
 		else if (name == "Area") {
 			// 左
-			res.first.push_back(new BoxObject(x1 - GAME_WIDE, y1 - GAME_HEIGHT, x1, y2, graph.c_str(), colorHandle, -1));
+			res.first.push_back(new BoxObject(x1 - 100, y1 - 50, x1, y2, "borderWide.png", colorHandle, -1));
 			// 右
-			res.first.push_back(new BoxObject(x2, y1 - GAME_HEIGHT, x2 + GAME_WIDE, y2, graph.c_str(), colorHandle, -1));
+			res.first.push_back(new BoxObject(x2, y1 - 50, x2 + 100, y2, "borderWide.png", colorHandle, -1));
 			// 上
-			res.first.push_back(new BoxObject(x1, y1 - GAME_HEIGHT, x2, y1, graph.c_str(), colorHandle, -1));
+			res.first.push_back(new BoxObject(x1 - 50, y1 - 100, x2 + 50, y1, "borderHeight.png", colorHandle, -1));
 			// 下
-			res.first.push_back(new BoxObject(x1 - GAME_WIDE, y2, x2 + GAME_WIDE, y2 + GAME_HEIGHT, graph.c_str(), colorHandle, -1));
+			res.first.push_back(new BoxObject(x1 - GAME_WIDE - 100, y2, x2 + GAME_WIDE + 100, y2 + GAME_HEIGHT, graph.c_str(), colorHandle, -1));
 		}
 
 		// 扉オブジェクトは別に分ける
