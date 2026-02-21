@@ -75,6 +75,15 @@ void ConversationDrawer::draw() {
 
 	// アニメ以外
 	if (!animeOnly) {
+		// 背景
+		int backGroud = m_conversation->getBackGround();
+		if (backGroud != -1 && anime == nullptr) {
+			int wide = 0, height = 0;
+			double ex = 1.0;
+			GetGraphSize(backGroud, &wide, &height);
+			ex = max((double)GAME_WIDE / wide, (double)GAME_HEIGHT / height);
+			DrawRotaGraph(GAME_WIDE / 2, GAME_HEIGHT / 2, ex, 0.0, backGroud, TRUE);
+		}
 		// 会話終了時
 		if (m_conversation->getFinishCnt() > 0) {
 			int finishCnt = (int)(m_conversation->getFinishCnt() * 8 * m_exY);
@@ -97,8 +106,8 @@ void ConversationDrawer::draw() {
 			int dy = m_conversation->getTextAction().getDy();
 
 			// キャラの顔画像
-			drawCharacter(m_conversation->getSpeakerGraph(), dx, dy, m_conversation->getSpeakerPosition(), 255);
-			drawCharacter(m_conversation->getListenerGraph(), dx, dy, m_conversation->getListenerPosition(), 150);
+			drawCharacter(m_conversation->getSpeakerGraph(), m_conversation->getSpeakerPosition(), 255);
+			drawCharacter(m_conversation->getListenerGraph(), m_conversation->getListenerPosition(), 100);
 
 			// 発言者の名前、セリフ顔画像
 			int now = 0;
@@ -112,7 +121,7 @@ void ConversationDrawer::draw() {
 			DrawStringToHandle(x, Y1 + TEXT_GRAPH_EDGE - 10 * m_exY + dy, name.c_str(), WHITE, m_nameHandle);
 			if (!m_conversation->getNarrationFlag()) {
 				int triangleHeight = 50 * m_exY;
-				int triangleWide = 50 * m_exX;
+				int triangleWide = 80 * m_exX;
 				int positionX = x;
 				switch (m_conversation->getSpeakerPosition()) {
 				case CHARACTER_POSITION::LEFT:
@@ -124,11 +133,12 @@ void ConversationDrawer::draw() {
 					positionX += GAME_WIDE * 3 / 5;
 					break;
 				}
-				DrawTriangle(positionX + dx, Y1 + dy, positionX + triangleWide + dx, Y1 + dy, positionX + (GAME_WIDE / 30) + (triangleWide / 2) + dx, Y1 - triangleHeight, BLACK, TRUE);
+				DrawTriangle(positionX + dx, Y1 + dy, positionX + triangleWide + dx, Y1 + dy, positionX + (GAME_WIDE / 30) + (triangleWide / 2) + dx, Y1 - triangleHeight + dy, BLACK, TRUE);
 			}
 			// セリフ
 			int height = (int)(TEXT_SIZE * m_exX);
-			drawText(x, Y1 + TEXT_GRAPH_EDGE + height + dy, height + CHAR_EDGE, text, BLACK, m_textHandle);
+			int textDx = 50 * m_exX;
+			drawText(x + textDx, Y1 + TEXT_GRAPH_EDGE + height + dy, height + CHAR_EDGE, text, BLACK, m_textHandle);
 		}
 	}
 
@@ -163,11 +173,12 @@ void ConversationDrawer::draw() {
 }
 
 
-void ConversationDrawer::drawCharacter(GraphHandle* graph, int dx, int dy, CHARACTER_POSITION position, int bright) {
+void ConversationDrawer::drawCharacter(GraphHandle* graph, CHARACTER_POSITION position, int bright) {
 	if (graph == nullptr) { return; }
 	SetDrawBright(bright, bright, bright);
 	int graphWide = 0, graphHeight = 0;
-	double ex = 0.4;
+	double ex = 0.5;
+	int dy = 200 * ex;
 	GetGraphSize(graph->getHandle(), &graphWide, &graphHeight);
 
 	int positionX = 0;
@@ -186,7 +197,7 @@ void ConversationDrawer::drawCharacter(GraphHandle* graph, int dx, int dy, CHARA
 		break;
 	}
 
-	graph->draw(positionX * m_exX + dx, GAME_HEIGHT - graphHeight / 2 * ex * m_exY + dy, m_exX * ex);
+	graph->draw(positionX * m_exX, GAME_HEIGHT - graphHeight / 2 * ex * m_exY + dy, m_exX * ex);
 	SetDrawBright(255, 255, 255);
 }
 

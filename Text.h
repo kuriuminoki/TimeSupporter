@@ -168,6 +168,9 @@ private:
 	// アニメイベント
 	EventAnime* m_eventAnime;
 
+	// 背景
+	int m_backGround;
+
 	// 発言者の名前
 	std::string m_speakerName;
 
@@ -251,6 +254,7 @@ public:
 	}
 	inline int getAnimeBright() const { return m_eventAnime->getBright(); }
 	inline int getAnimeAlpha() const { return m_eventAnime->getAlpha(); }
+	inline int getBackGround() const { return m_backGround; }
 	inline const std::vector<Animation*> getAnimations() const { return m_animations; }
 	inline const GraphHandle* getTextFinishGraph() const { return m_textFinishGraph; }
 	inline const EventAnime* getEventAnime() const { return m_eventAnime; }
