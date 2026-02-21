@@ -29,7 +29,7 @@ private:
 	const int TEXT_SIZE = 50;
 
 	// 一行に表示する文字数
-	const int MAX_TEXT_LEN = 48;
+	const int MAX_TEXT_LEN = 66;
 
 	// フォント（名前）
 	int m_nameHandle;
@@ -46,7 +46,7 @@ public:
 
 	void draw();
 
-	void drawCharacter(GraphHandle* graph, int dx, int dy, CHARACTER_POSITION position, int bright);
+	void drawCharacter(GraphHandle* graph, CHARACTER_POSITION position, int bright);
 
 	void drawText(int x, int y, int height, const std::string text, int color, int font);
 };

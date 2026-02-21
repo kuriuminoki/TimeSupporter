@@ -149,6 +149,7 @@ Conversation::Conversation(int textNum, World* world, SoundPlayer* soundPlayer) 
 	m_selectFlag = false;
 	m_world_p = world;
 	m_soundPlayer_p = soundPlayer;
+	m_backGround = -1;
 	m_speakerName = "サエル";
 	m_speakerGraph_p = nullptr;
 	m_speakerPosition = CHARACTER_POSITION::LEFT;
@@ -195,6 +196,9 @@ Conversation::~Conversation() {
 	// BGMを戻す
 	m_soundPlayer_p->setBGM(m_originalBgmPath);
 	m_soundPlayer_p->playBGM();
+	if (m_backGround != -1) {
+		DeleteGraph(m_backGround);
+	}
 	// クリックエフェクト削除
 	delete m_clickGraph;
 	for (unsigned i = 0; i < m_animations.size(); i++) {
@@ -452,6 +456,18 @@ void Conversation::loadNextBlock() {
 		// 挿絵の終わり
 		delete m_eventAnime;
 		m_eventAnime = nullptr;
+		loadNextBlock();
+	}
+	else if (str == "@backGround") {
+		if (m_backGround != -1) {
+			DeleteGraph(m_backGround);
+		}
+		// 背景を変更
+		FileRead_gets(buff, size, m_fp);
+		string path = "picture/backGround/";
+		path += buff;
+		path += ".png";
+		m_backGround = LoadGraph(path.c_str());
 		loadNextBlock();
 	}
 	else if (str == "@same") {
