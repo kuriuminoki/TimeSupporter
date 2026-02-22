@@ -31,7 +31,7 @@ GameDrawer::GameDrawer(const Game* game) {
 	m_gameoverHandle = LoadGraph("picture/system/gameover.png");
 
 	m_noticeSaveDataHandle = LoadGraph("picture/system/noticeSaveDone.png");
-	m_noticeEx = 0.7;
+	m_noticeEx = 0.3;
 	GetGraphSize(m_noticeSaveDataHandle, &m_noticeX, &m_noticeY);
 	m_noticeX = (int)(m_noticeX * (m_exX / 2 * m_noticeEx));
 	m_noticeY = (int)(m_noticeY * (m_exY / 2 * m_noticeEx));

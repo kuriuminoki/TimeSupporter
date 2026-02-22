@@ -46,6 +46,9 @@ public:
 	// BGMを再生
 	void playBGM();
 
+	// BGMを消す
+	void deleteBGM();
+
 	// BGMをストップ
 	void stopBGM();
 
