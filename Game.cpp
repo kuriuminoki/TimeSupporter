@@ -251,7 +251,7 @@ bool Game::play() {
 		if (m_selectStagePage->play(m_handX, m_handY)) {
 			int targetStoryNum = m_selectStagePage->getFocusStage();
 			if (TEST_MODE) {
-				targetStoryNum = 0;
+				//targetStoryNum = 0;
 			}
 			m_story = new Story(targetStoryNum, m_gameData, m_soundPlayer);
 		}

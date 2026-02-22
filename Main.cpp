@@ -5,6 +5,9 @@
 #include "Title.h"
 #include "DxLib.h"
 
+// TODO: 消す
+#include "Sound.h"
+#include "Animation.h"
 
 ///////fpsの調整///////////////
 static int mStartTime;
@@ -70,13 +73,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// ゲーム中ならtrue タイトル画面ならfalse
 	bool gamePlay = false;
 
+	// TODO: 消す
+	SoundPlayer* soundPlayer = new SoundPlayer();
+	ChapterOneED* chapterOneED = new ChapterOneED(soundPlayer);
+	const bool MOVIE_TEST = false;
+
 	while (SetDrawScreen(screen) == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0)
 	{
 		updateKey();
 		mouseClick();
 
 		/////メイン////
-		if (gamePlay) {
+		if (MOVIE_TEST) {
+			// TODO: 消す
+			chapterOneED->play();
+			chapterOneED->draw();
+		}
+		else if (gamePlay) {
 			if (game->play()) {
 				//InitGraphが実行されたのでDrawerも作り直し
 				delete gameDrawer;

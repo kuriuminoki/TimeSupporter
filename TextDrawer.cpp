@@ -47,6 +47,9 @@ void ConversationDrawer::draw() {
 	// アニメのみを表示してテキストは表示しないならtrue
 	bool animeOnly = false;
 
+	int textBright = m_conversation->getTextBright();
+	SetDrawBright(textBright, textBright, textBright);
+
 	// 座標等の準備
 	string text = m_conversation->getText();
 	string name = m_conversation->getSpeakerName();
@@ -141,22 +144,25 @@ void ConversationDrawer::draw() {
 			drawText(x + textDx, Y1 + TEXT_GRAPH_EDGE + height + dy, height + CHAR_EDGE, text, BLACK, m_textHandle);
 		}
 	}
+	SetDrawBright(255, 255, 255);
 
 	// Zキー長押しでスキップの表示
 	drawSkip(m_conversation->getSkipCnt(), m_exX, m_exY, m_textHandle);
 	
 	// 画面右下のクリック要求アイコン
-	bool textFinish = m_conversation->finishText() && m_conversation->getFinishCnt() == 0 && m_conversation->nextTextAble();
-	bool eventFinish = !(m_conversation->animePlayNow()) || (m_conversation->getEventAnime()->getAnime()->getFinishFlag());
-	if (textFinish && eventFinish) {
-		int dy = (int)(((m_conversation->getCnt() / 3) % 20 - 10) * m_exY);
-		m_conversation->getTextFinishGraph()->draw(GAME_WIDE - EDGE_X - (int)(100 * m_exX), GAME_HEIGHT - EDGE_DOWN - (int)(50 * m_exY) + dy - TEXT_GRAPH_EDGE, m_conversation->getTextFinishGraph()->getEx());
-		const Button* yesButton = m_conversation->getYesButton();
-		const Button* noButton = m_conversation->getNoButton();
-		int mouseX, mouseY;
-		GetMousePoint(&mouseX, &mouseY);
-		if (yesButton != nullptr) { yesButton->draw(mouseX, mouseY); }
-		if (noButton != nullptr) { noButton->draw(mouseX, mouseY); }
+	if (textBright == 255 || textBright == 0) {
+		bool textFinish = m_conversation->finishText() && m_conversation->getFinishCnt() == 0 && m_conversation->nextTextAble();
+		bool eventFinish = !(m_conversation->animePlayNow()) || (m_conversation->getEventAnime()->getAnime()->getFinishFlag());
+		if (textFinish && eventFinish) {
+			int dy = (int)(((m_conversation->getCnt() / 3) % 20 - 10) * m_exY);
+			m_conversation->getTextFinishGraph()->draw(GAME_WIDE - EDGE_X - (int)(100 * m_exX), GAME_HEIGHT - EDGE_DOWN - (int)(50 * m_exY) + dy - TEXT_GRAPH_EDGE, m_conversation->getTextFinishGraph()->getEx());
+			const Button* yesButton = m_conversation->getYesButton();
+			const Button* noButton = m_conversation->getNoButton();
+			int mouseX, mouseY;
+			GetMousePoint(&mouseX, &mouseY);
+			if (yesButton != nullptr) { yesButton->draw(mouseX, mouseY); }
+			if (noButton != nullptr) { noButton->draw(mouseX, mouseY); }
+		}
 	}
 
 	// クリックエフェクト
@@ -175,7 +181,10 @@ void ConversationDrawer::draw() {
 
 void ConversationDrawer::drawCharacter(GraphHandle* graph, CHARACTER_POSITION position, int bright) {
 	if (graph == nullptr) { return; }
-	SetDrawBright(bright, bright, bright);
+	int originalBright = m_conversation->getTextBright();
+	if (originalBright == 255) {
+		SetDrawBright(bright, bright, bright);
+	}
 	int graphWide = 0, graphHeight = 0;
 	double ex = 0.5;
 	int dy = 200 * ex;
@@ -198,7 +207,7 @@ void ConversationDrawer::drawCharacter(GraphHandle* graph, CHARACTER_POSITION po
 	}
 
 	graph->draw(positionX * m_exX, GAME_HEIGHT - graphHeight / 2 * ex * m_exY + dy, m_exX * ex);
-	SetDrawBright(255, 255, 255);
+	SetDrawBright(originalBright, originalBright, originalBright);
 }
 
 
