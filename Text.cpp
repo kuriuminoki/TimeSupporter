@@ -131,9 +131,13 @@ void TextAction::play() {
 /*
 * 会話イベント
 */
-Conversation::Conversation(int textNum, World* world, SoundPlayer* soundPlayer) {
+Conversation::Conversation(int textNum, SoundPlayer* soundPlayer, int movieSpeed) {
 
-	m_textBrightToDark = true;
+	m_movieSpeed = movieSpeed;
+	m_movieCnt = 0;
+
+	m_textBrightToDark = false;
+	m_textBrightToClear = false;
 	m_textBright = 255;
 
 	m_initFlag = false;
@@ -150,7 +154,6 @@ Conversation::Conversation(int textNum, World* world, SoundPlayer* soundPlayer) 
 	m_yesButton = new Button("はい", (int)(400 * exX), (int)(800 * exY), (int)(200 * exX), (int)(100 * exY), LIGHT_BLUE, BLUE, m_font, BLACK);
 	m_noButton = new Button("いいえ", (int)(700 * exX), (int)(800 * exY), (int)(200 * exX), (int)(100 * exY), LIGHT_BLUE, BLUE, m_font, BLACK);
 	m_selectFlag = false;
-	m_world_p = world;
 	m_soundPlayer_p = soundPlayer;
 	m_backGround = -1;
 	m_speakerName = "サエル";
@@ -171,7 +174,8 @@ Conversation::Conversation(int textNum, World* world, SoundPlayer* soundPlayer) 
 	m_nextSound = LoadSoundMem("sound/text/next.wav");
 
 	// BGM
-	m_originalBgmPath = "";
+	m_originalBgmPath = m_soundPlayer_p->getBgmName();
+	m_resetWorldBGMFlag = false;
 
 	// 対象のファイルを開く
 	ostringstream oss;
@@ -183,6 +187,8 @@ Conversation::Conversation(int textNum, World* world, SoundPlayer* soundPlayer) 
 
 	// セリフを最後まで表示したときの画像
 	m_textFinishGraph = new GraphHandle("picture/system/textFinish.png", 0.5 * exX, 0, true);
+
+	m_continueMovie = false;
 
 }
 
@@ -198,7 +204,9 @@ Conversation::~Conversation() {
 	if (m_eventAnime != nullptr) { delete m_eventAnime; }
 	// BGMを戻す
 	m_soundPlayer_p->setBGM(m_originalBgmPath);
-	m_soundPlayer_p->playBGM();
+	if (m_resetWorldBGMFlag) {
+		m_soundPlayer_p->playBGM();
+	}
 	if (m_backGround != -1) {
 		DeleteGraph(m_backGround);
 	}
@@ -287,7 +295,7 @@ bool Conversation::play() {
 	}
 
 	// Zキー長押しで終了
-	if (controlZ() > 0) { 
+	if (controlZ() > 0 && m_movieSpeed == -1) { 
 		if (m_skipCnt++ == FPS_N) {
 			m_finishFlag = true;
 			return true;
@@ -324,17 +332,17 @@ bool Conversation::play() {
 		return false;
 	}
 
-	// イベント開始前のBGM名をバックアップ
 	if (m_text == "") {
-		m_originalBgmPath = m_soundPlayer_p->getBgmName();
 		loadNextBlock();
 	}
 
 	bool forceNext = false;
-	if (m_textBright != 255 && m_textBright != 0) {
-		if (m_textBrightToDark) { m_textBright--; }
-		else { m_textBright++; }
+	if (m_textBrightToDark || m_textBrightToClear) {
+		if (m_textBrightToDark) { m_textBright = max(0, m_textBright - 2); }
+		else { m_textBright = min(255, m_textBright + 2); }
 		if (m_textBright == 255 || m_textBright == 0) {
+			m_textBrightToDark = false;
+			m_textBrightToClear = false;
 			forceNext = true;
 		}
 		else {
@@ -342,8 +350,17 @@ bool Conversation::play() {
 		}
 	}
 
+	// ムービーとしての会話イベントなら時間経過で次のセリフ
+	if (finishText()) {
+		m_movieCnt++;
+		if (m_movieCnt == m_movieSpeed) {
+			m_movieCnt = 0;
+			forceNext = true;
+		}
+	}
+
 	// プレイヤーからのアクション（スペースキー入力）
-	if (forceNext || (leftClick() == 1 && m_cnt > MOVE_FINAL_ABLE)) {
+	if (forceNext || (m_movieSpeed == -1 && leftClick() == 1 && m_cnt > MOVE_FINAL_ABLE)) {
 		if (m_selectFlag) {
 			int mouseX, mouseY;
 			GetMousePoint(&mouseX, &mouseY);
@@ -361,6 +378,10 @@ bool Conversation::play() {
 			m_textAction.init();
 			// 全ての会話が終わった
 			if (FileRead_eof(m_fp) != 0) {
+				if (m_continueMovie) {
+					m_finishFlag = true;
+					return true;
+				}
 				m_finishCnt++;
 				return false;
 			}
@@ -404,6 +425,7 @@ bool Conversation::play() {
 }
 
 void Conversation::loadNextBlock() {
+	if (m_textBrightToClear || m_textBrightToDark) { return; }
 	// バッファ
 	const int size = 512;
 	char buff[size];
@@ -480,7 +502,13 @@ void Conversation::loadNextBlock() {
 		m_textBright--;
 	}
 	else if (str == "@toClear") {
-		m_textBrightToDark = false;
+		m_cnt = 0;
+		m_textNow = 0;
+		m_text = "";
+		m_speakerName = "";
+		m_narrationFlag = true;
+		m_startCnt = FINISH_COUNT;
+		m_textBrightToClear = true;
 		m_textBright = 1;
 	}
 	else if (str == "@backGround") {
@@ -519,6 +547,14 @@ void Conversation::loadNextBlock() {
 		m_soundPlayer_p->playBGM();
 		loadNextBlock();
 	}
+	else if (str == "@resetWorldBGM") {
+		m_resetWorldBGMFlag = true;
+		loadNextBlock();
+	}
+	else if (str == "@continueMovie") {
+		m_continueMovie = true;
+		loadNextBlock();
+	}
 	else if (str == "@setWorldBGM") {
 		// WorldのBGMを変更
 		FileRead_gets(buff, size, m_fp);
@@ -529,28 +565,6 @@ void Conversation::loadNextBlock() {
 	else if (str == "@select") {
 		// Yes, Noの選択をさせNoなら終了
 		m_selectFlag = true;
-		loadNextBlock();
-	}
-	else if (str == "@cure") {
-		// ＨＰを回復
-		FileRead_gets(buff, size, m_fp);
-		string s = buff;
-		int cure = stoi(s);
-		m_world_p->cureHpOfHearts(cure);
-		loadNextBlock();
-	}
-	else if (str == "@money") {
-		// 所持金の変動
-		FileRead_gets(buff, size, m_fp);
-		string s = buff;
-		int money = stoi(s);
-		if (m_world_p->getMoney() + money < 0) {
-			m_marks.push_back("noMoney");
-		}
-		else {
-			m_marks.push_back("haveMoney");
-			m_world_p->setMoney(m_world_p->getMoney() + money);
-		}
 		loadNextBlock();
 	}
 	else if (str == "@if") {
@@ -632,9 +646,12 @@ void Conversation::loadNextBlock() {
 		m_speakerPosition = CHARACTER_POSITION::LEFT;
 		m_listenerGraph_p = nullptr;
 		m_listenerPosition = CHARACTER_POSITION::RIGHT;
+		loadNextBlock();
 	}
 	else { // 発言
-		m_textBright = 255;
+		if (!m_textBrightToClear) {
+			m_textBright = 255;
+		}
 		if (str == "@null") {
 			// ナレーション
 			m_speakerName = "";
@@ -687,10 +704,16 @@ void Conversation::loadNextBlock() {
 			}
 			// 発言者
 			m_speakerName = buff;
+			if (m_speakerName[0] == '*'){
+				m_speakerName = m_speakerName.substr(1, m_speakerName.size());
+				m_narrationFlag = true;
+			}
+			else {
+				m_narrationFlag = false;
+			}
 			// 画像
 			FileRead_gets(buff, size, m_fp);
 			setSpeakerGraph(m_speakerGraph_p, m_speakerName, buff);
-			m_narrationFlag = false;
 		}
 		setNextText(size, buff);
 	}
@@ -726,12 +749,4 @@ void Conversation::setSpeakerGraph(GraphHandles*& graph_p, string characterName,
 		graph_p = nullptr;
 	}
 	graph_p = m_faceHandles[characterName]->getGraphHandle(faceName);
-}
-
-
-// セッタ
-void Conversation::setWorld(World* world) {
-	m_world_p = world;
-	m_speakerName = "サエル";
-	setSpeakerGraph(m_speakerGraph_p, m_speakerName, "通常");
 }

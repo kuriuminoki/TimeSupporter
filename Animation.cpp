@@ -2,13 +2,16 @@
 #include "AnimationDrawer.h"
 #include "Character.h"
 #include "Control.h"
+#include "Text.h"
+#include "TextDrawer.h"
 #include "GraphHandle.h"
 #include "Sound.h"
 #include "DrawTool.h"
 #include "Define.h"
 #include "DxLib.h"
 
-#include<string>
+#include <sstream>
+#include <string>
 
 using namespace std;
 
@@ -136,16 +139,19 @@ void Movie::play() {
 		}
 	}
 	else { m_skipCnt = 0; }
-}
 
-void Movie::draw() {
 	if (m_animation != nullptr) {
 		m_animationDrawer->setAnimation(m_animation);
+	}
+}
+
+void Movie::draw() const {
+	if (m_animation != nullptr) {
 		m_animationDrawer->drawAnimation();
 	}
 }
 
-void Movie::drawframe() {
+void Movie::drawframe() const {
 	if (m_frameWide > 0) {
 		DrawBox(0, 0, m_frameWide + 1, GAME_HEIGHT, BLACK, TRUE);
 		DrawBox(GAME_WIDE - m_frameWide - 1, 0, GAME_WIDE, GAME_HEIGHT, BLACK, TRUE);
@@ -156,8 +162,8 @@ void Movie::drawframe() {
 	}
 
 	// デバッグ用
-	//DrawFormatString(0, GAME_HEIGHT - 100, BLACK, "COUNT = %d", m_cnt);
-	//DrawFormatString(0, GAME_HEIGHT - 50, WHITE, "COUNT = %d", m_cnt);
+	DrawFormatString(0, GAME_HEIGHT - 100, BLACK, "COUNT = %d", m_cnt);
+	DrawFormatString(0, GAME_HEIGHT - 50, WHITE, "COUNT = %d", m_cnt);
 }
 
 
@@ -272,7 +278,7 @@ void ChapterOneED::play() {
 	}
 }
 
-void ChapterOneED::draw() {
+void ChapterOneED::draw() const {
 	// DrawBox(0, 0, GAME_WIDE, GAME_HEIGHT, WHITE, TRUE);
 
 	SetDrawBright(m_bright, m_bright, m_bright);
@@ -324,6 +330,207 @@ void ChapterOneED::draw() {
 }
 
 
+/*
+* 各章のED(共通部分)
+*/
+ChapterEDCommon::ChapterEDCommon(SoundPlayer* soundPlayer_p, int chapterNum):
+	Movie(soundPlayer_p)
+{
+	ostringstream oss;
+	oss << "チャプター" << chapterNum << "：";
+	m_chapterNumStr = oss.str();
+
+	// 最初の画像設定
+	m_nextHandles = nullptr;
+	m_animation = nullptr;
+
+	m_conversation = nullptr;
+	m_conversationDrawer = nullptr;
+
+	// BGM
+	m_bgmPath = "sound/music/各章ED.mp3";
+
+	m_bright = 255;
+
+}
+ChapterEDCommon::~ChapterEDCommon() {
+	if (m_nextHandles != nullptr) {
+		delete m_nextHandles;
+	}
+	if (m_conversation != nullptr) {
+		delete m_conversation;
+	}
+	if (m_conversationDrawer != nullptr) {
+		delete m_conversationDrawer;
+	}
+}
+
+// 再生
+void ChapterEDCommon::play() {
+	Movie::play();
+
+	// 会話イベント再生
+	if (m_conversation != nullptr && m_cnt < HARUJION_TIME) {
+		m_conversation->play();
+		m_soundPlayer_p->play();
+	}
+
+	if (m_cnt >= HARUJION_TIME - 255 && m_cnt < HARUJION_TIME) {
+		// 暗くなっていき、次回予告ムービーへ入る準備
+		m_bright--;
+	}
+	else if (m_cnt >= HARUJION_TIME) {
+		// 暗くなっていき、次回予告ムービーが始まる
+		m_bright = min(255, m_bright + 2);
+	}
+
+	// 次回予告ムービー
+	if (m_cnt >= HARUJION_TIME && m_cnt < CHAPTER_TIME) {
+		nextMoviePlay();
+	}
+
+	// 終了
+	if (m_cnt == END_TIME) {
+		m_finishFlag = true;
+	}
+}
+
+// 描画
+void ChapterEDCommon::draw() const {
+
+	if (m_conversation != nullptr && m_cnt < HARUJION_TIME) {
+		m_conversationDrawer->draw(true);
+	}
+	else if(m_cnt < CHAPTER_TIME) {
+		Movie::draw();
+	}
+
+	const int INTERVAL = 50;
+	const int DURATION = 350;
+	const int xs[5] = {200, 50, 300, 600, 500};
+	const int ys[5] = {500, 700, 100, 400, 950};
+	if (m_cnt > CHAPTER_TIME) {
+		for (int i = 0; i < 5; i++) {
+			// 4200~ 4250~ 4300~ 4350~ 4400~ ~4750
+			if (m_cnt > CHAPTER_TIME + 100 + (INTERVAL * i) && m_cnt < CHAPTER_TIME + 100 + (INTERVAL * i) + DURATION) {
+				if (GetRand(100) < 80) {
+					DrawFormatStringToHandle(xs[i] * m_exX, ys[i] * m_exY, GREEN, m_textHandle, m_words[i].c_str());
+				}
+			}
+		}
+	}
+	if (m_cnt > 4760) {
+		if (m_cnt % 4 < 2 || m_cnt > 5000) {
+			DrawFormatStringToHandle(100 * m_exX, 450 * m_exY, GREEN, m_textHandle, m_chapterNumStr.c_str());
+		}
+	}
+	if (m_cnt > 5000) {
+		DrawFormatStringToHandle(100 * m_exX, 520 * m_exY, GREEN, m_textHandle, m_chapterTitle.c_str());
+	}
+
+	drawframe();
+
+	// Zキー長押しでスキップの表示
+	drawSkip(m_skipCnt, m_exX, m_exY, m_textHandle);
+}
+
+
+/*
+* 2章ED
+*/
+Chapter2ED::Chapter2ED(SoundPlayer* soundPlayer_p):
+	ChapterEDCommon(soundPlayer_p, 2)
+{
+	m_words[0] = "平気よ。ロボットは人より弱いわ。";
+	m_words[1] = "やったー！楽しみにしてるね！！";
+	m_words[2] = "そろそろ状況を変えないとな・・・";
+	m_words[3] = "オレは任務を遂行するだけだ。";
+	m_words[4] = "できるだけ、感情を捨てたらいいんだよ。";
+	m_chapterTitle = "黒い過去";
+
+	string path = "picture/movie/chapter2ed/";
+
+	// 最初の画像設定
+	m_nextHandles = new GraphHandles((path + "サエル次回").c_str(), 2, m_ex * 3, 0, true);
+	m_centerX = GAME_WIDE / 2;
+	m_centerY = GAME_HEIGHT / 2;
+	m_animation = new Animation(m_centerX, m_centerY, 10, m_nextHandles);
+
+	// 会話
+	m_conversation = new Conversation(116, soundPlayer_p, 400);
+	m_conversationDrawer = new ConversationDrawer(m_conversation);
+
+	m_kuroeHandle = LoadGraph("picture/event/クロエイト登場.png");
+	m_kuroeFaceHandle = LoadGraph("picture/event/クロエイトの顔.png");
+	m_kuroeEx = 0.5 * m_exX;
+
+	m_bright = 0;
+}
+
+Chapter2ED::~Chapter2ED() {
+	DeleteGraph(m_kuroeHandle);
+	DeleteGraph(m_kuroeFaceHandle);
+}
+
+// 再生
+void Chapter2ED::play() {
+	if (m_bright < 255 && m_cnt < 300) {
+		m_bright++;
+	}
+	ChapterEDCommon::play();
+
+	if (m_cnt >= 3000 && m_cnt < 3255) {
+		m_bright--;
+	}
+	else if (m_cnt >= 3255 && m_cnt < 3510) {
+		m_bright++;
+	}
+	if (m_cnt == 3255) {
+		m_kuroeEx = 0.5 * m_exX;
+	}
+
+	if (m_cnt < HARUJION_TIME) {
+		m_kuroeEx += 0.0001;
+	}
+	if (m_cnt >= 3255 && m_cnt <= HARUJION_TIME) {
+		m_kuroeEx += 0.0001;
+	}
+}
+
+// 次回予告ムービー
+void Chapter2ED::nextMoviePlay() {
+	if (m_cnt == HARUJION_TIME) {
+		m_animation->setVy(10);
+		m_animation->setLoopFlag(true);
+		m_animation->setMovable(true);
+	}
+	if (m_cnt == 4053) {
+		m_animation->setVy(0);
+		m_animation->setLoopFlag(false);
+	}
+}
+
+// 描画
+void Chapter2ED::draw() const {
+	SetDrawBright(m_bright, m_bright, m_bright);
+	if (m_cnt < HARUJION_TIME) {
+		DrawRotaGraph(GAME_WIDE / 2, GAME_HEIGHT / 2, m_kuroeEx, 0.0, m_kuroeHandle, TRUE);
+	}
+	ChapterEDCommon::draw();
+	SetDrawBright(m_bright, m_bright, m_bright);
+	if (m_cnt >= 3255 && m_cnt <= HARUJION_TIME) {
+		DrawRotaGraph(GAME_WIDE / 2, GAME_HEIGHT / 2, m_kuroeEx, 0.0, m_kuroeFaceHandle, TRUE);
+	}
+	SetDrawBright(255, 255, 255);
+}
+
+
+
+
+/*
+* 使う予定なし
+*/
+
 OpMovieMp4::OpMovieMp4(SoundPlayer* soundPlayer_p) :
 	Movie(soundPlayer_p)
 {
@@ -348,7 +555,7 @@ void OpMovieMp4::play() {
 }
 
 // 描画
-void OpMovieMp4::draw() {
+void OpMovieMp4::draw() const {
 
 	DrawRotaGraph(GAME_WIDE / 2, GAME_HEIGHT / 2, m_ex, 0, m_mp4, TRUE);
 

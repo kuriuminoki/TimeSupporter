@@ -121,6 +121,9 @@ void SelectStagePage::draw(int handX, int handY) const {
 	if (m_focusChapter != -1) {
 		int dispStageSum = selectableStageSum();
 		for (int i = 0; i < dispStageSum; i++) {
+			ostringstream oss;
+			oss << "ステージ" << i + 1 + m_focusChapter * STAGE_PER_CHAPTER;
+			m_stageButton[i]->setString(oss.str().c_str());
 			m_stageButton[i]->draw(handX, handY);
 		}
 	}

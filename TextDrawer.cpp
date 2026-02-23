@@ -38,7 +38,7 @@ ConversationDrawer::~ConversationDrawer() {
 	DeleteGraph(m_frameHandle);
 }
 
-void ConversationDrawer::draw() {
+void ConversationDrawer::draw(bool movieFlag) {
 
 	if (!m_conversation->getInitFlag()) {
 		return;
@@ -70,7 +70,7 @@ void ConversationDrawer::draw() {
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
 		if(alpha == 255){ DrawBox(0, 0, GAME_WIDE, GAME_HEIGHT, BLACK, TRUE); }
 		m_animationDrawer->setAnimation(anime);
-		m_animationDrawer->drawAnimation();
+		m_animationDrawer->adjustSizeAndDraw();
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0 );
 		SetDrawBright(255, 255, 255);
 		if (m_conversation->animePlayNow() && m_conversation->getFinishCnt() == 0) { animeOnly = true; }
@@ -148,6 +148,11 @@ void ConversationDrawer::draw() {
 
 	// Zキー長押しでスキップの表示
 	drawSkip(m_conversation->getSkipCnt(), m_exX, m_exY, m_textHandle);
+
+	// 動画としての会話イベントならクリック周りの描画は不要
+	if (movieFlag) {
+		return;
+	}
 	
 	// 画面右下のクリック要求アイコン
 	if (textBright == 255 || textBright == 0) {

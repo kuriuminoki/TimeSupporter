@@ -124,6 +124,7 @@ class Conversation {
 private:
 
 	bool m_textBrightToDark;
+	bool m_textBrightToClear;
 	int m_textBright;
 
 	bool m_initFlag;
@@ -161,9 +162,6 @@ private:
 	Button* m_yesButton;
 	Button* m_noButton;
 	bool m_selectFlag; // 今選択待ち
-
-	// 世界
-	World* m_world_p;
 
 	// 世界のサウンドプレイヤー
 	SoundPlayer* m_soundPlayer_p;
@@ -210,6 +208,14 @@ private:
 
 	// BGMを変更しても戻せるよう
 	std::string m_originalBgmPath;
+	bool m_resetWorldBGMFlag;
+
+	// 会話終了時のフキダシ閉じをしない
+	bool m_continueMovie;
+
+	// ムービーとしてのテキストイベントで次のセリフへ行くまでの時間（通常のクリックで進める場合は-1）
+	int m_movieSpeed;
+	int m_movieCnt;
 
 	// クリックエフェクト等のアニメーション このクラスがデリートする
 	GraphHandles* m_clickGraph;
@@ -233,7 +239,7 @@ private:
 	FaceDrawMode m_faceDrawMode;
 
 public:
-	Conversation(int textNum, World* world, SoundPlayer* soundPlayer);
+	Conversation(int textNum, SoundPlayer* soundPlayer, int movieSpeed = -1);
 	~Conversation();
 
 	// ゲッタ
@@ -267,9 +273,6 @@ public:
 	inline const Button* getNoButton() const { return m_selectFlag ? m_noButton : nullptr; }
 	inline CHARACTER_POSITION getSpeakerPosition() const { return m_speakerPosition; }
 	inline CHARACTER_POSITION getListenerPosition() const { return m_listenerPosition; }
-
-	// セッタ
-	void setWorld(World* world);
 
 	// 今アニメ再生中か
 	bool animePlayNow() const { return m_eventAnime == nullptr ? false : !m_eventAnime->getFinishAnimeEvent(); }

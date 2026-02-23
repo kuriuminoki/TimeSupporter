@@ -44,7 +44,7 @@ public:
 
 	void setConversation(const Conversation* conversation) { m_conversation = conversation; }
 
-	void draw();
+	void draw(bool movieFlag = false);
 
 	void drawCharacter(GraphHandle* graph, CHARACTER_POSITION position, int bright);
 

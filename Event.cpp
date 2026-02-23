@@ -612,7 +612,7 @@ TalkEvent::TalkEvent(World* world, SoundPlayer* soundPlayer, std::vector<std::st
 	EventElement(world)
 {
 	int textNum = stoi(param[1]);
-	m_conversation = new Conversation(textNum, world, soundPlayer);
+	m_conversation = new Conversation(textNum, soundPlayer);
 }
 
 TalkEvent::~TalkEvent() {
@@ -633,7 +633,6 @@ EVENT_RESULT TalkEvent::play() {
 
 void TalkEvent::setWorld(World* world) { 
 	EventElement::setWorld(world);
-	m_conversation->setWorld(world);
 }
 
 
@@ -643,6 +642,9 @@ MovieEvent::MovieEvent(World* world, SoundPlayer* soundPlayer, std::vector<std::
 {
 	if (param[1] == "chapterOneED") {
 		m_movie = new ChapterOneED(soundPlayer);
+	}
+	else if (param[1] == "chapter2ED") {
+		m_movie = new Chapter2ED(soundPlayer);
 	}
 }
 

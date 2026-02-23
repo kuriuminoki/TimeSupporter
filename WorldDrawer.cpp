@@ -98,7 +98,7 @@ void WorldDrawer::draw(bool drawSkillBar) {
 	const Camera* camera = m_world->getCamera();
 
 	// ムービー
-	Movie* movie = m_world->getMovie();
+	const Movie* movie = m_world->getMovie();
 
 	// テキストイベント
 	const Conversation* conversation = m_world->getConversation();

@@ -75,7 +75,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// TODO: Á‚·
 	SoundPlayer* soundPlayer = new SoundPlayer();
-	ChapterOneED* chapterOneED = new ChapterOneED(soundPlayer);
+	Chapter2ED* movie = new Chapter2ED(soundPlayer);
 	const bool MOVIE_TEST = false;
 
 	while (SetDrawScreen(screen) == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0)
@@ -86,8 +86,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/////ƒƒCƒ“////
 		if (MOVIE_TEST) {
 			// TODO: Á‚·
-			chapterOneED->play();
-			chapterOneED->draw();
+			movie->play();
+			movie->draw();
 		}
 		else if (gamePlay) {
 			if (game->play()) {

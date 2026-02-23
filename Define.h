@@ -49,5 +49,6 @@ const int LIGHT_BLUE = GetColor(100, 100, 255);
 const int ORANGE = GetColor(255, 165, 0);
 const int DARK_ORANGE = GetColor(80, 50, 0);
 const int YELLOW = GetColor(255, 255, 0);
+const int GREEN = GetColor(0, 255, 0);
 
 #endif
