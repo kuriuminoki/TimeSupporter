@@ -641,8 +641,8 @@ void TalkEvent::setWorld(World* world) {
 MovieEvent::MovieEvent(World* world, SoundPlayer* soundPlayer, std::vector<std::string> param) :
 	EventElement(world)
 {
-	if (param[1] == "op") {
-		m_movie = new OpMovieMp4(soundPlayer);
+	if (param[1] == "chapterOneED") {
+		m_movie = new ChapterOneED(soundPlayer);
 	}
 }
 

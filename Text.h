@@ -123,6 +123,9 @@ public:
 class Conversation {
 private:
 
+	bool m_textBrightToDark;
+	int m_textBright;
+
 	bool m_initFlag;
 
 	// 終了時、少しだけ待機時間
@@ -234,6 +237,7 @@ public:
 	~Conversation();
 
 	// ゲッタ
+	inline int getTextBright() const { return m_textBright; }
 	inline bool getInitFlag() const { return m_initFlag; }
 	std::string getText() const;
 	inline std::string getFullText() const { return m_text; }

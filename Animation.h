@@ -90,6 +90,8 @@ public:
 class Movie {
 protected:
 
+	std::string OWNER_NAME;
+
 	// 解像度の変更に対応
 	double m_ex;
 	// テキストやフォントのサイズの倍率
@@ -146,139 +148,37 @@ protected:
 };
 
 
-// オープニング用
-class PartOneCharacter {
-private:
-
-	// 画像
-	GraphHandle* m_character;
-
-	// 座標
-	int m_initX, m_initY;
-	int m_x, m_y;
-
-	// 速度
-	int m_vx, m_vy;
-
-	double m_ex;
-
-public:
-	PartOneCharacter(GraphHandle* character, int initX, int initY, int vx, double ex);
-
-	void play();
-	void draw();
-};
-
-
 // オープニング
-class OpMovie:
+class ChapterOneED:
 	public Movie
 {
 private:
 
+	int m_bright;
+	bool m_toDark;
+
+	int m_nowHaikei;
+
+	bool m_elinaFlag;
+
+	bool m_saeruFlag;
+
 	// 画像
-	// タイトル
-	GraphHandles* m_titleH;
-	GraphHandles* m_title;
-	GraphHandles* m_titleChara;
-	GraphHandles* m_titleBlue;
-	GraphHandles* m_titleOrange;
-	GraphHandles* m_titleHeart;
-	GraphHandles* m_heartHide;
-	GraphHandles* m_heartHide2;
-
-	// part1
-	GraphHandles* m_darkHeart;
-	GraphHandles* m_heartEye;
-	std::vector<PartOneCharacter*> m_partOneCharacters;
-	GraphHandle* m_archive1;
-	GraphHandle* m_aigis1;
-	GraphHandle* m_assault1;
-	GraphHandle* m_vermelia1;
-	GraphHandle* m_exlucina1;
-	GraphHandle* m_msadi1;
-	GraphHandle* m_elnino1;
-	GraphHandle* m_onyx1;
-	GraphHandle* m_courir1;
-	GraphHandle* m_cornein1;
-	GraphHandle* m_koharu1;
-	GraphHandle* m_siesta1;
-	GraphHandle* m_hierarchy1;
-	GraphHandle* m_troy1;
-	GraphHandle* m_ancient1;
-	GraphHandle* m_valkiria1;
-	GraphHandle* m_chocola1;
-	GraphHandle* m_titius1;
-	GraphHandle* m_fred1;
-	GraphHandle* m_french1;
-	GraphHandle* m_mascara1;
-	GraphHandle* m_yuri1;
-	GraphHandle* m_rabbi1;
-
-	// part2
-	GraphHandles* m_heartAndMem;
-	GraphHandles* m_heartCry1;
-	GraphHandles* m_heartCry2;
-	GraphHandles* m_memSad1;
-	GraphHandles* m_memSad2;
-	GraphHandles* m_eyeFocus;
-
-	// キャラ
-	GraphHandles* m_archive;
-	GraphHandles* m_aigis;
-	GraphHandles* m_assault;
-	GraphHandles* m_vermelia;
-	GraphHandles* m_exlucina;
-	GraphHandles* m_msadi;
-	GraphHandles* m_elnino;
-	GraphHandles* m_onyx;
-	GraphHandles* m_courir;
-	GraphHandles* m_cornein;
-	GraphHandles* m_koharu;
-	GraphHandles* m_siesta;
-	GraphHandles* m_chocola;
-	GraphHandles* m_titius;
-	GraphHandles* m_heart;
-	GraphHandles* m_fred;
-	GraphHandles* m_french;
-	GraphHandles* m_mascara;
-	GraphHandles* m_memoryA;
-	GraphHandles* m_memoryB;
-	GraphHandles* m_yuri;
-	GraphHandles* m_rabbi;
-
-	// サビ
-	GraphHandles* m_orange;
-	GraphHandles* m_duplications;
-	Animation* m_orangeAnime;
-	Animation* m_duplicationsAnime;
-	GraphHandles* m_heartframe;
-	GraphHandles* m_rmem;
-	GraphHandles* m_heartSabi;
-	GraphHandles* m_tvSiesta;
-	GraphHandles* m_tvHierarchy;
-	GraphHandles* m_tvValkiria;
-	GraphHandles* m_tvTroy;
-	GraphHandles* m_tvHeart;
-	GraphHandles* m_tvShine;
-	GraphHandles* m_tvRshine;
-	GraphHandles* m_titleFinal;
-
-	// キャラを順に表示する用 (graph, cntSum)
-	std::queue<std::pair<GraphHandles*, int> > characterQueue;
+	GraphHandles* m_walkSaeru;
+	int m_haikei[4];
+	std::string m_credit[7];
+	int m_elina;
+	int m_deadSaeru;
 
 public:
-	OpMovie(SoundPlayer* soundPlayer_p);
-	~OpMovie();
+	ChapterOneED(SoundPlayer* soundPlayer_p);
+	~ChapterOneED();
 
 	// 再生
 	void play();
 
 	// 描画
 	void draw();
-
-private:
-	void pushPartOneCharacter(int index, bool front, GraphHandle* character);
 };
 
 // オープニング (mp4)

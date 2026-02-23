@@ -150,7 +150,7 @@ Title::Title(int* screen) {
 
 	m_soundPlayer = new SoundPlayer();
 
-	m_titleGraph = LoadGraph("picture/movie/op/title/titleBlue.png");
+	m_titleGraph = LoadGraph("picture/title.png");
 
 	// セーブデータがあるなら音量セット
 	if (m_selectSaveData->saveDataExist()) { 
@@ -169,8 +169,8 @@ Title::Title(int* screen) {
 	double exX, exY;
 	getGameEx(exX, exY);
 	m_font = CreateFontToHandle(nullptr, (int)(50 * exX), 3);
-	m_selectButton = new Button("Game Start", (int)(500 * exX), (int)(800 * exY), (int)(920 * exX), (int)(80 * exY), GRAY2, BLUE, m_font, BLACK);
-	m_optionButton = new Button("Setting", (int)(500 * exX), (int)(900 * exY), (int)(920 * exX), (int)(80 * exY), GRAY2, BLUE, m_font, BLACK);
+	m_selectButton = new Button("Game Start", (int)(100 * exX), (int)(800 * exY), (int)(920 * exX), (int)(80 * exY), GRAY2, BLUE, m_font, BLACK);
+	m_optionButton = new Button("Setting", (int)(100 * exX), (int)(900 * exY), (int)(920 * exX), (int)(80 * exY), GRAY2, BLUE, m_font, BLACK);
 	m_cancelButton = new Button("Backward", (int)(50 * exX), (int)(50 * exY), (int)(300 * exX), (int)(100 * exY), GRAY2, WHITE, m_font, BLACK);
 
 	// オプション画面

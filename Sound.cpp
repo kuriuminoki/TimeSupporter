@@ -63,6 +63,12 @@ void SoundPlayer::playBGM() {
 	}
 }
 
+void SoundPlayer::deleteBGM() {
+	StopSoundMem(m_bgmHandle);
+	DeleteSoundMem(m_bgmHandle);
+	m_bgmHandle = -1;
+}
+
 // BGMをストップ
 void SoundPlayer::stopBGM() {
 	StopSoundMem(m_bgmHandle);

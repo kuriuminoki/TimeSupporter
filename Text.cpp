@@ -133,6 +133,9 @@ void TextAction::play() {
 */
 Conversation::Conversation(int textNum, World* world, SoundPlayer* soundPlayer) {
 
+	m_textBrightToDark = true;
+	m_textBright = 255;
+
 	m_initFlag = false;
 
 	double exX = 0, exY = 0;
@@ -327,8 +330,20 @@ bool Conversation::play() {
 		loadNextBlock();
 	}
 
+	bool forceNext = false;
+	if (m_textBright != 255 && m_textBright != 0) {
+		if (m_textBrightToDark) { m_textBright--; }
+		else { m_textBright++; }
+		if (m_textBright == 255 || m_textBright == 0) {
+			forceNext = true;
+		}
+		else {
+			return false;
+		}
+	}
+
 	// プレイヤーからのアクション（スペースキー入力）
-	if (leftClick() == 1 && m_cnt > MOVE_FINAL_ABLE) {
+	if (forceNext || (leftClick() == 1 && m_cnt > MOVE_FINAL_ABLE)) {
 		if (m_selectFlag) {
 			int mouseX, mouseY;
 			GetMousePoint(&mouseX, &mouseY);
@@ -354,7 +369,9 @@ bool Conversation::play() {
 			// 次のテキストへ移る
 			loadNextBlock();
 			// 効果音
-			m_soundPlayer_p->pushSoundQueue(m_nextSound);
+			if (!forceNext) {
+				m_soundPlayer_p->pushSoundQueue(m_nextSound);
+			}
 		}
 		else {
 			// 最後までテキストを飛ばす
@@ -458,6 +475,14 @@ void Conversation::loadNextBlock() {
 		m_eventAnime = nullptr;
 		loadNextBlock();
 	}
+	else if (str == "@toDark") {
+		m_textBrightToDark = true;
+		m_textBright--;
+	}
+	else if (str == "@toClear") {
+		m_textBrightToDark = false;
+		m_textBright = 1;
+	}
 	else if (str == "@backGround") {
 		if (m_backGround != -1) {
 			DeleteGraph(m_backGround);
@@ -483,9 +508,9 @@ void Conversation::loadNextBlock() {
 		m_soundPlayer_p->playBGM();
 		loadNextBlock();
 	}
-	else if (str == "@stopBGM") {
+	else if (str == "@deleteBGM") {
 		// BGMを止める
-		m_soundPlayer_p->stopBGM();
+		m_soundPlayer_p->deleteBGM();
 		loadNextBlock();
 	}
 	else if (str == "@resetBGM") {
@@ -609,6 +634,7 @@ void Conversation::loadNextBlock() {
 		m_listenerPosition = CHARACTER_POSITION::RIGHT;
 	}
 	else { // 発言
+		m_textBright = 255;
 		if (str == "@null") {
 			// ナレーション
 			m_speakerName = "";
