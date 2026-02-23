@@ -66,6 +66,7 @@ void SoundPlayer::playBGM() {
 void SoundPlayer::deleteBGM() {
 	StopSoundMem(m_bgmHandle);
 	DeleteSoundMem(m_bgmHandle);
+	m_bgmName = "";
 	m_bgmHandle = -1;
 }
 

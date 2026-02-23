@@ -985,7 +985,7 @@ void World::atariCharacterAndDoor(CharacterController* controller, vector<Object
 			if (objects[i]->getAreaNum() == -1) {
 				// ƒhƒA‚¶‚á‚È‚¢
 				if (objects[i]->getTextNum() != -1) {
-					m_objectConversation = new Conversation(objects[i]->getTextNum(), this, m_soundPlayer_p);
+					m_objectConversation = new Conversation(objects[i]->getTextNum(), m_soundPlayer_p);
 				}
 			}
 			else {

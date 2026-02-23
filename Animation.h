@@ -10,6 +10,8 @@ class GraphHandles;
 class SoundPlayer;
 class AnimationDrawer;
 class Character;
+class Conversation;
+class ConversationDrawer;
 
 class Animation {
 private:
@@ -141,14 +143,14 @@ public:
 	virtual void play();
 
 	// 描画
-	virtual void draw();
+	virtual void draw() const;
 
 protected:
-	void drawframe();
+	void drawframe() const;
 };
 
 
-// オープニング
+// 1章のED
 class ChapterOneED:
 	public Movie
 {
@@ -178,8 +180,69 @@ public:
 	void play();
 
 	// 描画
-	void draw();
+	void draw() const;
 };
+
+
+// 各章のED (共通部分)
+class ChapterEDCommon :
+	public Movie
+{
+protected:
+
+	Conversation* m_conversation;
+	ConversationDrawer* m_conversationDrawer;
+
+	// 画像
+	GraphHandles* m_nextHandles;
+
+	// 文字列
+	std::string m_words[5];
+	std::string m_chapterTitle;
+	std::string m_chapterNumStr;
+
+	int m_bright;
+
+	const int HARUJION_TIME = 3770;
+	const int CHAPTER_TIME = 4100;
+	const int END_TIME = 5400;
+
+public:
+	ChapterEDCommon(SoundPlayer* soundPlayer_p, int chapterNum);
+	~ChapterEDCommon();
+
+	// 再生
+	void play();
+
+	// 描画
+	void draw() const;
+
+	virtual void nextMoviePlay() = 0;
+};
+
+
+// 2章のED
+class Chapter2ED :
+	public ChapterEDCommon
+{
+private:
+	int m_kuroeHandle;
+	int m_kuroeFaceHandle;
+	double m_kuroeEx;
+
+public:
+	Chapter2ED(SoundPlayer* soundPlayer_p);
+	~Chapter2ED();
+
+	// 再生
+	void play();
+
+	void nextMoviePlay();
+
+	// 描画
+	void draw() const;
+};
+
 
 // オープニング (mp4)
 class OpMovieMp4 :
@@ -197,7 +260,7 @@ public:
 	void play();
 
 	// 描画
-	void draw();
+	void draw() const;
 };
 
 #endif
