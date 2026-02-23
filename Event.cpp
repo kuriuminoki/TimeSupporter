@@ -646,6 +646,18 @@ MovieEvent::MovieEvent(World* world, SoundPlayer* soundPlayer, std::vector<std::
 	else if (param[1] == "chapter2ED") {
 		m_movie = new Chapter2ED(soundPlayer);
 	}
+	else if (param[1] == "chapter3ED") {
+		m_movie = new Chapter3ED(soundPlayer);
+	}
+	else if (param[1] == "chapter4ED") {
+		m_movie = new Chapter4ED(soundPlayer);
+	}
+	else if (param[1] == "chapter5ED") {
+		m_movie = new Chapter5ED(soundPlayer);
+	}
+	else if (param[1] == "chapter6ED") {
+		m_movie = new Chapter6ED(soundPlayer);
+	}
 }
 
 MovieEvent::~MovieEvent() {

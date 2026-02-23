@@ -244,23 +244,84 @@ public:
 };
 
 
-// ƒI[ƒvƒjƒ“ƒO (mp4)
-class OpMovieMp4 :
-	public Movie
+// 3Í‚ÌED
+class Chapter3ED :
+	public ChapterEDCommon
 {
 private:
 
-	int m_mp4;
-
 public:
-	OpMovieMp4(SoundPlayer* soundPlayer_p);
-	~OpMovieMp4();
+	Chapter3ED(SoundPlayer* soundPlayer_p);
+	~Chapter3ED();
 
 	// Ä¶
 	void play();
 
+	void nextMoviePlay();
+
 	// •`‰æ
 	void draw() const;
 };
+
+
+// 4Í‚ÌED
+class Chapter4ED :
+	public ChapterEDCommon
+{
+private:
+
+public:
+	Chapter4ED(SoundPlayer* soundPlayer_p);
+	~Chapter4ED();
+
+	// Ä¶
+	void play();
+
+	void nextMoviePlay();
+
+	// •`‰æ
+	void draw() const;
+};
+
+
+// 5Í‚ÌED
+class Chapter5ED :
+	public ChapterEDCommon
+{
+private:
+
+public:
+	Chapter5ED(SoundPlayer* soundPlayer_p);
+	~Chapter5ED();
+
+	// Ä¶
+	void play();
+
+	void nextMoviePlay();
+
+	// •`‰æ
+	void draw() const;
+};
+
+
+// 6Í‚ÌED
+class Chapter6ED :
+	public ChapterEDCommon
+{
+private:
+
+public:
+	Chapter6ED(SoundPlayer* soundPlayer_p);
+	~Chapter6ED();
+
+	// Ä¶
+	void play();
+
+	void nextMoviePlay();
+
+	// •`‰æ
+	void draw() const;
+};
+
 
 #endif
