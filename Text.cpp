@@ -180,6 +180,7 @@ Conversation::Conversation(int textNum, SoundPlayer* soundPlayer, int movieSpeed
 	// 対象のファイルを開く
 	ostringstream oss;
 	oss << "data/text/text" << textNum << ".txt";
+	loadAllFace(oss.str().c_str());
 	m_fp = FileRead_open(oss.str().c_str());
 
 	// クリックエフェクト
@@ -626,21 +627,6 @@ void Conversation::loadNextBlock() {
 		}
 		loadNextBlock();
 	}
-	else if (str == "@preLoadFace") {
-		FileRead_gets(buff, size, m_fp);
-		string speakerName = buff;
-		while (speakerName != "") {
-			FileRead_gets(buff, size, m_fp);
-			if (m_faceHandles.find(speakerName) != m_faceHandles.end()) {
-				m_faceHandles[speakerName]->addFace(buff);
-			}
-			else {
-				m_faceHandles[speakerName] = new FaceGraphHandle(speakerName.c_str(), buff, 1.0);
-			}
-			FileRead_gets(buff, size, m_fp);
-			speakerName = buff;
-		}
-	}
 	else if (str == "@resetGraph") {
 		m_speakerGraph_p = nullptr;
 		m_speakerPosition = CHARACTER_POSITION::LEFT;
@@ -686,6 +672,12 @@ void Conversation::loadNextBlock() {
 				FileRead_gets(buff, size, m_fp);
 				m_listenerPosition = CHARACTER_POSITION::RIGHT;
 				setSpeakerGraph(m_listenerGraph_p, listenerName, buff);
+				FileRead_gets(buff, size, m_fp);
+				str = buff;
+			}
+			else if (str == "@replace") {
+				m_listenerPosition = m_speakerPosition;
+				m_listenerGraph_p = m_speakerGraph_p;
 				FileRead_gets(buff, size, m_fp);
 				str = buff;
 			}
@@ -749,4 +741,38 @@ void Conversation::setSpeakerGraph(GraphHandles*& graph_p, string characterName,
 		graph_p = nullptr;
 	}
 	graph_p = m_faceHandles[characterName]->getGraphHandle(faceName);
+}
+
+
+void Conversation::loadAllFace(string path) {
+	int fp = FileRead_open(path.c_str());
+
+	// バッファ
+	const int size = 512;
+	char buff[size];
+	// ブロックの1行目
+	string speakerName = "";
+	int speakerNameSum = 9;
+	const char* names[9] = { "エリーナ", "クロエイト", "サエル", "タイプ", "テイク", "ノア", "少女", "人型ロボット", "ＴｙｐｅＣ"};
+	while (FileRead_eof(fp) == 0) {
+		FileRead_gets(buff, size, fp);
+		speakerName = buff;
+		if (speakerName[0] == '*') {
+			speakerName = speakerName.substr(1, speakerName.size());
+		}
+		for (int i = 0; i < speakerNameSum; i++) {
+			if (names[i] == speakerName) {
+				FileRead_gets(buff, size, fp);
+				if (m_faceHandles.find(speakerName) != m_faceHandles.end()) {
+					m_faceHandles[speakerName]->addFace(buff);
+				}
+				else {
+					m_faceHandles[speakerName] = new FaceGraphHandle(speakerName.c_str(), buff, 1.0);
+				}
+				break;
+			}
+		}
+	}
+
+	FileRead_close(fp);
 }

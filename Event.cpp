@@ -591,9 +591,15 @@ DeadGroupEvent::DeadGroupEvent(World* world, std::vector<std::string> param) :
 	EventElement(world)
 {
 	m_groupId = stoi(param[1]);
+	m_cnt = 0;
 }
 EVENT_RESULT DeadGroupEvent::play() {
 	m_world_p->battle();
+	if (m_cnt > 0) {
+		m_cnt++;
+		if (m_cnt == FINISH_CNT) { return EVENT_RESULT::SUCCESS; }
+		return EVENT_RESULT::NOW;
+	}
 	if (m_world_p->getBrightValue() < 255) {
 		return EVENT_RESULT::NOW;
 	}
@@ -603,7 +609,8 @@ EVENT_RESULT DeadGroupEvent::play() {
 			return EVENT_RESULT::NOW;
 		}
 	}
-	return EVENT_RESULT::SUCCESS;
+	m_cnt++;
+	return EVENT_RESULT::NOW;
 }
 
 
@@ -645,6 +652,18 @@ MovieEvent::MovieEvent(World* world, SoundPlayer* soundPlayer, std::vector<std::
 	}
 	else if (param[1] == "chapter2ED") {
 		m_movie = new Chapter2ED(soundPlayer);
+	}
+	else if (param[1] == "chapter3ED") {
+		m_movie = new Chapter3ED(soundPlayer);
+	}
+	else if (param[1] == "chapter4ED") {
+		m_movie = new Chapter4ED(soundPlayer);
+	}
+	else if (param[1] == "chapter5ED") {
+		m_movie = new Chapter5ED(soundPlayer);
+	}
+	else if (param[1] == "chapter6ED") {
+		m_movie = new Chapter6ED(soundPlayer);
 	}
 }
 

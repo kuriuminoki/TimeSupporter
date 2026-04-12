@@ -162,8 +162,8 @@ void Movie::drawframe() const {
 	}
 
 	// デバッグ用
-	DrawFormatString(0, GAME_HEIGHT - 100, BLACK, "COUNT = %d", m_cnt);
-	DrawFormatString(0, GAME_HEIGHT - 50, WHITE, "COUNT = %d", m_cnt);
+	//DrawFormatString(0, GAME_HEIGHT - 100, BLACK, "COUNT = %d", m_cnt);
+	//DrawFormatString(0, GAME_HEIGHT - 50, WHITE, "COUNT = %d", m_cnt);
 }
 
 
@@ -337,7 +337,12 @@ ChapterEDCommon::ChapterEDCommon(SoundPlayer* soundPlayer_p, int chapterNum):
 	Movie(soundPlayer_p)
 {
 	ostringstream oss;
-	oss << "チャプター" << chapterNum << "：";
+	if (chapterNum == 6) {
+		oss << "NEXT: FINAL CHAPTER";
+	}
+	else {
+		oss << "NEXT: CHAPTER " << chapterNum + 1;
+	}
 	m_chapterNumStr = oss.str();
 
 	// 最初の画像設定
@@ -408,7 +413,7 @@ void ChapterEDCommon::draw() const {
 	const int INTERVAL = 50;
 	const int DURATION = 350;
 	const int xs[5] = {200, 50, 300, 600, 500};
-	const int ys[5] = {500, 700, 100, 400, 950};
+	const int ys[5] = {500, 700, 100, 350, 950};
 	if (m_cnt > CHAPTER_TIME) {
 		for (int i = 0; i < 5; i++) {
 			// 4200~ 4250~ 4300~ 4350~ 4400~ ~4750
@@ -525,45 +530,266 @@ void Chapter2ED::draw() const {
 }
 
 
-
-
 /*
-* 使う予定なし
+* 3章ED
 */
-
-OpMovieMp4::OpMovieMp4(SoundPlayer* soundPlayer_p) :
-	Movie(soundPlayer_p)
+Chapter3ED::Chapter3ED(SoundPlayer* soundPlayer_p) :
+	ChapterEDCommon(soundPlayer_p, 3)
 {
-	m_mp4 = LoadGraph("picture/movie/DuplicationHeartOp.mp4");
-	double rate = 10 * m_soundPlayer_p->getVolume() / 100.0;
-	rate = log10(rate);
-	int volume = (int)(rate * 3000);
-	SetMovieVolumeToGraph(7000 + volume, m_mp4);
-	PlayMovieToGraph(m_mp4);
+	m_words[0] = "金持ちの嬢ちゃんだろ？大っ嫌いだな。";
+	m_words[1] = "全部、集めることができるか？";
+	m_words[2] = "んあ、あの手が凄かった男ね。";
+	m_words[3] = "まあ、いいんじゃないかな。";
+	m_words[4] = "お前を助けに来たんだよ。";
+	m_chapterTitle = "テイク・ワン";
+
+	string path = "picture/movie/chapter3ed/";
+
+	// 最初の画像設定
+	m_nextHandles = new GraphHandles((path + "クロエイト次回").c_str(), 2, m_ex * 2.5, 0, true);
+	m_centerX = GAME_WIDE / 2 - 800 * m_exX;
+	m_centerY = GAME_HEIGHT / 2 + 1400 * m_exX;
+	m_animation = new Animation(m_centerX, m_centerY, 10, m_nextHandles);
+
+	// 会話
+	m_conversation = new Conversation(124, soundPlayer_p, 300);
+	m_conversation->setStartCnt(0);
+	m_conversationDrawer = new ConversationDrawer(m_conversation);
 }
-OpMovieMp4::~OpMovieMp4() {
-	DeleteGraph(m_mp4);
+
+Chapter3ED::~Chapter3ED() {
 }
 
 // 再生
-void OpMovieMp4::play() {
-	Movie::play();
-	// 終了
-	if (GetMovieStateToGraph(m_mp4) != 1) {
-		m_finishFlag = true;
+void Chapter3ED::play() {
+
+	ChapterEDCommon::play();
+
+}
+
+// 次回予告ムービー
+void Chapter3ED::nextMoviePlay() {
+	if (m_cnt == HARUJION_TIME) {
+		m_animation->setVx(5 * m_exX);
+		m_animation->setVy(-5 * m_exX);
+		m_animation->setLoopFlag(true);
+		m_animation->setMovable(true);
+	}
+	if (m_cnt >= HARUJION_TIME && m_cnt < 4053) {
+		m_animation->setCnt(0);
+	}
+	if (m_cnt == 4053) {
+		m_animation->setVx(0);
+		m_animation->setVy(0);
+		m_animation->setLoopFlag(false);
 	}
 }
 
 // 描画
-void OpMovieMp4::draw() const {
+void Chapter3ED::draw() const {
+	SetDrawBright(m_bright, m_bright, m_bright);
+	ChapterEDCommon::draw();
+	SetDrawBright(255, 255, 255);
+}
 
-	DrawRotaGraph(GAME_WIDE / 2, GAME_HEIGHT / 2, m_ex, 0, m_mp4, TRUE);
 
-	drawframe();
+/*
+* 4章ED
+*/
+Chapter4ED::Chapter4ED(SoundPlayer* soundPlayer_p) :
+	ChapterEDCommon(soundPlayer_p, 4)
+{
+	m_words[0] = "・・・とてもそうは思えなかったよ？";
+	m_words[1] = "ああ・・・なるほどな。";
+	m_words[2] = "ハッ、なめんじゃねーよ。";
+	m_words[3] = "私のことはノアと呼んでください。";
+	m_words[4] = "機械なんて叩けば直るでしょ。";
+	m_chapterTitle = "明日、あなたと、ＮＯＴ　ＯＲ？";
 
-	// Zキー長押しでスキップの表示
-	drawSkip(m_skipCnt, m_exX, m_exY, m_textHandle);
+	string path = "picture/movie/chapter4ed/";
 
-	// 画面のちらつき防止
-	WaitTimer(15);
+	// 最初の画像設定
+	m_nextHandles = new GraphHandles((path + "テイク次回").c_str(), 2, m_ex * 2.5, 0, true);
+	m_centerX = -2000 * m_exX;
+	m_centerY = 100 * m_exX;
+	m_animation = new Animation(m_centerX, m_centerY, 10, m_nextHandles);
+
+	// 会話
+	m_conversation = new Conversation(132, soundPlayer_p, 320);
+	m_conversation->setStartCnt(0);
+	m_conversationDrawer = new ConversationDrawer(m_conversation);
+}
+
+Chapter4ED::~Chapter4ED() {
+}
+
+// 再生
+void Chapter4ED::play() {
+
+	ChapterEDCommon::play();
+
+}
+
+// 次回予告ムービー
+void Chapter4ED::nextMoviePlay() {
+	if (m_cnt == HARUJION_TIME) {
+		m_animation->setVx(5 * m_exX);
+		m_animation->setVy(3 * m_exX);
+		m_animation->setLoopFlag(false);
+		m_animation->setMovable(true);
+	}
+	if (m_cnt >= HARUJION_TIME && m_cnt < HARUJION_TIME + 190) {
+		m_animation->setCnt(0);
+	}
+	if (m_cnt == HARUJION_TIME + 200) {
+		m_animation->setVx(55 * m_exX);
+		m_animation->setVy(33 * m_exX);
+	}
+	if (m_cnt == 4050) {
+		m_animation->setVx(5 * m_exX);
+		m_animation->setVy(3 * m_exX);
+		m_animation->setLoopFlag(false);
+	}
+}
+
+// 描画
+void Chapter4ED::draw() const {
+	SetDrawBright(m_bright, m_bright, m_bright);
+	ChapterEDCommon::draw();
+	SetDrawBright(255, 255, 255);
+}
+
+
+/*
+* 5章ED
+*/
+Chapter5ED::Chapter5ED(SoundPlayer* soundPlayer_p) :
+	ChapterEDCommon(soundPlayer_p, 5)
+{
+	m_words[0] = "――それで、嬉しいの？";
+	m_words[1] = "ハッ、なんだよ調子狂うぜ。";
+	m_words[2] = "救われたことに、違いはない。";
+	m_words[3] = "私が治療をします。";
+	m_words[4] = "それがバカだって言ってるのよ！！";
+	m_chapterTitle = "世界の中心はエリーナ";
+
+	string path = "picture/movie/chapter5ed/";
+
+	// 最初の画像設定
+	m_nextHandles = new GraphHandles((path + "ノア次回").c_str(), 3, m_ex * 1.5, 0, true);
+	m_centerX = GAME_WIDE / 2;
+	m_centerY = GAME_HEIGHT / 2;
+	m_animation = new Animation(m_centerX, m_centerY, 30, m_nextHandles);
+
+	// 会話
+	m_conversation = new Conversation(140, soundPlayer_p, 187);
+	m_conversationDrawer = new ConversationDrawer(m_conversation);
+
+	m_bright = 0;
+}
+
+Chapter5ED::~Chapter5ED() {
+}
+
+// 再生
+void Chapter5ED::play() {
+
+	if (m_bright < 255 && m_cnt < 300) {
+		m_bright++;
+	}
+	ChapterEDCommon::play();
+
+}
+
+// 次回予告ムービー
+void Chapter5ED::nextMoviePlay() {
+	if (m_cnt == HARUJION_TIME) {
+		m_animation->setVy(4);
+		m_animation->setLoopFlag(false);
+		m_animation->setMovable(true);
+	}
+	if (m_cnt >= HARUJION_TIME && m_cnt < 4000) {
+		m_animation->setCnt(0);
+	}
+	if (m_cnt == 4000) {
+		m_animation->setVy(0);
+		m_animation->setLoopFlag(false);
+	}
+}
+
+// 描画
+void Chapter5ED::draw() const {
+	SetDrawBright(m_bright, m_bright, m_bright);
+	ChapterEDCommon::draw();
+	SetDrawBright(255, 255, 255);
+}
+
+
+/*
+* 6章ED
+*/
+Chapter6ED::Chapter6ED(SoundPlayer* soundPlayer_p) :
+	ChapterEDCommon(soundPlayer_p, 6)
+{
+	m_words[0] = "ああ、それは約束する。";
+	m_words[1] = "偉そうにすんな！！調子に乗ってんじゃねえよ！！";
+	m_words[2] = "それは傲慢だと、言ってて思わないか？";
+	m_words[3] = "私に敗北を渡すのは許さないから。";
+	m_words[4] = "サエル、君がしたいようにすればいいよ。";
+	m_chapterTitle = "タイム・サポーター";
+
+	string path = "picture/movie/chapter6ed/";
+
+	// 最初の画像設定
+	m_nextHandles = new GraphHandles((path + "エリーナ次回").c_str(), 2, m_ex * 1.8, 0, true);
+	m_centerX = GAME_WIDE;
+	m_centerY = GAME_HEIGHT / 2;
+	m_animation = new Animation(m_centerX, m_centerY, 5, m_nextHandles);
+
+	// 会話
+	m_conversation = new Conversation(148, soundPlayer_p, 310);
+	m_conversation->setStartCnt(0);
+	m_conversationDrawer = new ConversationDrawer(m_conversation);
+
+	m_bright = 0;
+}
+
+Chapter6ED::~Chapter6ED() {
+}
+
+// 再生
+void Chapter6ED::play() {
+
+	if (m_bright < 255 && m_cnt < 300) {
+		m_bright++;
+	}
+	ChapterEDCommon::play();
+
+}
+
+// 次回予告ムービー
+void Chapter6ED::nextMoviePlay() {
+	if (m_cnt == HARUJION_TIME) {
+		m_animation->setVy(10);
+		m_animation->setLoopFlag(false);
+		m_animation->setMovable(true);
+	}
+	if (m_cnt >= HARUJION_TIME && m_cnt < 3900) {
+		m_animation->setCnt(0);
+	}
+	if (m_cnt == 3900) {
+		m_animation->setVy(0);
+		m_animation->setVx(-16);
+		m_animation->setLoopFlag(false);
+	}
+	if (m_cnt == 4050) {
+		m_animation->setVx(0);
+	}
+}
+
+// 描画
+void Chapter6ED::draw() const {
+	SetDrawBright(m_bright, m_bright, m_bright);
+	ChapterEDCommon::draw();
+	SetDrawBright(255, 255, 255);
 }

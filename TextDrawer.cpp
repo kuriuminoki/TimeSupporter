@@ -101,6 +101,7 @@ void ConversationDrawer::draw(bool movieFlag) {
 			if ((Y1 + startCnt) <= (GAME_HEIGHT - EDGE_DOWN - startCnt)) { 
 				// フキダシ
 				DrawExtendGraph(EDGE_X, Y1 + startCnt, GAME_WIDE - EDGE_X, GAME_HEIGHT - EDGE_DOWN - startCnt, m_frameHandle, TRUE);
+				DrawBox(EDGE_X, Y1 + startCnt, GAME_WIDE - EDGE_X, Y1 + startCnt + TEXT_GRAPH_EDGE + NAME_SIZE, BLACK2, TRUE);
 			}
 		}
 		// 会話中
@@ -110,7 +111,12 @@ void ConversationDrawer::draw(bool movieFlag) {
 
 			// キャラの顔画像
 			drawCharacter(m_conversation->getSpeakerGraph(), m_conversation->getSpeakerPosition(), 255);
-			drawCharacter(m_conversation->getListenerGraph(), m_conversation->getListenerPosition(), 100);
+			if (m_conversation->getNarrationFlag()) {
+				drawCharacter(m_conversation->getListenerGraph(), m_conversation->getListenerPosition(), 255);
+			}
+			else {
+				drawCharacter(m_conversation->getListenerGraph(), m_conversation->getListenerPosition(), 100);
+			}
 
 			// 発言者の名前、セリフ顔画像
 			int now = 0;
@@ -120,8 +126,12 @@ void ConversationDrawer::draw(bool movieFlag) {
 			DrawExtendGraph(EDGE_X + dx, Y1 + dy, GAME_WIDE - EDGE_X + dx, GAME_HEIGHT - EDGE_DOWN + dy, m_frameHandle, TRUE);
 			int x = EDGE_X + TEXT_GRAPH_EDGE + dx;
 			// 名前
-			DrawBox(EDGE_X + dx + 1, Y1 + 1 + dy, GAME_WIDE - EDGE_X - 1 + dx, Y1 + TEXT_GRAPH_EDGE + NAME_SIZE + dy, BLACK, TRUE);
-			DrawStringToHandle(x, Y1 + TEXT_GRAPH_EDGE - 10 * m_exY + dy, name.c_str(), WHITE, m_nameHandle);
+			int textDy = -40 * m_exY;
+			if (name != "") {
+				textDy = 0;
+				DrawBox(EDGE_X + dx + 1, Y1 + 1 + dy, GAME_WIDE - EDGE_X - 1 + dx, Y1 + TEXT_GRAPH_EDGE + NAME_SIZE + dy, BLACK2, TRUE);
+				DrawStringToHandle(x, Y1 + TEXT_GRAPH_EDGE - 10 * m_exY + dy, name.c_str(), WHITE, m_nameHandle);
+			}
 			if (!m_conversation->getNarrationFlag()) {
 				int triangleHeight = 50 * m_exY;
 				int triangleWide = 80 * m_exX;
@@ -136,12 +146,12 @@ void ConversationDrawer::draw(bool movieFlag) {
 					positionX += GAME_WIDE * 3 / 5;
 					break;
 				}
-				DrawTriangle(positionX + dx, Y1 + dy, positionX + triangleWide + dx, Y1 + dy, positionX + (GAME_WIDE / 30) + (triangleWide / 2) + dx, Y1 - triangleHeight + dy, BLACK, TRUE);
+				DrawTriangle(positionX + dx, Y1 + dy, positionX + triangleWide + dx, Y1 + dy, positionX + (GAME_WIDE / 30) + (triangleWide / 2) + dx, Y1 - triangleHeight + dy, BLACK2, TRUE);
 			}
 			// セリフ
 			int height = (int)(TEXT_SIZE * m_exX);
 			int textDx = 50 * m_exX;
-			drawText(x + textDx, Y1 + TEXT_GRAPH_EDGE + height + dy, height + CHAR_EDGE, text, BLACK, m_textHandle);
+			drawText(x + textDx, Y1 + TEXT_GRAPH_EDGE + height + dy + textDy, height + CHAR_EDGE, text, BLACK, m_textHandle);
 		}
 	}
 	SetDrawBright(255, 255, 255);

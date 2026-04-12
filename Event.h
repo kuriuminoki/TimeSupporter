@@ -537,6 +537,10 @@ private:
 	// 対象のグループ
 	int m_groupId;
 
+	// 全滅してからクリア判定までの待ち時間
+	const int FINISH_CNT = 120;
+	int m_cnt;
+
 public:
 	DeadGroupEvent(World* world, std::vector<std::string> param);
 

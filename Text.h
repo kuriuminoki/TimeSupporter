@@ -133,7 +133,7 @@ private:
 	const int FINISH_COUNT = 30;
 	// 0 -> FINISH_COUNTで発言終了
 	int m_finishCnt;
-	// FINISH_CINT -> 0で発言開始
+	// FINISH_COUNT -> 0で発言開始
 	int m_startCnt;
 
 	// Zキーの長押し時間
@@ -147,7 +147,7 @@ private:
 	unsigned int m_textSpeed;
 
 	// 次のテキストへ行けるようになるまでの時間
-	const unsigned int NEXT_TEXT_ABLE = 30;
+	const unsigned int NEXT_TEXT_ABLE = 45;
 
 	// テキストを飛ばせるようになるまでの時間
 	const unsigned int MOVE_FINAL_ABLE = 10;
@@ -188,7 +188,7 @@ private:
 
 	CHARACTER_POSITION m_listenerPosition;
 
-	// 顔画像 <画像名, 画像ハンドル> 事前ロードする
+	// 顔画像 <キャラ名, 画像ハンドル> 事前ロードする
 	std::map<std::string, FaceGraphHandle*> m_faceHandles;
 
 	// 発言
@@ -274,6 +274,9 @@ public:
 	inline CHARACTER_POSITION getSpeakerPosition() const { return m_speakerPosition; }
 	inline CHARACTER_POSITION getListenerPosition() const { return m_listenerPosition; }
 
+	// セッタ
+	inline void setStartCnt(int startCnt) { m_startCnt = startCnt; }
+
 	// 今アニメ再生中か
 	bool animePlayNow() const { return m_eventAnime == nullptr ? false : !m_eventAnime->getFinishAnimeEvent(); }
 
@@ -290,6 +293,7 @@ private:
 	void loadNextBlock();
 	void setNextText(const int size, char* buff);
 	void setSpeakerGraph(GraphHandles*& graph_p, std::string characterName, const char* faceName);
+	void loadAllFace(std::string path);
 };
 
 
