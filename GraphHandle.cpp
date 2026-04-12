@@ -600,5 +600,7 @@ GraphHandles* FaceGraphHandle::getGraphHandle(const char* faceName) {
 void FaceGraphHandle::addFace(const char* faceName) {
 	// ÉçÅ[Éh
 	const char* dir = "picture/face/";
-	loadCharacterGraph(dir, m_characterName.c_str(), m_faceHandles[faceName], faceName, m_ex);
+	if (getGraphHandle(faceName) == nullptr) {
+		loadCharacterGraph(dir, m_characterName.c_str(), m_faceHandles[faceName], faceName, m_ex);
+	}
 }

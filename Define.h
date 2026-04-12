@@ -39,6 +39,7 @@ void ChangeGameResolution(int* screen);
 
 //êF
 const int BLACK = GetColor(0, 0, 0);
+const int BLACK2 = GetColor(20, 20, 20);
 const int GRAY = GetColor(100, 100, 100);
 const int GRAY2 = GetColor(200, 200, 200);
 const int WHITE = GetColor(255, 255, 255);

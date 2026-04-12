@@ -75,7 +75,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// TODO: è¡Ç∑
 	SoundPlayer* soundPlayer = new SoundPlayer();
-	Chapter6ED* movie = new Chapter6ED(soundPlayer);
+	ChapterEDCommon* movie = new Chapter5ED(soundPlayer);
 	const bool MOVIE_TEST = false;
 
 	while (SetDrawScreen(screen) == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0)

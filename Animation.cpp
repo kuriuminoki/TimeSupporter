@@ -553,6 +553,7 @@ Chapter3ED::Chapter3ED(SoundPlayer* soundPlayer_p) :
 
 	// 会話
 	m_conversation = new Conversation(124, soundPlayer_p, 300);
+	m_conversation->setStartCnt(0);
 	m_conversationDrawer = new ConversationDrawer(m_conversation);
 }
 
@@ -615,6 +616,7 @@ Chapter4ED::Chapter4ED(SoundPlayer* soundPlayer_p) :
 
 	// 会話
 	m_conversation = new Conversation(132, soundPlayer_p, 320);
+	m_conversation->setStartCnt(0);
 	m_conversationDrawer = new ConversationDrawer(m_conversation);
 }
 
@@ -643,9 +645,9 @@ void Chapter4ED::nextMoviePlay() {
 		m_animation->setVx(55 * m_exX);
 		m_animation->setVy(33 * m_exX);
 	}
-	if (m_cnt == 4053) {
-		m_animation->setVx(0);
-		m_animation->setVy(0);
+	if (m_cnt == 4050) {
+		m_animation->setVx(5 * m_exX);
+		m_animation->setVy(3 * m_exX);
 		m_animation->setLoopFlag(false);
 	}
 }
@@ -680,7 +682,7 @@ Chapter5ED::Chapter5ED(SoundPlayer* soundPlayer_p) :
 	m_animation = new Animation(m_centerX, m_centerY, 30, m_nextHandles);
 
 	// 会話
-	m_conversation = new Conversation(140, soundPlayer_p, 170);
+	m_conversation = new Conversation(140, soundPlayer_p, 187);
 	m_conversationDrawer = new ConversationDrawer(m_conversation);
 
 	m_bright = 0;
@@ -745,7 +747,8 @@ Chapter6ED::Chapter6ED(SoundPlayer* soundPlayer_p) :
 	m_animation = new Animation(m_centerX, m_centerY, 5, m_nextHandles);
 
 	// 会話
-	m_conversation = new Conversation(148, soundPlayer_p, 335);
+	m_conversation = new Conversation(148, soundPlayer_p, 310);
+	m_conversation->setStartCnt(0);
 	m_conversationDrawer = new ConversationDrawer(m_conversation);
 
 	m_bright = 0;

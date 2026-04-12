@@ -366,7 +366,7 @@ class FaceGraphHandle {
 private:
 	double m_ex;
 
-	// 顔画像 <画像名, 画像ハンドル>
+	// 顔画像 <画像(表情)名, 画像ハンドル>
 	std::map<std::string, GraphHandles*> m_faceHandles;
 
 	std::string m_characterName;
