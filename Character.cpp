@@ -40,10 +40,10 @@ Character* createCharacter(const char* characterName, int hp, int x, int y, int 
 	else if (name == "コハル") {
 		character = new Koharu(name.c_str(), hp, x, y, groupId);
 	}
-	else if (name == "棒人間" || name == "クロ人間" || name == "ソッリーソ" || name == "カテゴリーZ") {
+	else if (name == "棒人間" || name == "人型ロボット" || name == "ソッリーソ" || name == "一輪車ロボット") {
 		character = new SlashOnly(name.c_str(), hp, x, y, groupId);
 	}
-	else if (name == "緑人間" || name == "フェーレース") {
+	else if (name == "緑人間" || name == "フェーレース" || name == "戦車ロボット" || name == "ホバーロボット") {
 		character = new BulletOnly(name.c_str(), hp, x, y, groupId);
 	}
 	else if (name == "大砲") {

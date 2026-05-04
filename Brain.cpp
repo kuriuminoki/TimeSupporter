@@ -26,6 +26,9 @@ const char* FollowFlightAI::BRAIN_NAME = "FollowFlightAI";
 const char* HierarchyAI::BRAIN_NAME = "HierarchyAI";
 const char* FrenchAI::BRAIN_NAME = "FrenchAI";
 const char* CategoryZAI::BRAIN_NAME = "CategoryZAI";
+const char* TankAI::BRAIN_NAME = "TankAI";
+const char* HoverAI::BRAIN_NAME = "HoverAI";
+const char* HumanRobAI::BRAIN_NAME = "HumanRobAI";
 const char* SunAI::BRAIN_NAME = "SunAI";
 
 // クラス名からBrainを作成する関数
@@ -66,6 +69,15 @@ Brain* createBrain(const string brainName, const Camera* camera_p) {
 	}
 	else if (brainName == CategoryZAI::BRAIN_NAME) {
 		brain = new CategoryZAI();
+	}
+	else if (brainName == TankAI::BRAIN_NAME) {
+		brain = new TankAI();
+	}
+	else if (brainName == HoverAI::BRAIN_NAME) {
+		brain = new HoverAI();
+	}
+	else if (brainName == HumanRobAI::BRAIN_NAME) {
+		brain = new HumanRobAI();
 	}
 	else if (brainName == SunAI::BRAIN_NAME) {
 		brain = new SunAI();
@@ -219,7 +231,7 @@ void NormalAI::moveOrder(int& right, int& left, int& up, int& down) {
 	int x = m_characterAction_p->getCharacter()->getCenterX();
 	int y = m_characterAction_p->getCharacter()->getCenterY();
 
-		// (壁につっかえるなどで)移動できてないから諦める
+	// (壁につっかえるなどで)移動できてないから諦める
 	if (m_moveCnt >= GIVE_UP_MOVE_CNT) {
 			m_gx = x;
 			m_gy = y;
@@ -941,6 +953,147 @@ CategoryZAI::CategoryZAI() :
 	FrenchAI()
 {
 
+}
+
+
+/*
+*  戦車ロボット用AI
+*/
+TankAI::TankAI() :
+	NormalAI()
+{
+
+}
+
+void TankAI::bulletTargetPoint(int& x, int& y) {
+	if (m_target_p == nullptr) {
+		x = 0;
+		y = 0;
+	}
+	else { // ターゲットに向かって射撃攻撃
+		x = m_target_p->getCenterX() + (GetRand(BULLET_ERROR) - BULLET_ERROR / 2);
+		y = m_characterAction_p->getCharacter()->getCenterY();
+	}
+}
+
+
+/*
+*  ホバーロボット用AI
+*/
+HoverAI::HoverAI() :
+	TankAI()
+{
+
+}
+
+void HoverAI::moveOrder(int& right, int& left, int& up, int& down) {
+
+	// 動かないキャラ
+	if (m_characterAction_p->getCharacter()->getCharacterInfo()->moveSpeed() == 0) {
+		return;
+	}
+
+	if (m_target_p == nullptr) {
+		NormalAI::moveOrder(right, left, up, down);
+		return;
+	}
+
+	// 現在地
+	int x = m_characterAction_p->getCharacter()->getCenterX();
+	int y = m_characterAction_p->getCharacter()->getCenterY();
+
+	// (壁につっかえるなどで)移動できてないから諦める
+	if (m_moveCnt >= GIVE_UP_MOVE_CNT) {
+		m_gx = x;
+		m_gy = y;
+	}
+
+	int targetX = m_target_p->getCenterX();
+
+	if (abs(x - targetX) < TARGET_CONST_DISTANCE) {
+		if (x < targetX) {
+			m_gx = targetX - TARGET_CONST_DISTANCE - 100;
+		}
+		else {
+			m_gx = targetX + TARGET_CONST_DISTANCE + 100;
+		}
+	}
+
+	stickOrder(right, left, up, down);
+}
+
+int HoverAI::bulletOrder() {
+	// 射撃攻撃を持っていない
+	if (!m_characterAction_p->getCharacter()->haveBulletAttack()) {
+		return 0;
+	}
+	// ターゲットがいない
+	if (m_target_p == nullptr || m_target_p->getHp() == 0) {
+		return 0;
+	}
+	// 遠距離の敵には射撃しない
+	int x = m_characterAction_p->getCharacter()->getCenterX();
+	if (abs(x - m_target_p->getCenterX()) > TARGET_DISTANCE) {
+		return 0;
+	}
+	return 1;
+}
+
+
+/*
+*  人型ロボット用AI
+*/
+HumanRobAI::HumanRobAI() :
+	NormalAI()
+{
+
+}
+
+void HumanRobAI::moveOrder(int& right, int& left, int& up, int& down) {
+
+	// 動かないキャラ
+	if (m_characterAction_p->getCharacter()->getCharacterInfo()->moveSpeed() == 0) {
+		return;
+	}
+
+	// 空中でしか移動しない
+	if (!m_characterAction_p->getGrand()) {
+		NormalAI::moveOrder(right, left, up, down);
+		return;
+	}
+	else {
+		// 現在地
+		int x = m_characterAction_p->getCharacter()->getCenterX();
+		int y = m_characterAction_p->getCharacter()->getY() + m_characterAction_p->getCharacter()->getHeight();
+		if (m_target_p != nullptr && abs(x - m_target_p->getCenterX()) < TARGET_DISTANCE) {
+			// targetについていく
+			setGoalToTarget();
+		}
+	}
+}
+
+int HumanRobAI::jumpOrder() {
+	// ダメージを食らったらリセット
+	if (m_characterAction_p->getState() == CHARACTER_STATE::DAMAGE) {
+		m_jumpCnt = 0;
+		// 受け身
+		if (GetRand(120) == 0) { return 1; }
+	}
+
+	// 現在地
+	int x = m_characterAction_p->getCharacter()->getCenterX();
+	int y = m_characterAction_p->getCharacter()->getY() + m_characterAction_p->getCharacter()->getHeight();
+
+	int maxJump = m_characterAction_p->getPreJumpMax();
+	int minJump = maxJump / 3;
+
+	// 目標に向かって移動
+	if (m_gx > x + GX_ERROR || m_gx < x - GX_ERROR) {
+		m_jumpCnt = GetRand(maxJump - minJump) + minJump;
+	}
+
+	if (m_jumpCnt > 0) { m_jumpCnt--; }
+	return m_jumpCnt == 0 ? 0 : maxJump - m_jumpCnt;
 }
 
 

@@ -103,6 +103,9 @@ Animation* BulletObject::createAnimation(int x, int y, int flameCnt) {
 	if (m_effectHandles_p == nullptr) {
 		return nullptr;
 	}
+	if (m_bomb) {
+		m_effectHandles_p->setEx(0.5);
+	}
 	return new Animation((m_x1 + m_x2) / 2, (m_y1 + m_y2) / 2, 3, m_effectHandles_p);
 }
 
@@ -914,10 +917,6 @@ BombObject::BombObject(int x, int y, int dx, int dy, int damage, Animation* bomb
 	m_animation = bombAnimation;
 	m_x = x;
 	m_y = y;
-	m_dx = dx;
-	m_dy = dy;
-	dx /= 2;
-	dy /= 2;
 	m_distance = (int)sqrt(dx * dx + dy * dy);
 	m_damage = damage;
 	// デフォルトでは無敵キャラ以外の全員に当たる
@@ -1011,7 +1010,7 @@ double BombObject::calcDamageRate(int x, int y) {
 	x -= m_x;
 	y -= m_y;
 	double distance = sqrt(x * x + y * y);
-	return min(1.0, (m_distance - distance) / m_distance);
+	return max(0.0, min(1.0, (m_distance - distance) / m_distance));
 }
 
 bool BombObject::ableDamage() {
