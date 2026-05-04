@@ -480,8 +480,6 @@ public:
 
 	// ’†S‚ÌÀ•W
 	int m_x, m_y;
-	
-	int m_dx, m_dy;
 
 	int m_distance;
 

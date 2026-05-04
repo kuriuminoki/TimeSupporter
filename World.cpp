@@ -941,9 +941,9 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 						m_bossDeadEffectCnt = 300; // ボスのやられエフェクトの継続時間
 					}
 					else {
-						m_animations.push_back(new Animation(x, y, 3, m_characterDeadGraph));
+						m_animations.push_back(new Animation(x, y, 3, m_bombGraph));
 						m_camera->shakingStart(20, 20);
-						m_soundPlayer_p->pushSoundQueue(m_characterDeadSound, panPal);
+						m_soundPlayer_p->pushSoundQueue(m_bombSound, panPal);
 						if ( character->getGroupId() != m_player_p->getGroupId() && !character->getBossFlag()) {
 							int r = GetRand(100);
 							// スキル発動中でなければ雑魚キャラは確率でアイテムが落ちる

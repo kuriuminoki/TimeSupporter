@@ -465,6 +465,72 @@ public:
 
 
 /*
+* 戦車ロボット用AI
+*/
+class TankAI :
+	public NormalAI
+{
+protected:
+
+public:
+	static const char* BRAIN_NAME;
+	const char* getBrainName() const { return this->BRAIN_NAME; }
+
+	TankAI();
+
+	void bulletTargetPoint(int& x, int& y);
+
+	int slashOrder() { return 0; }
+};
+
+
+/*
+* ホバーロボット用AI
+*/
+class HoverAI :
+	public TankAI
+{
+protected:
+	// この距離を常に保つように後ずさりする
+	const int TARGET_CONST_DISTANCE = 1000;
+
+public:
+	static const char* BRAIN_NAME;
+	const char* getBrainName() const { return this->BRAIN_NAME; }
+
+	HoverAI();
+
+	void moveOrder(int& right, int& left, int& up, int& down);
+
+	int bulletOrder();
+
+	int slashOrder() { return 0; }
+};
+
+
+/*
+* 人型ロボット用AI
+*/
+class HumanRobAI :
+	public NormalAI
+{
+protected:
+
+public:
+	static const char* BRAIN_NAME;
+	const char* getBrainName() const { return this->BRAIN_NAME; }
+
+	HumanRobAI();
+
+	void moveOrder(int& right, int& left, int& up, int& down);
+
+	int jumpOrder();
+
+	int bulletOrder() { return 0; }
+};
+
+
+/*
 * Boss1: サン
 */
 class SunAI :
