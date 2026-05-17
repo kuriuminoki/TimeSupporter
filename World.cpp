@@ -623,7 +623,7 @@ void World::updateCamera() {
 			max_dy = max(max_dy, dy * dy / 100);
 		}
 		// フォーカスしているキャラ以外なら距離を調べる
-		else if (m_characters[i]->getHp() > 0) {
+		else if (m_characters[i]->getHp() > 0 || (m_bossDeadEffectCnt > 0 && m_characters[i]->getBossFlag())) {
 			int x = m_characters[i]->getX();
 			if (m_camera->getX() < x) { x += m_characters[i]->getWide() * 2; }
 			else { x -= m_characters[i]->getWide(); }
@@ -712,6 +712,8 @@ void World::controlCharacter() {
 		if (controller->getAction()->getCharacter()->getHp() == 0) {
 			controller->setCharacterDeadFlag(true);
 		}
+
+		controller->updateHp();
 
 		// 斬撃が当たった時のヒットストップ中はスキップ
 		if(controller->getAction()->getCharacter()->getStopCnt() > 0 && controller->getAction()->getCharacter()->getStopCnt() != SLASH_STOP_CNT){

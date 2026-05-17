@@ -71,6 +71,8 @@ public:
 	void setCharacterY(int y);
 	void setCharacterFreeze(bool freeze);
 
+	void updateHp();
+
 	// 行動前の処理 毎フレーム行う
 	void init();
 

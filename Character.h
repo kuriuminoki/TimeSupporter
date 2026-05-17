@@ -687,47 +687,30 @@ public:
 
 
 /*
-* Boss1: サン
+* Boss1: TypeA
 */
-class Sun :
+class TypeA :
 	public Heart
 {
+private:
+	const int SLASH_START_CNT = 30; // 斬撃攻撃の開始時間
 public:
 	// コンストラクタ
-	Sun(const char* name, int hp, int x, int y, int groupId);
-	Sun(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
+	TypeA(const char* name, int hp, int x, int y, int groupId);
+	TypeA(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
 
 	// ボスの初期アニメーションをセット
-	void switchInit(int cnt);
+	void switchInit(int cnt) { return; }
 
 	// 射撃攻撃をする
 	std::vector<Object*>* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer);
 
-	// 斬撃攻撃をする
-	std::vector<Object*>* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) { return nullptr; }
-
-};
-
-
-/*
-* Boss2: アーカイブ
-*/
-class Archive :
-	public Valkyria
-{
-public:
-	// コンストラクタ
-	Archive(const char* name, int hp, int x, int y, int groupId);
-	Archive(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
-
-	void switchJump(int cnt);
+	// 立ち斬撃画像をセット
 	void switchSlash(int cnt);
-
-	// ジャンプ前画像をセット
-	void switchPreJump(int cnt = 0) { Heart::switchPreJump(); }
 
 	// 斬撃攻撃をする
 	std::vector<Object*>* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer);
+
 };
 
 

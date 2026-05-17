@@ -609,6 +609,9 @@ EVENT_RESULT DeadGroupEvent::play() {
 			return EVENT_RESULT::NOW;
 		}
 	}
+	if (m_world_p->getBossDeadEffextCnt() > 0) {
+		return EVENT_RESULT::NOW;
+	}
 	m_cnt++;
 	return EVENT_RESULT::NOW;
 }

@@ -118,6 +118,11 @@ void CharacterController::setCharacterFreeze(bool freeze) {
 	m_characterAction->setCharacterFreeze(freeze);
 }
 
+// HP表示の更新
+void CharacterController::updateHp() {
+	m_characterAction->updateHp();
+}
+
 // 行動前の処理
 void CharacterController::init() {
 	m_characterAction->init();

@@ -236,6 +236,12 @@ void CharacterAction::setDeadFlag(bool deadFlag) {
 	m_character_p->setDeadFlag(deadFlag);
 }
 
+// HP表示更新の処理
+void CharacterAction::updateHp() {
+	// prevHpをhpに追いつかせる
+	m_character_p->setPrevHp(m_character_p->getPrevHp() - 1);
+}
+
 // 行動前の処理 毎フレーム行う
 void CharacterAction::init() {
 
@@ -256,9 +262,6 @@ void CharacterAction::init() {
 	m_grand = false;
 	m_grandRightSlope = false;
 	m_grandLeftSlope = false;
-
-	// prevHpをhpに追いつかせる
-	m_character_p->setPrevHp(m_character_p->getPrevHp() - 1);
 
 	// キャラのバージョンが変化した場合
 	if (m_characterVersion != m_character_p->getVersion()) {
