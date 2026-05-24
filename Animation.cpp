@@ -462,7 +462,7 @@ Chapter2ED::Chapter2ED(SoundPlayer* soundPlayer_p):
 	m_animation = new Animation(m_centerX, m_centerY, 10, m_nextHandles);
 
 	// 会話
-	m_conversation = new Conversation(116, soundPlayer_p, 400);
+	m_conversation = new Conversation(116, soundPlayer_p, 450);
 	m_conversationDrawer = new ConversationDrawer(m_conversation);
 
 	m_kuroeHandle = LoadGraph("picture/event/クロエイト登場.png");
@@ -552,7 +552,7 @@ Chapter3ED::Chapter3ED(SoundPlayer* soundPlayer_p) :
 	m_animation = new Animation(m_centerX, m_centerY, 10, m_nextHandles);
 
 	// 会話
-	m_conversation = new Conversation(124, soundPlayer_p, 300);
+	m_conversation = new Conversation(124, soundPlayer_p, 340);
 	m_conversation->setStartCnt(0);
 	m_conversationDrawer = new ConversationDrawer(m_conversation);
 }
@@ -615,7 +615,7 @@ Chapter4ED::Chapter4ED(SoundPlayer* soundPlayer_p) :
 	m_animation = new Animation(m_centerX, m_centerY, 10, m_nextHandles);
 
 	// 会話
-	m_conversation = new Conversation(132, soundPlayer_p, 320);
+	m_conversation = new Conversation(132, soundPlayer_p, 370);
 	m_conversation->setStartCnt(0);
 	m_conversationDrawer = new ConversationDrawer(m_conversation);
 }
@@ -682,7 +682,7 @@ Chapter5ED::Chapter5ED(SoundPlayer* soundPlayer_p) :
 	m_animation = new Animation(m_centerX, m_centerY, 30, m_nextHandles);
 
 	// 会話
-	m_conversation = new Conversation(140, soundPlayer_p, 187);
+	m_conversation = new Conversation(140, soundPlayer_p, 220);
 	m_conversationDrawer = new ConversationDrawer(m_conversation);
 
 	m_bright = 0;
@@ -693,7 +693,6 @@ Chapter5ED::~Chapter5ED() {
 
 // 再生
 void Chapter5ED::play() {
-
 	if (m_bright < 255 && m_cnt < 300) {
 		m_bright++;
 	}
@@ -747,7 +746,7 @@ Chapter6ED::Chapter6ED(SoundPlayer* soundPlayer_p) :
 	m_animation = new Animation(m_centerX, m_centerY, 5, m_nextHandles);
 
 	// 会話
-	m_conversation = new Conversation(148, soundPlayer_p, 310);
+	m_conversation = new Conversation(148, soundPlayer_p, 350);
 	m_conversation->setStartCnt(0);
 	m_conversationDrawer = new ConversationDrawer(m_conversation);
 
@@ -759,7 +758,6 @@ Chapter6ED::~Chapter6ED() {
 
 // 再生
 void Chapter6ED::play() {
-
 	if (m_bright < 255 && m_cnt < 300) {
 		m_bright++;
 	}

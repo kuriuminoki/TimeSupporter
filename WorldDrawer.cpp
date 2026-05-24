@@ -104,7 +104,7 @@ void WorldDrawer::draw(bool drawSkillBar) {
 	const Conversation* conversation = m_world->getConversation();
 
 	// íê
-	if (!m_world->getBlindFlag() && conversation == nullptr) {
+	if (!m_world->getBlindFlag() && conversation == nullptr && movie == nullptr) {
 		drawBattleField(camera, bright, drawSkillBar);
 	}
 
@@ -139,6 +139,7 @@ void WorldDrawer::draw(bool drawSkillBar) {
 // íê‚Ì•`‰æ
 void WorldDrawer::drawBattleField(const Camera* camera, int bright, bool drawSkillBar) {
 	// ”wŒi
+	filterRetroDispFlag = m_world->getFilterRetroDispFlag(); // ƒRƒ“ƒsƒ…[ƒ^‚Ì’†‚Ì¢ŠE‚©‚Ç‚¤‚©
 	int groundGraph = m_world->getBackGroundGraph();
 	int wide = 0, height = 0;
 	double ex = 1.0;

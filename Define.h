@@ -8,6 +8,9 @@ static int WINDOW = TRUE;
 // マウスを表示するならFALSE
 static int MOUSE_DISP = TRUE;
 
+// レトロ風画面にするならtrue(場面によって切り替える)
+extern bool filterRetroDispFlag;
+
 // FPS
 #define FPS_N 60
 

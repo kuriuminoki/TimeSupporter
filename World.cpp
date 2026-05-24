@@ -191,6 +191,7 @@ World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) :
 	m_stageObjects = data.getObjects();
 	m_doorObjects = data.getDoorObjects();
 	data.getBackGround(m_backGroundGraph, m_backGroundColor);
+	m_filterRetroDispFlag = data.getFilterRetroDispFlag();
 
 	// プレイヤーをセット
 	for (unsigned int i = 0; i < m_characters.size(); i++) {

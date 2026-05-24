@@ -44,6 +44,9 @@ public:
 	~GameDrawer();
 
 	void draw(int screen);
+private:
+	// ƒŒƒgƒƒQ[ƒ€•—‚Ì‰æ–Ê‰ÁH‚ğs‚¤
+	void filterRetroDisp(int screen);
 };
 
 

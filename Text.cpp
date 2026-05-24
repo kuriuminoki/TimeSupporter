@@ -156,6 +156,7 @@ Conversation::Conversation(int textNum, SoundPlayer* soundPlayer, int movieSpeed
 	m_selectFlag = false;
 	m_soundPlayer_p = soundPlayer;
 	m_backGround = -1;
+	m_filterRetroDispFlag = false;
 	m_speakerName = "サエル";
 	m_speakerGraph_p = nullptr;
 	m_speakerPosition = CHARACTER_POSITION::LEFT;
@@ -168,6 +169,7 @@ Conversation::Conversation(int textNum, SoundPlayer* soundPlayer, int movieSpeed
 	m_textSpeed = TEXT_SPEED;
 	m_eventAnime = nullptr;
 	m_sound = -1;
+	m_soundFlag = false;
 
 	// 効果音
 	m_displaySound = LoadSoundMem("sound/text/display.wav");
@@ -328,12 +330,14 @@ bool Conversation::play() {
 		m_eventAnime->play();
 		if (m_eventAnime->getFinishAnimeEvent()) {
 			// 次のテキストへ移る
+			m_soundFlag = false;
 			loadNextBlock();
 		}
 		return false;
 	}
 
 	if (m_text == "") {
+		m_soundFlag = false;
 		loadNextBlock();
 	}
 
@@ -389,6 +393,7 @@ bool Conversation::play() {
 			// 顔画像の表示モードをデフォルトに戻す
 			m_faceDrawMode = FaceDrawMode::NORMAL;
 			// 次のテキストへ移る
+			m_soundFlag = false;
 			loadNextBlock();
 			// 効果音
 			if (!forceNext) {
@@ -411,7 +416,9 @@ bool Conversation::play() {
 			// 日本語表示は１文字がサイズ２分
 			m_textNow = min(m_textNow + 2, (unsigned int)m_text.size());
 			// 効果音
-			m_soundPlayer_p->pushSoundQueue(m_displaySound);
+			if (m_cnt % (m_textSpeed * 2) == 0 && !m_soundFlag) {
+				m_soundPlayer_p->pushSoundQueue(m_displaySound);
+			}
 		}
 	}
 
@@ -511,6 +518,17 @@ void Conversation::loadNextBlock() {
 		m_startCnt = FINISH_COUNT;
 		m_textBrightToClear = true;
 		m_textBright = 1;
+	}
+	else if (str == "@retro") {
+		FileRead_gets(buff, size, m_fp);
+		string flag = buff;
+		if (flag == "true") {
+			m_filterRetroDispFlag = true;
+		}
+		else {
+			m_filterRetroDispFlag = false;
+		}
+		loadNextBlock();
 	}
 	else if (str == "@backGround") {
 		if (m_backGround != -1) {
@@ -614,6 +632,7 @@ void Conversation::loadNextBlock() {
 		path += buff;
 		m_sound = LoadSoundMem(path.c_str());
 		m_soundPlayer_p->pushSoundQueue(m_sound);
+		m_soundFlag = true;
 		loadNextBlock();
 	}
 	else if (str == "@face") {

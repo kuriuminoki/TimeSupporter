@@ -173,6 +173,8 @@ private:
 	int m_backGroundGraph;
 	int m_backGroundColor;
 
+	bool m_filterRetroDispFlag;
+
 	// ボスがやられた時のエフェクト中
 	int m_bossDeadEffectCnt;
 
@@ -209,6 +211,7 @@ public:
 	std::vector<Item*> getItemVector() const { return m_itemVector; }
 	inline const int getBackGroundGraph() const { return m_backGroundGraph; }
 	inline const int getBackGroundColor() const { return m_backGroundColor; }
+	inline bool getFilterRetroDispFlag() const { return m_filterRetroDispFlag; }
 	inline const Conversation* getConversation() const { return m_conversation_p; }
 	inline const Conversation* getObjectConversation() const { return m_objectConversation; }
 	inline Movie* getMovie() const { return m_movie_p; }

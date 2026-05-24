@@ -29,7 +29,9 @@ const char* CategoryZAI::BRAIN_NAME = "CategoryZAI";
 const char* TankAI::BRAIN_NAME = "TankAI";
 const char* HoverAI::BRAIN_NAME = "HoverAI";
 const char* HumanRobAI::BRAIN_NAME = "HumanRobAI";
-const char* SunAI::BRAIN_NAME = "SunAI";
+const char* TypeAAI::BRAIN_NAME = "TypeAAI";
+const char* FlyAI::BRAIN_NAME = "FlyAI";
+const char* RocketAI::BRAIN_NAME = "RocketAI";
 
 // クラス名からBrainを作成する関数
 Brain* createBrain(const string brainName, const Camera* camera_p) {
@@ -79,8 +81,14 @@ Brain* createBrain(const string brainName, const Camera* camera_p) {
 	else if (brainName == HumanRobAI::BRAIN_NAME) {
 		brain = new HumanRobAI();
 	}
-	else if (brainName == SunAI::BRAIN_NAME) {
-		brain = new SunAI();
+	else if (brainName == TypeAAI::BRAIN_NAME) {
+		brain = new TypeAAI();
+	}
+	else if (brainName == FlyAI::BRAIN_NAME) {
+		brain = new FlyAI();
+	}
+	else if (brainName == RocketAI::BRAIN_NAME) {
+		brain = new RocketAI();
 	}
 	return brain;
 }
@@ -298,12 +306,12 @@ void NormalAI::stickOrder(int& right, int& left, int& up, int& down) {
 	int y = m_characterAction_p->getCharacter()->getY() + m_characterAction_p->getCharacter()->getHeight();
 
 	// 目標に向かって走る
-	if (m_gx > x + GX_ERROR) {
+	if (m_gx >= x + GX_ERROR) {
 		m_rightKey++;
 		m_leftKey = 0;
 		m_moveCnt++;
 	}
-	else if (m_gx < x - GX_ERROR) {
+	else if (m_gx <= x - GX_ERROR) {
 		m_rightKey = 0;
 		m_leftKey++;
 		m_moveCnt++;
@@ -724,7 +732,7 @@ void ValkiriaAI::moveOrder(int& right, int& left, int& up, int& down) {
 	int x = m_characterAction_p->getCharacter()->getCenterX();
 	if (m_follow_p != nullptr && m_target_p != nullptr && m_target_p->getHp() > 0) {
 		// 戦闘中の敵が近くにいるならハートとの距離をある程度気にせずtargetを追跡
-		if (abs(m_follow_p->getCenterX() - x) < FOLLOW_X_ERROR * 2 && abs(m_target_p->getCenterX() - x) < getSlashReach()) {
+		if (abs(m_follow_p->getCenterX() - x) < FOLLOW_X_ERROR * 3 && abs(m_target_p->getCenterX() - x) < getSlashReach()) {
 			NormalAI::moveOrder(right, left, up, down);
 			return;
 		}
@@ -1097,77 +1105,152 @@ int HumanRobAI::jumpOrder() {
 }
 
 
-/*
-* Boss1: サン
-*/
-SunAI::SunAI() :
-	FlightAI()
+TypeAAI::TypeAAI() :
+	NormalAI()
 {
 
 }
 
-// 移動（上下左右の入力）
-void SunAI::moveOrder(int& right, int& left, int& up, int& down) {
+void TypeAAI::moveOrder(int& right, int& left, int& up, int& down) {
+
 	// 現在地
 	int x = m_characterAction_p->getCharacter()->getCenterX();
 	int y = m_characterAction_p->getCharacter()->getCenterY();
 
-	if ((x > m_gx && m_characterAction_p->getLeftLock()) || (x < m_gx && m_characterAction_p->getRightLock())) {
-		m_gx = x, m_gy = y;
-		m_try = false;
+	// (壁につっかえるなどで)移動できてないから諦める
+	if (m_moveCnt >= GIVE_UP_MOVE_CNT) {
+		m_gx = x;
+		m_gy = y;
 	}
 
-	if (m_characterAction_p->getState() != CHARACTER_STATE::INIT) {
-		FlightAI::moveOrder(right, left, up, down);
+	// 目標地点設定
+	bool alreadyGoal = m_gx > x - GX_ERROR && m_gx < x + GX_ERROR;
+	if (alreadyGoal && GetRand(29) == 0) {
+		if (m_target_p != nullptr && abs(x - m_target_p->getCenterX()) < TARGET_DISTANCE) {
+			// targetについていく
+			setGoalToTarget();
+		}
+		else {
+			// ランダムに設定
+			m_gx = GetRand(400) - 200;
+			m_gx += x;
+		}
+		if (abs(x - m_gx) < 50) { m_gx = x; }
 	}
+	stickOrder(right, left, up, down);
 }
 
-// ジャンプの制御
-int SunAI::jumpOrder() {
-	if (m_characterAction_p->getState() != CHARACTER_STATE::INIT) {
-		return FlightAI::jumpOrder();
-	}
-	return 0;
-}
-
-// しゃがみの制御
-int SunAI::squatOrder() {
-	if (m_characterAction_p->getState() != CHARACTER_STATE::INIT) {
-		return FlightAI::squatOrder();
-	}
-	return 0;
-}
-
-// 近距離攻撃
-int SunAI::slashOrder() {
-	if (m_characterAction_p->getState() != CHARACTER_STATE::INIT) {
-		return FlightAI::slashOrder();
-	}
-	return 0;
-}
-
-// 遠距離攻撃
-int SunAI::bulletOrder() {
-	if (m_characterAction_p->getState() != CHARACTER_STATE::INIT) {
-		return m_characterAction_p->getBulletCnt() + 1;
-	}
-	return 0;
-}
-
-void SunAI::bulletTargetPoint(int& x, int& y) {
-	x = GetRand(m_characterAction_p->getCharacter()->getWide()) + m_characterAction_p->getCharacter()->getX();
-	y = m_characterAction_p->getCharacter()->getY() - GetRand(300);
-}
-
-void SunAI::setGoalToTarget() {
+void TypeAAI::setGoalToTarget() {
 	// targetについていく
-	int NEAR_TARGET_X = 1500, NEAR_TARGET_Y = 400;
-	m_gx = m_characterAction_p->getCharacter()->getCenterX() + GetRand(NEAR_TARGET_X) - NEAR_TARGET_X / 2;
-	m_gy = m_target_p->getCenterY() + GetRand(NEAR_TARGET_Y) - (NEAR_TARGET_Y / 2);
-	if (m_characterAction_p->getLeftLock()) {
-		m_gx += NEAR_TARGET_X / 2;
+	int NEAR_TARGET = 500;
+	int targetX1 = 0, targetY1 = 0, targetX2 = 0, targetY2 = 0;
+	m_target_p->getAtariArea(&targetX1, &targetY1, &targetX2, &targetY2);
+	m_gx = (targetX1 + targetX2) / 2 + GetRand(NEAR_TARGET) - NEAR_TARGET / 2;
+}
+
+int TypeAAI::slashOrder() {
+	// ターゲットがいない
+	if (m_target_p == nullptr || m_target_p->getHp() == 0) {
+		return 0;
 	}
-	else if (m_characterAction_p->getRightLock()) {
-		m_gx -= NEAR_TARGET_X / 2;
+	// 遠距離の敵には斬撃しない
+	if (abs(m_target_p->getCenterX() - m_characterAction_p->getCharacter()->getCenterX()) > getSlashReach()) {
+		return 0;
 	}
+	// ランダムで斬撃
+	if (GetRand(59) == 0) {
+		return 1;
+	}
+	return 0;
+}
+
+
+FlyAI::FlyAI() :
+	FlightAI()
+{
+	m_bulletModeTime = 0;
+}
+
+void FlyAI::moveOrder(int& right, int& left, int& up, int& down) {
+	if (m_bulletModeTime > 0) {
+		return;
+	}
+	FlightAI::moveOrder(right, left, up, down);
+}
+int FlyAI::bulletOrder() {
+	// ターゲットがいない
+	if (m_target_p == nullptr || m_target_p->getHp() == 0) {
+		return 0;
+	}
+	// ランダムで射撃
+	if (m_bulletModeTime == 0 && GetRand(179) == 0) {
+		m_bulletModeTime = GetRand(59) + 1;
+	}
+	if (m_bulletModeTime > 0) {
+		m_bulletModeTime++;
+		if (m_bulletModeTime > 120) {
+			m_bulletModeTime = 0;
+		}
+		return m_bulletModeTime;
+	}
+	return 0;
+}
+
+
+/*
+*  バズーカロボット用AI
+*/
+RocketAI::RocketAI() :
+	ParabolaAI()
+{
+
+}
+
+void RocketAI::moveOrder(int& right, int& left, int& up, int& down) {
+
+	if (m_target_p == nullptr) {
+		NormalAI::moveOrder(right, left, up, down);
+		return;
+	}
+
+	// 現在地
+	int x = m_characterAction_p->getCharacter()->getCenterX();
+	int y = m_characterAction_p->getCharacter()->getCenterY();
+
+	// (壁につっかえるなどで)移動できてないから諦める
+	if (m_moveCnt >= GIVE_UP_MOVE_CNT) {
+		m_gx = 1500;
+		m_gy = y;
+	}
+	else if (x < -300 || x > 2700) {
+		m_gx = 2000;
+		m_gy = y;
+	}
+	else {
+		int targetX = m_target_p->getCenterX();
+
+		if (abs(x - targetX) < TARGET_CONST_DISTANCE) {
+			if (x < targetX) {
+				m_gx = targetX - TARGET_CONST_DISTANCE - 100;
+			}
+			else {
+				m_gx = targetX + TARGET_CONST_DISTANCE + 100;
+			}
+		}
+	}
+
+	stickOrder(right, left, up, down);
+}
+
+int RocketAI::bulletOrder() {
+	// ターゲットがいない
+	if (m_target_p == nullptr || m_target_p->getHp() == 0) {
+		return 0;
+	}
+	// 遠距離の敵には射撃しない
+	int x = m_characterAction_p->getCharacter()->getCenterX();
+	if (abs(x - m_target_p->getCenterX()) > TARGET_DISTANCE) {
+		return 0;
+	}
+	return 1;
 }

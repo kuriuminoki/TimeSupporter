@@ -1,5 +1,7 @@
 #include "Define.h"
 
+bool filterRetroDispFlag = false;
+
 int GAME_WIDE = 1920;
 int GAME_HEIGHT = 1080;
 //int GAME_WIDE = GAME_WIDE_MAX;

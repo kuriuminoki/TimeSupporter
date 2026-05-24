@@ -112,6 +112,8 @@ private:
 	// プレイヤーのキャラのポインタ
 	Character* m_playerCharacter_p;
 
+	bool m_filterRetroDispFlag;
+
 public:
 	AreaReader(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer);
 
@@ -136,6 +138,10 @@ public:
 	inline void getBackGround(int& graphHandle, int& colorHandle) const {
 		graphHandle = m_backGroundGraph;
 		colorHandle = m_backGroundColor;
+	}
+
+	inline bool getFilterRetroDispFlag() const {
+		return m_filterRetroDispFlag;
 	}
 
 private:

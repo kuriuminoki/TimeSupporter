@@ -531,10 +531,10 @@ public:
 
 
 /*
-* Boss1: サン
+* Boss1: TypeA
 */
-class SunAI :
-	public FlightAI
+class TypeAAI :
+	public NormalAI
 {
 private:
 
@@ -542,27 +542,63 @@ public:
 	static const char* BRAIN_NAME;
 	const char* getBrainName() const { return this->BRAIN_NAME; }
 
-	SunAI();
+	TypeAAI();
 
-	// 移動（上下左右の入力）
 	void moveOrder(int& right, int& left, int& up, int& down);
-
-	// ジャンプの制御
-	int jumpOrder();
-
-	// しゃがみの制御
-	int squatOrder();
-
-	// 近距離攻撃
-	int slashOrder();
-
-	// 遠距離攻撃
-	int bulletOrder();
-
-	void bulletTargetPoint(int& x, int& y);
 
 	void setGoalToTarget();
 
+	int jumpOrder() { return 0; }
+
+	int slashOrder();
+};
+
+/*
+* Boss2: fly
+*/
+class FlyAI :
+	public FlightAI
+{
+private:
+
+	int m_bulletModeTime;
+	int BULLET_TIME = 180;
+
+public:
+	static const char* BRAIN_NAME;
+	const char* getBrainName() const { return this->BRAIN_NAME; }
+
+	FlyAI();
+
+	void moveOrder(int& right, int& left, int& up, int& down);
+	int bulletOrder();
+};
+
+
+/*
+* バズーカロボット用AI
+*/
+class RocketAI :
+	public ParabolaAI
+{
+protected:
+	// この距離を常に保つように後ずさりする
+	const int TARGET_CONST_DISTANCE = 1000;
+
+	// 攻撃対象を認知する距離
+	const int TARGET_DISTANCE = 3000;
+
+public:
+	static const char* BRAIN_NAME;
+	const char* getBrainName() const { return this->BRAIN_NAME; }
+
+	RocketAI();
+
+	void moveOrder(int& right, int& left, int& up, int& down);
+
+	int bulletOrder();
+
+	int slashOrder() { return 0; }
 };
 
 

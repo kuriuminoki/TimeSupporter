@@ -222,6 +222,7 @@ AreaReader::AreaReader(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer)
 	m_objects = op.first;
 	m_doorObjects = op.second;
 	// BACKGROUND
+	m_filterRetroDispFlag = false;
 	data = csvReader2.getDomainData("BACKGROUND:");
 	for (unsigned int i = 0; i < data.size(); i++) {
 		loadBackGround(data[i]);
@@ -249,6 +250,9 @@ void AreaReader::loadBackGround(std::map<std::string, std::string> dataMap) {
 		ostringstream filePath;
 		filePath << "picture/backGround/" << graphName;
 		m_backGroundGraph = LoadGraph(filePath.str().c_str());
+		if (graphName == "black.png") {
+			m_filterRetroDispFlag = true;
+		}
 	}
 	else {
 		m_backGroundGraph = -1;

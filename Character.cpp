@@ -31,11 +31,13 @@ Character* createCharacter(const char* characterName, int hp, int x, int y, int 
 	else if (name == "ヒエラルキー") {
 		character = new Hierarchy(name.c_str(), hp, x, y, groupId);
 	}
-	else if (name == "ヴァルキリア" || name == "フレンチ") {
+	else if (name == "テイク") {
 		character = new Valkyria(name.c_str(), hp, x, y, groupId);
+		character->setBossFlag(true);
 	}
-	else if (name == "トロイ") {
+	else if (name == "暴走ノア") {
 		character = new Troy(name.c_str(), hp, x, y, groupId);
+		character->setBossFlag(true);
 	}
 	else if (name == "コハル") {
 		character = new Koharu(name.c_str(), hp, x, y, groupId);
@@ -49,8 +51,16 @@ Character* createCharacter(const char* characterName, int hp, int x, int y, int 
 	else if (name == "大砲") {
 		character = new ParabolaOnly(name.c_str(), hp, x, y, groupId);
 	}
+	else if (name == "バズーカロボット") {
+		character = new Rocket(name.c_str(), hp, x, y, groupId);
+		character->setBossFlag(true);
+	}
 	else if (name == "TypeA") {
 		character = new TypeA(name.c_str(), hp, x, y, groupId);
+	}
+	else if (name == "fly") {
+		character = new Troy(name.c_str(), hp, x, y, groupId);
+		character->setBossFlag(true);
 	}
 	else {
 		character = new Heart(name.c_str(), hp, x, y, groupId);
@@ -856,18 +866,18 @@ vector<Object*>* Valkyria::slashZanzouAttack(bool leftDirection, int cnt, bool g
 	if (cnt == m_attackInfo->slashCountSum() - 1) {
 		index = 0 % slashGraphHandles->getSize();
 		attackObject = new SlashObject(x1, m_y, x2, m_y + height,
-			slashGraphHandles->getGraphHandle(index), m_attackInfo->slashCountSum() - 12, DEFAULT_SLASH_ENERGY_TIME, m_attackInfo);
+			slashGraphHandles->getGraphHandle(index), m_attackInfo->slashCountSum() / 2, DEFAULT_SLASH_ENERGY_TIME, m_attackInfo);
 		pushCharacterSoundQueue(m_attackInfo->slashStartSoundHandle(), soundPlayer);
 	}
 	else if (cnt == m_attackInfo->slashCountSum() * 2 / 3) {
 		index = 1 % slashGraphHandles->getSize();
 		attackObject = new SlashObject(x1, m_y, x2, m_y + height,
-			slashGraphHandles->getGraphHandle(index), m_attackInfo->slashCountSum() - slashCountSum - 6, DEFAULT_SLASH_ENERGY_TIME, m_attackInfo);
+			slashGraphHandles->getGraphHandle(index), m_attackInfo->slashCountSum() / 2, DEFAULT_SLASH_ENERGY_TIME, m_attackInfo);
 	}
 	else if (cnt == m_attackInfo->slashCountSum() / 3) {
 		index = 2 % slashGraphHandles->getSize();
 		attackObject = new SlashObject(x1, m_y, x2, m_y + height,
-			slashGraphHandles->getGraphHandle(index), m_attackInfo->slashCountSum() - 2 * slashCountSum, DEFAULT_SLASH_ENERGY_TIME, m_attackInfo);
+			slashGraphHandles->getGraphHandle(index), m_attackInfo->slashCountSum() / 2, DEFAULT_SLASH_ENERGY_TIME, m_attackInfo);
 	}
 	if (attackObject != nullptr) {
 		prepareSlashObject(attackObject);
@@ -1122,4 +1132,37 @@ vector<Object*>* TypeA::slashAttack(bool leftDirection, int cnt, bool grand, Sou
 		return nullptr;
 	}
 	return new std::vector<Object*>{ attackObject };
+}
+
+
+/*
+* バズーカロボット
+*/
+Rocket::Rocket(const char* name, int hp, int x, int y, int groupId) :
+	Siesta(name, hp, x, y, groupId)
+{
+
+}
+Rocket::Rocket(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo) :
+	Siesta(name, hp, x, y, groupId, attackInfo)
+{
+
+}
+
+// 射撃攻撃をする
+vector<Object*>* Rocket::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) {
+	if (cnt != getBulletRapid() / 2) { return nullptr; }
+	pushCharacterSoundQueue(m_attackInfo->bulletStartSoundeHandle(), soundPlayer);
+
+	ParabolaBullet* attackObject = new ParabolaBullet(
+		getCenterX(), getCenterY(), m_graphHandle->getBulletHandle()->getGraphHandles()->getGraphHandle(),
+		gx + GetRand(100) - 50, gy + GetRand(100) - 50, DEFAULT_BULLET_ENERGY_TIME, m_attackInfo);
+	prepareBulletObject(attackObject);
+
+	ParabolaBullet* attackObject2 = new ParabolaBullet(
+		getCenterX(), getCenterY(), m_graphHandle->getBulletHandle()->getGraphHandles()->getGraphHandle(),
+		gx + GetRand(100) - 50, gy + GetRand(100) - 50, DEFAULT_BULLET_ENERGY_TIME, m_attackInfo);
+	prepareBulletObject(attackObject2);
+
+	return new std::vector<Object*>{ attackObject, attackObject2 };
 }

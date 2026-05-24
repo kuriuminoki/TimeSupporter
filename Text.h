@@ -143,14 +143,14 @@ private:
 	bool m_finishFlag;
 
 	// 文字表示の速さ 1が最速
-	const unsigned int TEXT_SPEED = 5;
+	const unsigned int TEXT_SPEED = 2;
 	unsigned int m_textSpeed;
 
 	// 次のテキストへ行けるようになるまでの時間
 	const unsigned int NEXT_TEXT_ABLE = 45;
 
 	// テキストを飛ばせるようになるまでの時間
-	const unsigned int MOVE_FINAL_ABLE = 10;
+	const unsigned int MOVE_FINAL_ABLE = 5;
 
 	// ファイルポインタ
 	int m_fp;
@@ -171,6 +171,8 @@ private:
 
 	// 背景
 	int m_backGround;
+
+	bool m_filterRetroDispFlag;
 
 	// 発言者の名前
 	std::string m_speakerName;
@@ -229,6 +231,7 @@ private:
 
 	// 効果音
 	int m_sound;
+	bool m_soundFlag;
 
 	// 顔画像の表示方法
 	enum FaceDrawMode {
@@ -265,6 +268,7 @@ public:
 	inline int getAnimeBright() const { return m_eventAnime->getBright(); }
 	inline int getAnimeAlpha() const { return m_eventAnime->getAlpha(); }
 	inline int getBackGround() const { return m_backGround; }
+	inline bool getFilterRetroDispFlag() const { return m_filterRetroDispFlag; }
 	inline const std::vector<Animation*> getAnimations() const { return m_animations; }
 	inline const GraphHandle* getTextFinishGraph() const { return m_textFinishGraph; }
 	inline const EventAnime* getEventAnime() const { return m_eventAnime; }

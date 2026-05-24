@@ -290,7 +290,7 @@ public:
 	inline int getY() const { return m_y; }
 	inline bool getLeftDirection() const { return m_leftDirection; }
 	inline bool getFreeze() const { return m_freeze; }
-	inline bool getBossFlag() const { return m_bossFlag; }
+	inline bool getBossFlag() const { return m_bossFlag && m_groupId != 0; }
 	inline CharacterGraphHandle* getCharacterGraphHandle() const { return m_graphHandle; }
 	inline AttackInfo* getAttackInfo() const { return m_attackInfo; }
 	inline CharacterInfo* getCharacterInfo() const { return m_characterInfo; }
@@ -711,6 +711,25 @@ public:
 	// 斬撃攻撃をする
 	std::vector<Object*>* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer);
 
+};
+
+
+/*
+* バズーカロボット
+*/
+class Rocket :
+	public Siesta
+{
+public:
+	// コンストラクタ
+	Rocket(const char* name, int hp, int x, int y, int groupId);
+	Rocket(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
+
+	// 射撃攻撃をする
+	std::vector<Object*>* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer);
+
+	// 斬撃攻撃をする
+	std::vector<Object*>* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) { return nullptr; }
 };
 
 

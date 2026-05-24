@@ -130,6 +130,8 @@ protected:
 
 	int m_damageCnt;
 
+	bool m_muteki;
+
 protected:
 
 	// action‚©‚çŒÄ‚Ño‚·
