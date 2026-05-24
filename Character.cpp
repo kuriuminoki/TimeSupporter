@@ -31,11 +31,13 @@ Character* createCharacter(const char* characterName, int hp, int x, int y, int 
 	else if (name == "ヒエラルキー") {
 		character = new Hierarchy(name.c_str(), hp, x, y, groupId);
 	}
-	else if (name == "ヴァルキリア" || name == "フレンチ") {
+	else if (name == "テイク") {
 		character = new Valkyria(name.c_str(), hp, x, y, groupId);
+		character->setBossFlag(true);
 	}
-	else if (name == "トロイ") {
+	else if (name == "暴走ノア") {
 		character = new Troy(name.c_str(), hp, x, y, groupId);
+		character->setBossFlag(true);
 	}
 	else if (name == "コハル") {
 		character = new Koharu(name.c_str(), hp, x, y, groupId);
@@ -49,11 +51,16 @@ Character* createCharacter(const char* characterName, int hp, int x, int y, int 
 	else if (name == "大砲") {
 		character = new ParabolaOnly(name.c_str(), hp, x, y, groupId);
 	}
-	else if (name == "サン") {
-		character = new Sun(name.c_str(), hp, x, y, groupId);
+	else if (name == "バズーカロボット") {
+		character = new Rocket(name.c_str(), hp, x, y, groupId);
+		character->setBossFlag(true);
 	}
-	else if (name == "アーカイブ") {
-		character = new Archive(name.c_str(), hp, x, y, groupId);
+	else if (name == "TypeA") {
+		character = new TypeA(name.c_str(), hp, x, y, groupId);
+	}
+	else if (name == "fly") {
+		character = new Troy(name.c_str(), hp, x, y, groupId);
+		character->setBossFlag(true);
 	}
 	else {
 		character = new Heart(name.c_str(), hp, x, y, groupId);
@@ -859,18 +866,18 @@ vector<Object*>* Valkyria::slashZanzouAttack(bool leftDirection, int cnt, bool g
 	if (cnt == m_attackInfo->slashCountSum() - 1) {
 		index = 0 % slashGraphHandles->getSize();
 		attackObject = new SlashObject(x1, m_y, x2, m_y + height,
-			slashGraphHandles->getGraphHandle(index), m_attackInfo->slashCountSum() - 12, DEFAULT_SLASH_ENERGY_TIME, m_attackInfo);
+			slashGraphHandles->getGraphHandle(index), m_attackInfo->slashCountSum() / 2, DEFAULT_SLASH_ENERGY_TIME, m_attackInfo);
 		pushCharacterSoundQueue(m_attackInfo->slashStartSoundHandle(), soundPlayer);
 	}
 	else if (cnt == m_attackInfo->slashCountSum() * 2 / 3) {
 		index = 1 % slashGraphHandles->getSize();
 		attackObject = new SlashObject(x1, m_y, x2, m_y + height,
-			slashGraphHandles->getGraphHandle(index), m_attackInfo->slashCountSum() - slashCountSum - 6, DEFAULT_SLASH_ENERGY_TIME, m_attackInfo);
+			slashGraphHandles->getGraphHandle(index), m_attackInfo->slashCountSum() / 2, DEFAULT_SLASH_ENERGY_TIME, m_attackInfo);
 	}
 	else if (cnt == m_attackInfo->slashCountSum() / 3) {
 		index = 2 % slashGraphHandles->getSize();
 		attackObject = new SlashObject(x1, m_y, x2, m_y + height,
-			slashGraphHandles->getGraphHandle(index), m_attackInfo->slashCountSum() - 2 * slashCountSum, DEFAULT_SLASH_ENERGY_TIME, m_attackInfo);
+			slashGraphHandles->getGraphHandle(index), m_attackInfo->slashCountSum() / 2, DEFAULT_SLASH_ENERGY_TIME, m_attackInfo);
 	}
 	if (attackObject != nullptr) {
 		prepareSlashObject(attackObject);
@@ -1035,122 +1042,89 @@ vector<Object*>* ParabolaOnly::bulletAttack(int cnt, int gx, int gy, SoundPlayer
 
 
 /*
-* Boss1: サン
+* Boss1: TypeA
 */
-Sun::Sun(const char* name, int hp, int x, int y, int groupId) :
+TypeA::TypeA(const char* name, int hp, int x, int y, int groupId) :
 	Heart(name, hp, x, y, groupId)
 {
 
 }
-Sun::Sun(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo) :
+TypeA::TypeA(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo) :
 	Heart(name, hp, x, y, groupId, attackInfo)
 {
 
 }
 
-// ボスの初期アニメーションをセット
-void Sun::switchInit(int cnt) { 
-	if (m_graphHandle->getInitHandle() == nullptr) { return; }
-	if (cnt < 0) {
-		m_graphHandle->switchSpecial1();
-		return;
-	}
-	int index = min(cnt / RUN_ANIME_SPEED, m_graphHandle->getInitHandle()->getGraphHandles()->getSize() - 1);
-	m_graphHandle->switchInit(index);
-}
-
-vector<Object*>* Sun::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) {
+// 射撃攻撃をする
+vector<Object*>* TypeA::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) {
 	if (cnt != getBulletRapid()) { return nullptr; }
-	int x = getCenterX() + GetRand(400) - 200;
-	int y = getCenterY() + GetRand(400) - 200;
-	ParabolaBullet* attackObject = new ParabolaBullet(
-		x, y, m_graphHandle->getBulletHandle()->getGraphHandles()->getGraphHandle(),
+	// 弾の作成
+	BulletObject* attackObject;
+	gy = getCenterY() - GetRand(250) + 50;
+	attackObject = new BulletObject(
+		getCenterX(), gy, m_graphHandle->getBulletHandle()->getGraphHandles()->getGraphHandle(),
 		gx, gy, DEFAULT_BULLET_ENERGY_TIME, m_attackInfo);
 	pushCharacterSoundQueue(m_attackInfo->bulletStartSoundeHandle(), soundPlayer);
 	prepareBulletObject(attackObject);
 	return new std::vector<Object*>{ attackObject };
 }
 
-
-/*
-* Boss1: アーカイブ
-*/
-Archive::Archive(const char* name, int hp, int x, int y, int groupId) :
-	Valkyria(name, hp, x, y, groupId)
-{
-
-}
-Archive::Archive(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo) :
-	Valkyria(name, hp, x, y, groupId, attackInfo)
-{
-
-}
-
-// 上昇画像をセット
-void Archive::switchJump(int cnt) { 
-	int size = m_graphHandle->getJumpHandle()->getGraphHandles()->getSize();
-	int index = min(size, cnt / 6);
-	m_graphHandle->switchJump(index); 
-}
-
 // 立ち斬撃画像をセット
-void Archive::switchSlash(int cnt) {
-	if (m_graphHandle->getStandSlashHandle() == nullptr) { return; }
-	int index = (getSlashCountSum() + getSlashInterval() - cnt) / 3;
-	m_graphHandle->switchSlash(index);
+void TypeA::switchSlash(int cnt) { 
+	int cntFromStart = m_attackInfo->slashCountSum() + m_attackInfo->slashInterval() - cnt;
+	if (cntFromStart < SLASH_START_CNT) {
+		m_graphHandle->switchSlash(0);
+	}
+	else {
+		m_graphHandle->switchSlash(min(7, (cntFromStart - SLASH_START_CNT) / 8));
+	}
 }
 
 // 斬撃攻撃をする
-vector<Object*>* Archive::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) {
-
-	// 空中はモーションが違う
-	if (!grand) { 
-		return Valkyria::slashZanzouAttack(leftDirection, cnt, grand, soundPlayer, m_graphHandle->getAirSlashEffectHandle()->getGraphHandles());
-	}
+vector<Object*>* TypeA::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) {
+	if (m_attackInfo->slashCountSum() + m_attackInfo->slashInterval() - cnt  < SLASH_START_CNT){ return nullptr; }
 
 	// 攻撃範囲を決定
-	int centerY = getCenterY() - 10;
-	int x1 = getCenterX();
-	int y1 = centerY - m_attackInfo->slashLenY() / 2 / 2;
-	int x2 = x1;
-	int y2 = y1 + m_attackInfo->slashLenY() / 2;
-	if (leftDirection) { // 左向きに攻撃
-		x1 += 200;
-		x2 -= m_attackInfo->slashLenX() * 3 / 2;
-	}
-	else { // 右向きに攻撃
-		x1 -= 200;
-		x2 += m_attackInfo->slashLenX() * 3 / 2;
-	}
+	int x1 = getX();
+	int y1 = getCenterY() - m_attackInfo->slashLenY() / 2;
+	int x2 = x1 + m_attackInfo->slashLenX();
+	int y2 = y1 + m_attackInfo->slashLenY();
 
 	// 攻撃の画像と持続時間(cntを考慮して決定)
 	cnt -= m_attackInfo->slashInterval();
 	int index = 0;
-	int slashCountSum = m_attackInfo->slashCountSum() / 15 + 1; // エフェクト画像一枚当たりの表示時間
+	int slashCountSum = (m_attackInfo->slashCountSum() - SLASH_START_CNT) / 4; // エフェクト画像一枚当たりの表示時間
 	SlashObject* attackObject = nullptr;
-	GraphHandlesWithAtari* slashHandles = m_graphHandle->getSlashHandle();
+	GraphHandlesWithAtari* slashHandles = m_graphHandle->getAirSlashEffectHandle();
+	if (grand || slashHandles == nullptr) {
+		// 地上にいる、もしくは空中斬撃画像がないなら地上用の画像を使う
+		slashHandles = m_graphHandle->getSlashHandle();
+	}
 	// 攻撃の方向
 	slashHandles->getGraphHandles()->setReverseX(m_leftDirection);
 	// cntが攻撃のタイミングならオブジェクト生成
-	int n = m_attackInfo->slashCountSum() / 15;
-	if (cnt == 9 * n || cnt == 8 * n || cnt == 7 * n) {
+	if (cnt == slashCountSum * 4) {
 		index = 0;
 		attackObject = new SlashObject(x1, y1, x2, y2,
-			slashHandles->getGraphHandles()->getGraphHandle(index), slashCountSum, DEFAULT_SLASH_ENERGY_TIME, m_attackInfo);
-		if (cnt == 9 * n) {
-			pushCharacterSoundQueue(m_attackInfo->slashStartSoundHandle(), soundPlayer);
-		}
+			slashHandles->getGraphHandles()->getGraphHandle(index), slashCountSum, 0, m_attackInfo);
+		pushCharacterSoundQueue(m_attackInfo->slashStartSoundHandle(), soundPlayer);
 	}
-	else if (cnt == 6 * n || cnt == 5 * n || cnt == 4 * n) {
+	else if (cnt == slashCountSum * 3) {
 		index = 1;
 		attackObject = new SlashObject(x1, y1, x2, y2,
-			slashHandles->getGraphHandles()->getGraphHandle(index), slashCountSum, DEFAULT_SLASH_ENERGY_TIME, m_attackInfo);
+			slashHandles->getGraphHandles()->getGraphHandle(index), slashCountSum, 0, m_attackInfo);
 	}
-	else if (cnt == 3 * n || cnt == 2 * n || cnt == n) {
+	else if (cnt == slashCountSum * 2) {
 		index = 2;
 		attackObject = new SlashObject(x1, y1, x2, y2,
-			slashHandles->getGraphHandles()->getGraphHandle(index), slashCountSum, DEFAULT_SLASH_ENERGY_TIME, m_attackInfo);
+			slashHandles->getGraphHandles()->getGraphHandle(index), slashCountSum, 0, m_attackInfo);
 	}
+	else if (cnt == slashCountSum) {
+		index = 3;
+		attackObject = new SlashObject(x1, y1, x2, y2,
+			slashHandles->getGraphHandles()->getGraphHandle(index), slashCountSum, 0, m_attackInfo);
+	}
+
 	if (attackObject != nullptr) {
 		prepareSlashObject(attackObject);
 	}
@@ -1158,5 +1132,37 @@ vector<Object*>* Archive::slashAttack(bool leftDirection, int cnt, bool grand, S
 		return nullptr;
 	}
 	return new std::vector<Object*>{ attackObject };
+}
 
+
+/*
+* バズーカロボット
+*/
+Rocket::Rocket(const char* name, int hp, int x, int y, int groupId) :
+	Siesta(name, hp, x, y, groupId)
+{
+
+}
+Rocket::Rocket(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo) :
+	Siesta(name, hp, x, y, groupId, attackInfo)
+{
+
+}
+
+// 射撃攻撃をする
+vector<Object*>* Rocket::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) {
+	if (cnt != getBulletRapid() / 2) { return nullptr; }
+	pushCharacterSoundQueue(m_attackInfo->bulletStartSoundeHandle(), soundPlayer);
+
+	ParabolaBullet* attackObject = new ParabolaBullet(
+		getCenterX(), getCenterY(), m_graphHandle->getBulletHandle()->getGraphHandles()->getGraphHandle(),
+		gx + GetRand(100) - 50, gy + GetRand(100) - 50, DEFAULT_BULLET_ENERGY_TIME, m_attackInfo);
+	prepareBulletObject(attackObject);
+
+	ParabolaBullet* attackObject2 = new ParabolaBullet(
+		getCenterX(), getCenterY(), m_graphHandle->getBulletHandle()->getGraphHandles()->getGraphHandle(),
+		gx + GetRand(100) - 50, gy + GetRand(100) - 50, DEFAULT_BULLET_ENERGY_TIME, m_attackInfo);
+	prepareBulletObject(attackObject2);
+
+	return new std::vector<Object*>{ attackObject, attackObject2 };
 }

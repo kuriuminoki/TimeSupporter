@@ -40,6 +40,8 @@ ConversationDrawer::~ConversationDrawer() {
 
 void ConversationDrawer::draw(bool movieFlag) {
 
+	filterRetroDispFlag = m_conversation->getFilterRetroDispFlag(); // コンピュータの中の世界かどうか
+
 	if (!m_conversation->getInitFlag()) {
 		return;
 	}

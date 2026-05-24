@@ -104,6 +104,7 @@ CharacterAction::CharacterAction(Character* character, SoundPlayer* soundPlayer_
 	m_slidingDone = 0;
 	m_damageCnt = 0;
 	m_heavy = false;
+	m_muteki = false;
 }
 
 CharacterAction::CharacterAction() :
@@ -236,6 +237,12 @@ void CharacterAction::setDeadFlag(bool deadFlag) {
 	m_character_p->setDeadFlag(deadFlag);
 }
 
+// HP表示更新の処理
+void CharacterAction::updateHp() {
+	// prevHpをhpに追いつかせる
+	m_character_p->setPrevHp(m_character_p->getPrevHp() - 1);
+}
+
 // 行動前の処理 毎フレーム行う
 void CharacterAction::init() {
 
@@ -256,9 +263,6 @@ void CharacterAction::init() {
 	m_grand = false;
 	m_grandRightSlope = false;
 	m_grandLeftSlope = false;
-
-	// prevHpをhpに追いつかせる
-	m_character_p->setPrevHp(m_character_p->getPrevHp() - 1);
 
 	// キャラのバージョンが変化した場合
 	if (m_characterVersion != m_character_p->getVersion()) {
@@ -416,6 +420,9 @@ void CharacterAction::finishSlash() {
 }
 
 bool CharacterAction::ableDamage() const {
+	if (m_muteki) {
+		return false;
+	}
 	return !(m_state == CHARACTER_STATE::DAMAGE || m_damageCnt > 0 || m_boostCnt > max(0, BOOST_TIME - 10) || m_stepCnt > STEP_STOP_TIME);
 }
 
@@ -985,6 +992,7 @@ void ValkiriaAction::finishSlash() {
 		}
 	}
 	m_slashNow = false;
+	m_muteki = false;
 }
 
 // ダメージを受ける ヴァルキリアは斬撃中はHPが減るだけ
@@ -992,6 +1000,7 @@ void ValkiriaAction::damage(int vx, int vy, int damageValue) {
 	if (m_slashCnt > 0) {
 		// HP減少
 		m_character_p->damageHp(damageValue / 2);
+		m_muteki = true;
 	}
 	else {
 		CharacterAction::damage(vx, vy, damageValue);

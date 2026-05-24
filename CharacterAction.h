@@ -130,6 +130,8 @@ protected:
 
 	int m_damageCnt;
 
+	bool m_muteki;
+
 protected:
 
 	// actionから呼び出す
@@ -236,6 +238,9 @@ public:
 	void setCharacterLeftDirection(bool leftDirection);
 	void setCharacterFreeze(bool freeze);
 	void setDeadFlag(bool deadFlag);
+
+	// HP表示更新の処理
+	virtual void updateHp();
 
 	// 行動前の処理 毎フレーム行う
 	virtual void init();

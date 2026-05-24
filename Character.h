@@ -290,7 +290,7 @@ public:
 	inline int getY() const { return m_y; }
 	inline bool getLeftDirection() const { return m_leftDirection; }
 	inline bool getFreeze() const { return m_freeze; }
-	inline bool getBossFlag() const { return m_bossFlag; }
+	inline bool getBossFlag() const { return m_bossFlag && m_groupId != 0; }
 	inline CharacterGraphHandle* getCharacterGraphHandle() const { return m_graphHandle; }
 	inline AttackInfo* getAttackInfo() const { return m_attackInfo; }
 	inline CharacterInfo* getCharacterInfo() const { return m_characterInfo; }
@@ -687,47 +687,49 @@ public:
 
 
 /*
-* Boss1: サン
+* Boss1: TypeA
 */
-class Sun :
+class TypeA :
 	public Heart
+{
+private:
+	const int SLASH_START_CNT = 30; // 斬撃攻撃の開始時間
+public:
+	// コンストラクタ
+	TypeA(const char* name, int hp, int x, int y, int groupId);
+	TypeA(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
+
+	// ボスの初期アニメーションをセット
+	void switchInit(int cnt) { return; }
+
+	// 射撃攻撃をする
+	std::vector<Object*>* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer);
+
+	// 立ち斬撃画像をセット
+	void switchSlash(int cnt);
+
+	// 斬撃攻撃をする
+	std::vector<Object*>* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer);
+
+};
+
+
+/*
+* バズーカロボット
+*/
+class Rocket :
+	public Siesta
 {
 public:
 	// コンストラクタ
-	Sun(const char* name, int hp, int x, int y, int groupId);
-	Sun(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
-
-	// ボスの初期アニメーションをセット
-	void switchInit(int cnt);
+	Rocket(const char* name, int hp, int x, int y, int groupId);
+	Rocket(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
 
 	// 射撃攻撃をする
 	std::vector<Object*>* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer);
 
 	// 斬撃攻撃をする
 	std::vector<Object*>* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) { return nullptr; }
-
-};
-
-
-/*
-* Boss2: アーカイブ
-*/
-class Archive :
-	public Valkyria
-{
-public:
-	// コンストラクタ
-	Archive(const char* name, int hp, int x, int y, int groupId);
-	Archive(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
-
-	void switchJump(int cnt);
-	void switchSlash(int cnt);
-
-	// ジャンプ前画像をセット
-	void switchPreJump(int cnt = 0) { Heart::switchPreJump(); }
-
-	// 斬撃攻撃をする
-	std::vector<Object*>* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer);
 };
 
 
