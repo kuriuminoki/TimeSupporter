@@ -212,7 +212,7 @@ void WorldDrawer::drawBattleField(const Camera* camera, int bright, bool drawSki
 				enemyNotice = m_enemyNotice;
 			}
 			// カメラを使ってキャラを描画
-			m_characterDrawer->drawCharacter(camera, enemyNotice, bright);
+			m_characterDrawer->drawCharacter(camera, enemyNotice, m_world->getKuroeFlag(), bright);
 			// ボスがいるなら保持しておく
 			if (actions[i]->getCharacter()->getBossFlag()) { bossCharacterAction = actions[i]; }
 			// 仲間も保持
@@ -226,7 +226,7 @@ void WorldDrawer::drawBattleField(const Camera* camera, int bright, bool drawSki
 	// プレイヤーは手前に描画
 	if (player != -1) {
 		m_characterDrawer->setCharacterAction(actions[player]);
-		m_characterDrawer->drawCharacter(camera, -1, bright);
+		m_characterDrawer->drawCharacter(camera, -1, m_world->getKuroeFlag(), bright);
 	}
 
 	// 各Objectを描画
@@ -283,11 +283,20 @@ void WorldDrawer::drawBattleField(const Camera* camera, int bright, bool drawSki
 			m_characterDrawer->drawBossHpBar(bX, bY, bWide, bHeight, bossCharacterAction->getCharacter(), m_bossHpBarGraph);
 		}
 
-		// お金
-		DrawExtendGraph((int)(1600 * m_exX), (int)(10 * m_exY), (int)(1900 * m_exX), (int)(80 * m_exY), m_moneyBoxGraph, TRUE);
-		int money = m_world->getMoney();
-		ostringstream oss;
-		oss << "Ｐ：" << money;
-		DrawStringToHandle((int)(1650 * m_exX), (int)(20 * m_exY), oss.str().c_str(), BLACK, m_font);
+		// 経験値
+		if (!m_world->getSaeruFlag()) {
+			DrawExtendGraph((int)(1600 * m_exX), (int)(10 * m_exY), (int)(1900 * m_exX), (int)(80 * m_exY), m_moneyBoxGraph, TRUE);
+			int money = m_world->getMoney();
+			ostringstream oss;
+			oss << "EXP:" << money;
+			DrawStringToHandle((int)(1650 * m_exX), (int)(20 * m_exY), oss.str().c_str(), BLACK, m_font);
+		}
+		else {
+			DrawExtendGraph((int)(1550 * m_exX), (int)(10 * m_exY), (int)(1900 * m_exX), (int)(80 * m_exY), m_moneyBoxGraph, TRUE);
+			int money = m_world->getMoney();
+			ostringstream oss;
+			oss << "Level:" << money / 10 + 1;
+			DrawStringToHandle((int)(1600 * m_exX), (int)(20 * m_exY), oss.str().c_str(), BLACK, m_font);
+		}
 	}
 }

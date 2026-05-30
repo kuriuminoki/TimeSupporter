@@ -35,7 +35,7 @@ vector<string> mapParam2vector(map<string, string> paramMap) {
 /*
 * イベント
 */
-Event::Event(int eventNum, World* world, SoundPlayer* soundPlayer) {
+Event::Event(int eventNum, STAGE_KIND stageKind, World* world, SoundPlayer* soundPlayer) {
 
 	m_eventNum = eventNum;
 	m_nowElement = 0;
@@ -46,7 +46,12 @@ Event::Event(int eventNum, World* world, SoundPlayer* soundPlayer) {
 	m_backPrevSave = 0;
 
 	ostringstream oss;
-	oss << "data/event/event" << m_eventNum << ".csv";
+	if (stageKind == STAGE_KIND::NORMAL) {
+		oss << "data/event/event" << m_eventNum << ".csv";
+	}
+	else {
+		oss << "data/typeEvent/event" << m_eventNum << ".csv";
+	}
 	CsvReader2 csvReader2(oss.str().c_str());
 
 	// 発火条件
@@ -173,6 +178,9 @@ void Event::createElement(vector<string> param, World* world, SoundPlayer* sound
 	}
 	else if (param0 == "SetBgm") {
 		element = new SetBgmEvent(world, param);
+	}
+	else if (param0 == "PlayForMoveGoal") {
+		element = new PlayForMoveGoalEvent(world, param);
 	}
 	else if (param0 == "BattleForever") {
 		element = new BattleForever(world, param);
@@ -788,6 +796,23 @@ EVENT_RESULT SetBgmEvent::play() {
 	m_world_p->getSoundPlayer()->setBGM(m_filePath);
 	m_world_p->getSoundPlayer()->playBGM();
 	return EVENT_RESULT::SUCCESS;
+}
+
+
+// プレイヤーが特定の地点に行くまでworld->playを実行
+PlayForMoveGoalEvent::PlayForMoveGoalEvent(World* world, std::vector<std::string> param) :
+	EventElement(world)
+{
+	m_gx = stoi(param[1]);
+	m_gy = stoi(param[2]);
+	m_character_p = m_world_p->getCharacterWithId(m_world_p->getPlayerId());
+}
+EVENT_RESULT PlayForMoveGoalEvent::play() {
+	m_world_p->battle();
+	if (abs(m_character_p->getCenterX() - m_gx) < ERROR_X && abs(m_character_p->getY() + m_character_p->getHeight() - m_gy) < ERROR_Y) {
+		return EVENT_RESULT::SUCCESS;
+	}
+	return EVENT_RESULT::NOW;
 }
 
 

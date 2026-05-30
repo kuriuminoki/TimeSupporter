@@ -22,6 +22,12 @@ class Object;
 class ObjectLoader;
 class SoundPlayer;
 
+enum class STAGE_KIND {
+	NORMAL, // 通常ステージ(通常難易度)
+	TYPE,// 裏ステージ(通常難易度)
+	HARD // 通常ステージ(高難易度)
+};
+
 
 /*
 * 操作するキャラを切り替えるクラス
@@ -116,6 +122,9 @@ private:
 
 	// プレイヤー 毎回for文でID検索しない用
 	Character* m_player_p;
+	bool m_saeruFlag;
+	bool m_kuroeFlag;
+	bool m_norFlag;
 
 	// キャラ切り替え処理
 	PlayerChanger* m_playerChanger;
@@ -184,7 +193,7 @@ private:
 
 public:
 	World();
-	World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer);
+	World(int fromAreaNum, int toAreaNum, STAGE_KIND stageKind, SoundPlayer* soundPlayer);
 	~World();
 
 	//デバッグ
@@ -231,6 +240,8 @@ public:
 	inline int getMoney() const { return m_money; }
 	inline bool getAreaLock() const { return m_areaLock; }
 	inline bool getControlCharacterLock() const { return m_controlCharacterLock; }
+	inline bool getSaeruFlag() const { return m_saeruFlag; }
+	inline bool getKuroeFlag() const { return m_kuroeFlag; }
 
 	// Drawer用のゲッタ
 	std::vector<const CharacterAction*> getActions() const;
@@ -256,6 +267,8 @@ public:
 	inline void setDate(int date) { m_date = date; }
 	inline void setBlindFlag(bool blindFlag) { m_blindFlag = blindFlag; }
 	inline void setMoney(int money) { m_money = money; }
+
+	void calcAndSetLevel();
 
 	// 強制的にエリア移動
 	inline void moveArea(int nextArea) { m_brightValue--; m_nextAreaNum = nextArea; m_resetBgmFlag = true; }

@@ -250,19 +250,22 @@ bool Game::play() {
 		GetMousePoint(&m_handX, &m_handY);
 		if (m_selectStagePage->play(m_handX, m_handY)) {
 			int targetStoryNum = m_selectStagePage->getFocusStage();
+			STAGE_KIND targetKind = m_selectStagePage->getFocusKind();
 			if (TEST_MODE) {
 				//targetStoryNum = 0;
 			}
-			m_story = new Story(targetStoryNum, m_gameData, m_soundPlayer);
+			m_story = new Story(targetStoryNum, targetKind, m_gameData, m_soundPlayer);
 		}
 	}
 	else {
 		// ストーリー進行
 		EVENT_RESULT result = m_story->play();
 		if (result == EVENT_RESULT::SUCCESS) {
-			if (m_story->getStoryNum() + 1 > m_gameData->getCompleteStageSum()) {
-				m_gameData->setCompleteStageSum(m_story->getStoryNum() + 1);
-				m_selectStagePage->setCompleteStageSum(m_gameData->getCompleteStageSum());
+			if (m_story->getStageKind() == STAGE_KIND::NORMAL) {
+				if (m_story->getStoryNum() + 1 > m_gameData->getCompleteStageSum()) {
+					m_gameData->setCompleteStageSum(m_story->getStoryNum() + 1);
+					m_selectStagePage->setCompleteStageSum(m_gameData->getCompleteStageSum());
+				}
 			}
 			m_gameData->updateStory(m_story);
 			// セーブ (バックアップは更新されない)

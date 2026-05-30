@@ -2,6 +2,7 @@
 #include "Control.h"
 #include "Define.h"
 #include "TimeSupporter.h"
+#include "World.h"
 #include "DxLib.h"
 
 
@@ -37,9 +38,12 @@ SelectStagePage::SelectStagePage(int completeStageSum) {
 		m_chapterButton.push_back(new Button(oss.str().c_str(), 100, 100 + (70 * i), 1200, 60, WHITE, RED, m_font, BLACK));
 	}
 	for (int i = 0; i < STAGE_PER_CHAPTER; i++) {
-		ostringstream oss;
-		oss << "ステージ" << i + 1;
-		m_stageButton.push_back(new Button(oss.str().c_str(), 200, 700 + (70 * i), 500, 60, WHITE, RED, m_font, BLACK));
+		ostringstream oss1;
+		oss1 << "ステージ" << i + 1;
+		m_stageButton.push_back(new Button(oss1.str().c_str(), 200, 700 + (70 * i), 500, 60, WHITE, RED, m_font, BLACK));
+		ostringstream oss2;
+		oss2 << "ステージ" << i + 1 << " (裏)";
+		m_typeStageButton.push_back(new Button(oss2.str().c_str(), 750, 700 + (70 * i), 500, 60, WHITE, RED, m_font, BLUE));
 	}
 	for (int i = 0; i < CHAPTER_SUM; i++) {
 		ostringstream oss;
@@ -55,6 +59,7 @@ SelectStagePage::~SelectStagePage() {
 	}
 	for (int i = 0; i < STAGE_PER_CHAPTER; i++) {
 		delete m_stageButton[i];
+		delete m_typeStageButton[i];
 	}
 	DeleteFontToHandle(m_font);
 	for (int i = 0; i < CHAPTER_SUM; i++) {
@@ -73,7 +78,15 @@ bool SelectStagePage::play(int handX, int handY) {
 			for (int i = 0; i < dispStageSum; i++) {
 				if (m_stageButton[i]->overlap(handX, handY)) {
 					m_focusStage = m_focusChapter * STAGE_PER_CHAPTER + i;
+					m_focusKind = STAGE_KIND::NORMAL;
 					return true;
+				}
+				else if (m_typeStageButton[i] != nullptr && m_typeStageButton[i]->overlap(handX, handY)) {
+					if (m_focusChapter > 0 && m_focusChapter < 6) {
+						m_focusStage = m_focusChapter * STAGE_PER_CHAPTER + i;
+						m_focusKind = STAGE_KIND::TYPE;
+						return true;
+					}
 				}
 			}
 		}
@@ -121,10 +134,20 @@ void SelectStagePage::draw(int handX, int handY) const {
 	if (m_focusChapter != -1) {
 		int dispStageSum = selectableStageSum();
 		for (int i = 0; i < dispStageSum; i++) {
-			ostringstream oss;
-			oss << "ステージ" << i + 1 + m_focusChapter * STAGE_PER_CHAPTER;
-			m_stageButton[i]->setString(oss.str().c_str());
+			int stage = i + 1 + m_focusChapter * STAGE_PER_CHAPTER;
+			ostringstream oss1;
+			oss1 << "ステージ" << stage;
+			if (stage <= 9) { oss1 << " "; }
+			m_stageButton[i]->setString(oss1.str().c_str());
 			m_stageButton[i]->draw(handX, handY);
+			if (m_focusChapter > 0 && m_focusChapter < 6) {
+				ostringstream oss2;
+				oss2 << "ステージ" << stage;
+				if (stage <= 9) { oss2 << " "; }
+				oss2 << " (裏)";
+				m_typeStageButton[i]->setString(oss2.str().c_str());
+				m_typeStageButton[i]->draw(handX, handY);
+			}
 		}
 	}
 	DrawFormatStringToHandle(10, 10, WHITE, m_font, "ステージ選択");

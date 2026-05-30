@@ -169,7 +169,7 @@ World::World() {
 /*
 * オブジェクトのロードなど
 */
-World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) :
+World::World(int fromAreaNum, int toAreaNum, STAGE_KIND stageKind, SoundPlayer* soundPlayer) :
 	World()
 {
 
@@ -181,7 +181,7 @@ World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) :
 	m_nextAreaNum = m_areaNum;
 
 	// エリアをロード
-	const AreaReader data(fromAreaNum, toAreaNum, m_soundPlayer_p);
+	const AreaReader data(fromAreaNum, toAreaNum, stageKind, m_soundPlayer_p);
 	m_camera = data.getCamera();
 	m_focusId = data.getFocusId();
 	m_playerId = data.getPlayerId();
@@ -194,10 +194,21 @@ World::World(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) :
 	m_filterRetroDispFlag = data.getFilterRetroDispFlag();
 
 	// プレイヤーをセット
+	m_saeruFlag = false;
+	m_kuroeFlag = false;
+	m_norFlag = false;
 	for (unsigned int i = 0; i < m_characters.size(); i++) {
 		if (m_playerId == m_characters[i]->getId()) {
 			m_player_p = m_characters[i];
-			break;
+			if (m_player_p->getName() == "サエル") {
+				m_saeruFlag = true;
+			}
+		}
+		if (m_characters[i]->getName() == "ノア") {
+			m_norFlag = true;
+		}
+		else if (m_characters[i]->getName() == "クロエイト") {
+			m_kuroeFlag = true;
 		}
 	}
 	// プレイヤーの方向へ向かせる
@@ -288,8 +299,8 @@ vector<const Object*> World::getFrontObjects() const {
 vector<const Object*> World::getBackObjects() const {
 
 	vector<const Object*> allObjects;
-	allObjects.insert(allObjects.end(), m_stageObjects.begin(), m_stageObjects.end());
 	allObjects.insert(allObjects.end(), m_doorObjects.begin(), m_doorObjects.end());
+	allObjects.insert(allObjects.end(), m_stageObjects.begin(), m_stageObjects.end());
 
 	return allObjects;
 }
@@ -353,6 +364,19 @@ void World::setBrainWithId(int id, Brain* brain) {
 		if (m_characterControllers[i]->getAction()->getCharacter()->getId() == id) {
 			m_characterControllers[i]->setBrain(brain);
 		}
+	}
+}
+
+void World::calcAndSetLevel() {
+	if (m_saeruFlag) {
+		m_player_p->updateLevel(m_money / 10 + 1, true);
+	}
+	else {
+		m_player_p->updateLevel(80, true);
+	}
+	for (unsigned int i = 0; i < m_characters.size(); i++) {
+		if (m_characters[i]->getId() == m_playerId) { continue; }
+		m_characters[i]->updateLevel(m_areaNum, false);
 	}
 }
 
@@ -939,6 +963,25 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 
 			// HP = 0になったとき（やられたとき）
 			if (character->getHp() <= 0) {
+				if (!m_saeruFlag) {
+					if (character->getBossFlag()) {
+						for (int i = 0; i < 5; i++) {
+							MoneyItem* money = new MoneyItem("money", x, y, 1);
+							money->setVx(GetRand(30) - 15);
+							money->setVy(GetRand(30) - 31);
+							m_itemVector.push_back(money);
+						}
+					}
+					else {
+						int r = GetRand(100);
+						for (int i = 0; i < r % m_areaNum / 3; i++) {
+							MoneyItem* money = new MoneyItem("money", x, y, 1);
+							money->setVx(GetRand(30) - 15);
+							money->setVy(GetRand(30) - 31);
+							m_itemVector.push_back(money);
+						}
+					}
+				}
 				if (!character->haveDeadGraph()) {
 					if (character->getBossFlag()) {
 						m_bossDeadEffectCnt = 300; // ボスのやられエフェクトの継続時間
@@ -950,16 +993,8 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 						if ( character->getGroupId() != m_player_p->getGroupId() && !character->getBossFlag()) {
 							int r = GetRand(100);
 							// スキル発動中でなければ雑魚キャラは確率でアイテムが落ちる
-							if (r < 20) {
-								m_itemVector.push_back(new CureItem("cure", x, y, 50));
-							}
-							else {
-								for (int i = 0; i < r % 4; i++) {
-									MoneyItem* money = new MoneyItem("money", x, y, 1);
-									money->setVx(GetRand(30) - 15);
-									money->setVy(GetRand(30) - 31);
-									m_itemVector.push_back(money);
-								}
+							if (r < 50 && m_norFlag) {
+								m_itemVector.push_back(new CureItem("cure", x, y, 10));
 							}
 						}
 					}
@@ -1126,6 +1161,13 @@ void World::createBossDeadEffect() {
 					int y = GetRand(y2 - y1) + y1;
 					createBomb(x, y, nullptr);
 					createDamageEffect(x, y, 2);
+
+					if (!m_saeruFlag && GetRand(m_areaNum) > 4) {
+						MoneyItem* money = new MoneyItem("money", x, y, 1);
+						money->setVx(GetRand(30) - 15);
+						money->setVy(GetRand(30) - 31);
+						m_itemVector.push_back(money);
+					}
 					break;
 				}
 			}

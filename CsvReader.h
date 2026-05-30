@@ -7,6 +7,9 @@
 #include <sstream>
 
 
+enum class STAGE_KIND;
+
+
 int str2color(std::string colorName);
 
 
@@ -115,7 +118,7 @@ private:
 	bool m_filterRetroDispFlag;
 
 public:
-	AreaReader(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer);
+	AreaReader(int fromAreaNum, int toAreaNum, STAGE_KIND stageKind, SoundPlayer* soundPlayer);
 
 	inline Camera* getCamera() const { return m_camera_p; }
 

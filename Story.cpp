@@ -30,15 +30,17 @@ vector<string> split(string str, char del) {
 }
 
 
-Story::Story(int storyNum, GameData* gameData, SoundPlayer* soundPlayer) {
+Story::Story(int storyNum, STAGE_KIND stageKind, GameData* gameData, SoundPlayer* soundPlayer) {
 
 	m_storyNum = storyNum;
+	m_stageKind = stageKind;
 
-	m_world = new World(-1, m_storyNum + 1, soundPlayer);
+	m_world = new World(-1, m_storyNum + 1, m_stageKind, soundPlayer);
 
 	// データを世界に反映
 	m_gameData_p = gameData;
 	m_gameData_p->asignWorld(m_world);
+	m_world->calcAndSetLevel();
 
 	// Worldの初期化
 	m_world->cameraPointInit();
@@ -55,7 +57,7 @@ Story::Story(int storyNum, GameData* gameData, SoundPlayer* soundPlayer) {
 	m_world->setDate(m_date);
 
 	// eventList.csvをロード
-	m_eventList.push_back(new Event(m_storyNum + 1, m_world, soundPlayer));
+	m_eventList.push_back(new Event(m_storyNum + 1, m_stageKind, m_world, soundPlayer));
 
 	// イベントの発火確認
 	checkFire();
