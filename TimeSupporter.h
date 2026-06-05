@@ -6,6 +6,7 @@
 
 
 class Button;
+enum class STAGE_KIND;
 
 
 class SelectStagePage {
@@ -15,6 +16,7 @@ private:
 	int m_completeStageSum; // セーブデータと同期させる
 	int m_focusChapter; // クリックしてフォーカス中にしているチャプター番号(0~)
 	int m_focusStage; // カーソルを合わせているステージ番号(0~)
+	STAGE_KIND m_focusKind;
 
 	// 背景画像
 	int m_backgroundGraph;
@@ -30,6 +32,7 @@ private:
 
 	std::vector<Button*> m_chapterButton;
 	std::vector<Button*> m_stageButton;
+	std::vector<Button*> m_typeStageButton;
 
 	std::vector<int> m_chapterGraphHandles;
 	const int CHAPTER_GRAPH_MAX_DX = 1000;
@@ -44,6 +47,7 @@ public:
 	void draw(int handX, int handY) const;
 
 	inline int getFocusStage() const { return m_focusStage; }
+	inline STAGE_KIND getFocusKind() const { return m_focusKind; }
 
 	void setCompleteStageSum(int completeStageSum) { m_completeStageSum = completeStageSum; }
 

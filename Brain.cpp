@@ -1087,6 +1087,9 @@ int HumanRobAI::jumpOrder() {
 		// ó‚¯g
 		if (GetRand(120) == 0) { return 1; }
 	}
+	else if (!m_characterAction_p->getGrand()) {
+		return 0;
+	}
 
 	// Œ»İ’n
 	int x = m_characterAction_p->getCharacter()->getCenterX();

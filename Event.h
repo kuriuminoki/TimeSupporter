@@ -13,6 +13,8 @@ class Character;
 class Conversation;
 class Movie;
 
+enum class STAGE_KIND;
+
 
 enum class EVENT_RESULT {
 	NOW,			// 進行中
@@ -100,7 +102,7 @@ private:
 	int m_version;
 
 public:
-	Event(int eventNum, World* world, SoundPlayer* soundPlayer);
+	Event(int eventNum, STAGE_KIND stageKind, World* world, SoundPlayer* soundPlayer);
 	~Event();
 
 	// ゲッタ
@@ -538,7 +540,7 @@ private:
 	int m_groupId;
 
 	// 全滅してからクリア判定までの待ち時間
-	const int FINISH_CNT = 120;
+	const int FINISH_CNT = 240;
 	int m_cnt;
 
 public:
@@ -687,6 +689,26 @@ public:
 
 	// プレイ
 	EVENT_RESULT play();
+};
+
+// プレイヤーが特定の地点に行くまでworld->playを実行
+class PlayForMoveGoalEvent :
+	public EventElement
+
+{
+private:
+	const int ERROR_X = 100;
+	const int ERROR_Y = 100;
+	int m_gx, m_gy;
+	Character* m_character_p;
+public:
+	PlayForMoveGoalEvent(World* world, std::vector<std::string> param);
+
+	// プレイ
+	EVENT_RESULT play();
+
+	// ハートのスキル発動が可能かどうか
+	bool skillAble() { return true; }
 };
 
 // 永遠にbattle テスト用

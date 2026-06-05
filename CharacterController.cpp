@@ -188,16 +188,19 @@ void CharacterController::stopCharacter(int cnt) {
 	m_characterAction->stopCharacter(cnt);
 }
 
-bool CharacterController::checkAndPushDamagedObjectId(int id) {
+bool CharacterController::checkDamagedObjectId(int id) {
 	for (unsigned i = 0; i < m_damagedObjectIds.size(); i++) {
 		if (m_damagedObjectIds[i] == id) {
 			return true;
 		}
 	}
+	return false;
+}
+
+void CharacterController::pushDamagedObjectId(int id) {
 	m_damagedObjectIds.push_back(id);
 	// ‘‰Á‚µ‘±‚¯‚é‚Ì‚ð–h‚®‚½‚ßŒÃ‚¢ID‚Í•s—v‚Æ‚Ý‚È‚µ‘|œ‚·‚é
 	if (m_damagedObjectIds.size() > 10) { m_damagedObjectIds.erase(m_damagedObjectIds.begin(), m_damagedObjectIds.begin() + 4); }
-	return false;
 }
 
 

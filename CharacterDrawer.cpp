@@ -56,7 +56,7 @@ CharacterDrawer::~CharacterDrawer() {
 }
 
 // キャラを描画する
-void CharacterDrawer::drawCharacter(const Camera* const camera, int enemyNoticeHandle, int bright) {
+void CharacterDrawer::drawCharacter(const Camera* const camera, int enemyNoticeHandle, bool dispHpBar, int bright) {
 	// 描画するキャラクター
 	const Character* character = m_characterAction->getCharacter();
 
@@ -95,7 +95,7 @@ void CharacterDrawer::drawCharacter(const Camera* const camera, int enemyNoticeH
 		graphHandle->draw(x, y + 1, ex);
 	}
 
-	if (character->getDispHpCnt() > 0 && character->getName() != "ハート" && !character->getBossFlag()) {
+	if (character->getDispHpCnt() > 0 && character->getName() != "ハート" && !character->getBossFlag() && dispHpBar) {
 		// 座標をカメラで調整
 		x = character->getX() + (character->getWide() / 2);
 		y = character->getY();

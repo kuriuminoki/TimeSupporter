@@ -7,6 +7,7 @@
 #include "Brain.h"
 #include "CharacterLoader.h"
 #include "ObjectLoader.h"
+#include "World.h"
 #include "Define.h"
 #include "DxLib.h"
 
@@ -176,7 +177,7 @@ CsvReader2::CsvReader2(const char* fileName) {
 * Character等をnewするため、このクラスをnewした後はgetして削除すること。
 * このクラスでnewされたCharacter等はこのクラスで削除しない。
 */
-AreaReader::AreaReader(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer) {
+AreaReader::AreaReader(int fromAreaNum, int toAreaNum, STAGE_KIND stageKind, SoundPlayer* soundPlayer) {
 	m_fromAreaNum = fromAreaNum;
 	m_soundPlayer_p = soundPlayer;
 
@@ -189,7 +190,12 @@ AreaReader::AreaReader(int fromAreaNum, int toAreaNum, SoundPlayer* soundPlayer)
 
 	// ファイルを開く
 	ostringstream fileName;
-	fileName << "data/area/area" << toAreaNum << ".csv";
+	if (stageKind == STAGE_KIND::NORMAL) {
+		fileName << "data/area/area" << toAreaNum << ".csv";
+	}
+	else {
+		fileName << "data/typeArea/area" << toAreaNum << ".csv";
+	}
 
 	CsvReader2 csvReader2(fileName.str().c_str());
 

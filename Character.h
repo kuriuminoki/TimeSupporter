@@ -63,6 +63,9 @@ public:
 	inline int passiveSound() const { return m_passiveSound; }
 	inline int landSound() const { return m_landSound; }
 
+	// レベルアップ用
+	inline void setMaxHp(int maxHp) { m_maxHp = maxHp; }
+
 	// バージョン変更
 	void changeVersion(int version);
 
@@ -174,6 +177,17 @@ public:
 	int slashSoundHandle() const { return m_slashSoundHandle; }
 	int bulletStartSoundeHandle() const { return m_bulletStartSoundHandle; }
 	int slashStartSoundHandle() const { return m_slashStartSoundHandle; }
+
+	// レベルアップ用
+	void setBulletHp(int hp) { m_bulletHp = hp; }
+	void setBulletDamage(int damage) { m_bulletDamage = damage; }
+	void setBulletSpeed(int speed) { m_bulletSpeed = speed; }
+	void setBulletRapid(int rapid) { m_bulletRapid = rapid; }
+	void setBulletDistance(int distance) { m_bulletDistance = distance; }
+	void setSlashDamage(int damage) { m_slashDamage = damage; }
+	void setSlashLen(int x, int y) { m_slashLenX = x; m_slashLenY = y; }
+	void setSlashInterval(int interval) { m_slashInterval = interval; }
+	void setSlashImpact(int x, int y) { m_slashImpactX = x; m_slashImpactY = y; }
 
 	// バージョン変更
 	void changeVersion(const char* characterName, int version);
@@ -320,7 +334,7 @@ public:
 	inline void setDuplicationFlag(bool flag) { m_duplicationFlag = flag; }
 	inline void setAttackInfo(AttackInfo* attackInfo) { m_attackInfo = attackInfo; }
 	inline void setCharacterInfo(CharacterInfo* characterInfo) { m_characterInfo = characterInfo; }
-	inline void setMoney(int money) { m_money = money; }
+	inline void setMoney(int money) { m_money = money > 999 ? 999: money; }
 
 	// CharacterInfoからキャラのスペックを取得
 	inline std::string getName() const { return m_characterInfo->name(); }
@@ -426,6 +440,9 @@ public:
 
 	// HPが0でやられ画像がなく、画面から消えるべきか
 	inline bool noDispForDead() const { return m_hp == 0 && !haveDeadGraph() && m_deadFlag; }
+
+	// キャラを強くする
+	void updateLevel(int level, bool player);
 
 protected:
 	void countDrawCnt(){ if (SHAKING_FLAG) { m_drawCnt++; } }

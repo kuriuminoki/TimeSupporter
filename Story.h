@@ -13,6 +13,7 @@ class CharacterLoader;
 class ObjectLoader;
 
 enum class EVENT_RESULT;
+enum class STAGE_KIND;
 
 
 // ストーリ－
@@ -20,6 +21,7 @@ class Story {
 private:
 
 	int m_storyNum;
+	STAGE_KIND m_stageKind;
 
 	GameData* m_gameData_p;
 
@@ -47,7 +49,7 @@ private:
 	ObjectLoader* m_objectLoader;
 
 public:
-	Story(int storyNum, GameData* gameData, SoundPlayer* soundPlayer);
+	Story(int storyNum, STAGE_KIND stageKind, GameData* gameData, SoundPlayer* soundPlayer);
 	~Story();
 
 	void debug(int x, int y, int color);
@@ -59,6 +61,7 @@ public:
 
 	// ゲッタ
 	inline int getStoryNum() const { return m_storyNum; }
+	inline STAGE_KIND getStageKind() const { return m_stageKind; }
 	inline int getDate() const { return m_date; }
 	inline bool getInitDark() const { return m_initDark; }
 	inline CharacterLoader* getCharacterLoader() const { return m_characterLoader; }

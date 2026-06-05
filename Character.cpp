@@ -19,7 +19,7 @@ Character* createCharacter(const char* characterName, int hp, int x, int y, int 
 	if (name == "テスト") {
 		character = new Heart(name.c_str(), hp, x, y, groupId);
 	}
-	else if (name == "サエル") {
+	else if (name == "サエル" || name == "タイプ") {
 		character = new Heart(name.c_str(), hp, x, y, groupId);
 	}
 	else if (name == "ハート") {
@@ -408,6 +408,32 @@ bool Character::haveDeadGraph() const {
 	return !(m_graphHandle->getDeadHandle() == nullptr);
 }
 
+// キャラを強くする
+void Character::updateLevel(int level, bool player) {
+	level--;
+	if (haveBulletAttack()) {
+		m_attackInfo->setBulletDamage(m_attackInfo->bulletDamage() + level);
+		if (player) {
+			m_attackInfo->setBulletHp(m_attackInfo->bulletHp() + level);
+			m_attackInfo->setBulletSpeed(m_attackInfo->bulletSpeed() + level / 5);
+			m_attackInfo->setBulletRapid(max(0, m_attackInfo->bulletRapid() - level / 10));
+			m_attackInfo->setBulletDistance(m_attackInfo->bulletDistance() + level * 2);
+		}
+	}
+	if (haveSlashAttack()) {
+		m_attackInfo->setSlashDamage(m_attackInfo->slashDamage() + level);
+		if (player) {
+			m_attackInfo->setSlashLen(m_attackInfo->slashLenX() + level / 2, m_attackInfo->slashLenY() + level / 2);
+			m_attackInfo->setSlashInterval(m_attackInfo->slashInterval() - level / 10);
+			m_attackInfo->setSlashImpact(m_attackInfo->slashImpactX() + level / 10, m_attackInfo->slashImpactY() + level / 10);
+		}
+	}
+
+	m_characterInfo->setMaxHp(m_characterInfo->maxHp() + level * 5);
+	m_hp = m_characterInfo->maxHp();
+	m_prevHp = m_hp;
+}
+
 // 立ち画像をセット
 void Character::switchStand(int cnt) { m_graphHandle->switchStand(); }
 // 立ち射撃画像をセット
@@ -633,6 +659,7 @@ vector<Object*>* Heart::bulletAttack(int cnt, int gx, int gy, SoundPlayer* sound
 
 // 斬撃攻撃をする
 vector<Object*>* Heart::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) {
+	if (!haveSlashAttack()) { return nullptr; }
 	// 攻撃範囲を決定
 	int x1 = getCenterX();
 	int y1 = getCenterY() - m_attackInfo->slashLenY() / 2;
