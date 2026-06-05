@@ -62,6 +62,8 @@ public:
 class World {
 private:
 
+	const int TYPE_LEVEL = 50;
+
 	// ¢ŠE‚ğƒtƒŠ[ƒY‚·‚éŠÔ
 	int m_worldFreezeTime;
 

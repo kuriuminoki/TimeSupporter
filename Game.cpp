@@ -22,7 +22,7 @@ using namespace std;
 
 
 // エリア0でデバッグするときはtrueにする
-const bool TEST_MODE = true;
+const bool TEST_MODE = false;
 
 
 /*

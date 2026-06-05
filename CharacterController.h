@@ -119,7 +119,8 @@ public:
 	void stopCharacter(int cnt);
 
 	// 攻撃を受けたことがあるIDかチェックし、ないならpushしてfalseを返す
-	bool checkAndPushDamagedObjectId(int id);
+	bool checkDamagedObjectId(int id);
+	void pushDamagedObjectId(int id);
 };
 
 

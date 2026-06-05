@@ -429,7 +429,7 @@ void Character::updateLevel(int level, bool player) {
 		}
 	}
 
-	m_characterInfo->setMaxHp(m_characterInfo->maxHp() + level * 10);
+	m_characterInfo->setMaxHp(m_characterInfo->maxHp() + level * 5);
 	m_hp = m_characterInfo->maxHp();
 	m_prevHp = m_hp;
 }

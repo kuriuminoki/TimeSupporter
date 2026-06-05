@@ -398,7 +398,7 @@ void CharacterAction::damage(int vx, int vy, int damageValue) {
 		m_grandLeftSlope = false;
 	}
 	// HPŒ¸­
-	m_character_p->damageHp(damageValue);
+ 	m_character_p->damageHp(damageValue);
 	m_boostCnt = 0;
 	finishSliding();
 }

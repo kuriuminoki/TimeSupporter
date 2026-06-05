@@ -372,7 +372,7 @@ void World::calcAndSetLevel() {
 		m_player_p->updateLevel(m_money / 10 + 1, true);
 	}
 	else {
-		m_player_p->updateLevel(80, true);
+		m_player_p->updateLevel(TYPE_LEVEL, true);
 	}
 	for (unsigned int i = 0; i < m_characters.size(); i++) {
 		if (m_characters[i]->getId() == m_playerId) { continue; }
@@ -929,7 +929,8 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 	for (unsigned int i = 0; i < objects.size(); i++) {
 		if (objects[i]->slopeFlag() != slope) { continue; }
 		// 当たり判定をここで行う (二重で攻撃を受けないようにobjectIdのチェックと記録もやる)
-		if (objects[i]->atari(controller) && !controller->checkAndPushDamagedObjectId(objects[i]->getId())) {
+		if (!controller->checkDamagedObjectId(objects[i]->getId()) && objects[i]->atari(controller)) {
+			controller->pushDamagedObjectId(objects[i]->getId());
 			const Character* character = controller->getAction()->getCharacter();
 			int targetX1 = 0, targetY1 = 0, targetX2 = 0, targetY2 = 0;
 			character->getAtariArea(&targetX1, &targetY1, &targetX2, &targetY2);
@@ -965,7 +966,7 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 			if (character->getHp() <= 0) {
 				if (!m_saeruFlag) {
 					if (character->getBossFlag()) {
-						for (int i = 0; i < 5; i++) {
+						for (int i = 0; i < m_areaNum / 2; i++) {
 							MoneyItem* money = new MoneyItem("money", x, y, 1);
 							money->setVx(GetRand(30) - 15);
 							money->setVy(GetRand(30) - 31);
@@ -974,7 +975,7 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 					}
 					else {
 						int r = GetRand(100);
-						for (int i = 0; i < r % m_areaNum / 3; i++) {
+						for (int i = 0; i < (r % (m_areaNum / 4 + 1)) + (m_areaNum / 4) + 1; i++) {
 							MoneyItem* money = new MoneyItem("money", x, y, 1);
 							money->setVx(GetRand(30) - 15);
 							money->setVy(GetRand(30) - 31);
@@ -1162,7 +1163,7 @@ void World::createBossDeadEffect() {
 					createBomb(x, y, nullptr);
 					createDamageEffect(x, y, 2);
 
-					if (!m_saeruFlag && GetRand(m_areaNum) > 4) {
+					if (!m_saeruFlag) {
 						MoneyItem* money = new MoneyItem("money", x, y, 1);
 						money->setVx(GetRand(30) - 15);
 						money->setVy(GetRand(30) - 31);
