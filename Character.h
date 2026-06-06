@@ -219,6 +219,7 @@ protected:
 	static int characterId;
 
 	AttackInfo* m_slidingInfo;
+	AttackInfo* m_skillInfo;
 
 	bool m_duplicationFlag;
 
@@ -409,6 +410,10 @@ public:
 	virtual void switchInit(int cnt = 0);
 	// 追加画像をセット
 	virtual void switchSpecial1(int cnt = 0);
+	// 必殺技チャージ画像をセット
+	virtual void switchCharge(int cnt = 0);
+	// 必殺技画像をセット
+	virtual void switchSkillShoot(int cnt = 0);
 
 	// HP減少
 	void damageHp(int value);
@@ -425,6 +430,9 @@ public:
 	// 斬撃攻撃をする(キャラごとに違う) 左を向いているか、今何カウントか
 	virtual std::vector<Object*>* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) { return nullptr; }
 
+	// スキル攻撃をする
+	virtual std::vector<Object*>* skillAttack(int cnt, SoundPlayer* soundPlayer) { return nullptr; }
+
 	// スライディング攻撃
 	std::vector<Object*>* slidingAttack(int sound, SoundPlayer* soundPlayer);
 
@@ -436,6 +444,7 @@ public:
 	// 特定の画像があるか
 	bool haveStepGraph() const;
 	bool haveSlidingGraph() const;
+	bool haveSkillGraph() const;
 	bool haveDeadGraph() const;
 
 	// HPが0でやられ画像がなく、画面から消えるべきか
@@ -474,6 +483,9 @@ protected:
 
 	// 弾の色
 	int m_bulletColor;
+
+	int m_chargeSound;
+	int m_skillSound;
 	
 public:
 	// コンストラクタ
@@ -520,12 +532,20 @@ public:
 	// やられ画像をセット
 	void switchDead(int cnt = 0);
 
+	// 必殺技チャージ画像をセット
+	void switchCharge(int cnt = 0);
+
+	// 必殺技画像をセット
+	void switchSkillShoot(int cnt = 0);
+
 	// 射撃攻撃をする
 	std::vector<Object*>* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer);
 
 	// 斬撃攻撃をする
 	std::vector<Object*>* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer);
 
+	// スキル攻撃をする
+	std::vector<Object*>* skillAttack(int cnt, SoundPlayer* soundPlayer);
 };
 
 

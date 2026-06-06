@@ -23,59 +23,6 @@
 using namespace std;
 
 
-/*
-* プレイヤー切り替え処理
-*/
-PlayerChanger::PlayerChanger(std::vector<CharacterController*> controllers_p, const Character* player_p) {
-	m_nowCharacter_p = player_p;
-	for (unsigned int i = 0; i < controllers_p.size(); i++) {
-		if (controllers_p[i]->getAction()->getCharacter()->getId() == m_nowCharacter_p->getId()) {
-			m_prevBrainName = controllers_p[i]->getBrain()->getBrainName();
-			if (m_prevBrainName == "KeyboardBrain") {
-				m_prevBrainName = "FollowNormalAI";
-			}
-			break;
-		}
-	}
-}
-
-const Character* PlayerChanger::play(SoundPlayer* soundPlayer_p, std::vector<CharacterController*> controllers_p) {
-	if (controlE() != 1) {
-		return nullptr;
-	}
-
-	const Character* minCharacter = nullptr; // IDが最小の仲間 これを採用=キャラが一周する
-	const Character* nextPlayer = nullptr; // nowCharacterの次のIDの仲間 基本的にはこれを採用
-	for (unsigned int i = 0; i < controllers_p.size(); i++) {
-		const Character* target = controllers_p[i]->getAction()->getCharacter();
-		if (target->getHp() == 0) { continue; }
-		int groupId = target->getGroupId();
-		int id = target->getId();
-		if (id == m_nowCharacter_p->getId()) { continue; }
-		// 仲間かどうか判定
-		if (groupId == m_nowCharacter_p->getGroupId()) {
-			if (minCharacter == nullptr || id < minCharacter->getId()) {
-				minCharacter = target;
-			}
-			if (id > m_nowCharacter_p->getId()) {
-				if (nextPlayer == nullptr || id < nextPlayer->getId()) {
-					nextPlayer = target;
-				}
-			}
-		}
-	}
-	if (nextPlayer == nullptr) {
-		nextPlayer = minCharacter;
-	}
-	return nextPlayer;
-}
-
-void PlayerChanger::changeCharacter(string prevBrainName, const Character* nextCharacter_p) {
-	m_prevBrainName = prevBrainName;
-	m_nowCharacter_p = nextCharacter_p;
-}
-
-
 // vectorに入った全オブジェクトを削除する
 void deleteAllObject(vector<Object*>& objects) {
 	for (int i = (int)objects.size() - 1; i >= 0; i--) {
@@ -197,6 +144,7 @@ World::World(int fromAreaNum, int toAreaNum, STAGE_KIND stageKind, SoundPlayer* 
 	m_saeruFlag = false;
 	m_kuroeFlag = false;
 	m_norFlag = false;
+	m_elinaFlag = false;
 	for (unsigned int i = 0; i < m_characters.size(); i++) {
 		if (m_playerId == m_characters[i]->getId()) {
 			m_player_p = m_characters[i];
@@ -210,13 +158,16 @@ World::World(int fromAreaNum, int toAreaNum, STAGE_KIND stageKind, SoundPlayer* 
 		else if (m_characters[i]->getName() == "クロエイト") {
 			m_kuroeFlag = true;
 		}
+		else if (m_characters[i]->getName() == "エリーナ") {
+			if (m_areaNum >= 24) {
+				m_elinaFlag = true;
+			}
+		}
 	}
 	// プレイヤーの方向へ向かせる
 	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
 		m_characterControllers[i]->setPlayerDirection(m_player_p, true);
 	}
-
-	m_playerChanger = new PlayerChanger(m_characterControllers, m_player_p);
 
 	m_camera->setEx(m_cameraMaxEx);
 
@@ -262,8 +213,6 @@ World::~World() {
 	for (unsigned int i = 0; i < m_characters.size(); i++) {
 		delete m_characters[i];
 	}
-
-	delete m_playerChanger;
 
 	if (m_objectConversation != nullptr) {
 		delete m_objectConversation;
@@ -445,11 +394,6 @@ void World::cureHpOfHearts(int value) {
 	}
 }
 
-// 今操作しているキャラの名前を取得
-string World::getControlCharacterName() const {
-	return m_playerChanger->getNowPlayer()->getCharacterInfo()->name();
-}
-
 // キャラ追加イベント用
 void World::pushCharacter(Character* character, CharacterController* controller) {
 	m_characters.push_back(character);
@@ -497,49 +441,6 @@ void World::setPlayerFollowerPoint() {
 			}
 		}
 	}
-}
-
-void World::changePlayer(const Character* nextPlayer) {
-
-	// 禁止されている
-	if (m_controlCharacterLock) {
-		return;
-	}
-
-	// 変更できるキャラがいない
-	if (nextPlayer == nullptr || nextPlayer->getId() == m_playerChanger->getNowPlayer()->getId()) { 
-		return;
-	}
-
-	// 効果音
-	m_soundPlayer_p->pushSoundQueue(m_characterChangeSound);
-
-	// 今操作中のキャラをNPCに変更(Brainを戻す)
-	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
-		if (m_characterControllers[i]->getAction()->getCharacter()->getId() == m_playerChanger->getNowPlayer()->getId()) {
-			m_characterControllers[i]->setBrain(createBrain(m_playerChanger->getPrevBrainName(), m_camera));
-			m_characterControllers[i]->setActionSound(nullptr);
-			break;
-		}
-	}
-	// 次操作するキャラを修正(BrainをKeyboardにする)
-	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
-		if (nextPlayer->getId() == m_characterControllers[i]->getAction()->getCharacter()->getId()) {
-			string brainName = m_characterControllers[i]->getBrain()->getBrainName();
-			m_playerChanger->changeCharacter(brainName, nextPlayer);
-			m_characterControllers[i]->setBrain(new KeyboardBrain(m_camera));
-			m_characterControllers[i]->setActionSound(m_soundPlayer_p);
-			break;
-		}
-	}
-	// 追跡対象を操作キャラにする
-	for (unsigned int i = 0; i < m_characterControllers.size(); i++) {
-		if (nextPlayer->getGroupId() == m_characterControllers[i]->getAction()->getCharacter()->getGroupId()) {
-			m_characterControllers[i]->setBrainFollow(nextPlayer);
-		}
-	}
-	// カメラが注目するキャラも変更
-	m_focusId = nextPlayer->getId();
 }
 
 // データ管理：カメラの位置をリセット
@@ -600,6 +501,10 @@ void World::battle() {
 	// 上でキャラを削除したから更新したから必要
 	updateCharacter();
 
+	if (m_elinaFlag) {
+		m_player_p->setSkillGage(m_player_p->getSkillGage() + 1);
+	}
+
 	// キャラクターの動き
 	controlCharacter();
 
@@ -620,9 +525,6 @@ void World::battle() {
 
 	// アニメーションの更新
 	updateAnimation();
-
-	// キャラ変更
-	changePlayer(m_playerChanger->play(m_soundPlayer_p, m_characterControllers));
 
 }
 
@@ -774,6 +676,14 @@ void World::controlCharacter() {
 		// 斬撃攻撃
 		vector<Object*>* slashAttack = controller->slashAttack();
 		if (slashAttack != nullptr) { m_attackObjects.insert(m_attackObjects.end(), slashAttack->begin(), slashAttack->end()); }
+
+		// スキル攻撃
+		vector<Object*>* skillAttack = controller->skillAttack();
+		if (skillAttack != nullptr) { 
+			m_attackObjects.insert(m_attackObjects.end(), skillAttack->begin(), skillAttack->end());
+			// 画面の揺れ
+			m_camera->shakingStart(20, 10);
+		}
 	}
 
 	// キャラ間の当たり判定
@@ -831,7 +741,7 @@ void World::controlItem() {
 	// 今操作しているキャラが当たり判定の対象
 	Character* targetCharacter = nullptr;
 	for (unsigned int i = 0; i < m_characters.size(); i++) {
-		if (m_characters[i]->getId() == m_playerChanger->getNowPlayer()->getId()) { 
+		if (m_characters[i]->getId() == m_player_p->getId()) { 
 			targetCharacter = m_characters[i];
 			break;
 		}

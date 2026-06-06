@@ -404,6 +404,9 @@ bool Character::haveStepGraph() const {
 bool Character::haveSlidingGraph() const {
 	return !(m_graphHandle->getSlidingHandle() == nullptr);
 }
+bool Character::haveSkillGraph() const {
+	return !(m_graphHandle->getSkillHandle() == nullptr);
+}
 bool Character::haveDeadGraph() const {
 	return !(m_graphHandle->getDeadHandle() == nullptr);
 }
@@ -432,6 +435,13 @@ void Character::updateLevel(int level, bool player) {
 	m_characterInfo->setMaxHp(m_characterInfo->maxHp() + level * 5);
 	m_hp = m_characterInfo->maxHp();
 	m_prevHp = m_hp;
+
+	if (haveSlidingGraph()) {
+		m_slidingInfo->setSlashDamage(m_slidingInfo->slashDamage() + level);
+	}
+	if (haveSkillGraph()) {
+		m_skillInfo->setSlashDamage(m_skillInfo->slashDamage() + level);
+	}
 }
 
 // 立ち画像をセット
@@ -474,6 +484,10 @@ void Character::switchDead(int cnt) { m_graphHandle->switchDead(); }
 void Character::switchInit(int cnt) { m_graphHandle->switchInit(); }
 // 追加画像をセット
 void Character::switchSpecial1(int cnt) { m_graphHandle->switchSpecial1(); }
+// 必殺技チャージ画像をセット
+void Character::switchCharge(int cnt) { m_graphHandle->switchCharge(); }
+// 必殺技画像をセット
+void Character::switchSkillShoot(int cnt) { m_graphHandle->switchSkillShoot(); }
 
 
 // 作成した攻撃オブジェクトの最終調整
@@ -519,11 +533,17 @@ Heart::Heart(const char* name, int hp, int x, int y, int groupId) :
 
 	m_bulletColor = WHITE;
 
+	m_slidingInfo = nullptr;
+	m_skillInfo = nullptr;
 	if (haveSlidingGraph()) { m_slidingInfo = new AttackInfo("スライディング", m_characterInfo->handleEx()); }
+	if (haveSkillGraph()) { m_skillInfo = new AttackInfo("サエル必殺技", m_characterInfo->handleEx()); }
 
 	// とりあえず立ち画像でスタート
 	switchStand();
 	m_y -= getAtariHeight();
+
+	m_chargeSound = LoadSoundMem("sound/stick/charge.wav");
+	m_skillSound = LoadSoundMem("sound/stick/skill.wav");
 }
 
 Heart::Heart(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo) :
@@ -541,13 +561,22 @@ Heart::Heart(const char* name, int hp, int x, int y, int groupId, AttackInfo* at
 
 	m_bulletColor = WHITE;
 
+	m_slidingInfo = nullptr;
+	m_skillInfo = nullptr;
 	if(haveSlidingGraph()){ m_slidingInfo = new AttackInfo("スライディング", m_characterInfo->handleEx()); }
+	if(haveSkillGraph()) { m_skillInfo = new AttackInfo("サエル必殺技", m_characterInfo->handleEx()); }
+
+	m_chargeSound = LoadSoundMem("sound/stick/charge.wav");
+	m_skillSound = LoadSoundMem("sound/stick/skill.wav");
 
 }
 
 // デストラクタ
 Heart::~Heart() {
-	delete m_slidingInfo;
+	if (m_slidingInfo != nullptr) { delete m_slidingInfo; }
+	if (m_skillInfo != nullptr) { delete m_skillInfo; }
+	DeleteSoundMem(m_chargeSound);
+	DeleteSoundMem(m_skillSound);
 }
 
 // 立ち画像をセット
@@ -637,6 +666,12 @@ void Heart::switchDead(int cnt) {
 	m_graphHandle->switchDead(m_drawCnt / DEFAULT_ANIME_SPEED % 2);
 }
 
+// 必殺技チャージ画像をセット
+void Heart::switchCharge(int cnt) { m_graphHandle->switchCharge(cnt / 3 % 3); }
+
+// 必殺技画像をセット
+void Heart::switchSkillShoot(int cnt) { m_graphHandle->switchSkillShoot(0); }
+
 // 射撃攻撃をする
 vector<Object*>* Heart::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) {
 	if (cnt != getBulletRapid()) { return nullptr; }
@@ -700,6 +735,45 @@ vector<Object*>* Heart::slashAttack(bool leftDirection, int cnt, bool grand, Sou
 		index = 2;
 		attackObject = new SlashObject(x1, y1, x2, y2,
 			slashHandles->getGraphHandles()->getGraphHandle(index), slashCountSum, DEFAULT_SLASH_ENERGY_TIME, m_attackInfo);
+	}
+	if (attackObject != nullptr) {
+		prepareSlashObject(attackObject);
+	}
+	else {
+		return nullptr;
+	}
+	return new std::vector<Object*>{ attackObject };
+}
+
+vector<Object*>* Heart::skillAttack(int cnt, SoundPlayer* soundPlayer) {
+	if (m_skillInfo == nullptr) { return nullptr; }
+	if (cnt < 0) {
+		pushCharacterSoundQueue(m_chargeSound, soundPlayer);
+		return nullptr;
+	}
+	// 攻撃範囲を決定
+	int x1 = getCenterX();
+	int y1 = getCenterY() - m_skillInfo->slashLenY() / 2;
+	int x2 = x1;
+	int y2 = y1 + m_skillInfo->slashLenY();
+	if (m_leftDirection) { // 左向きに攻撃
+		x2 -= m_skillInfo->slashLenX();
+	}
+	else { // 右向きに攻撃
+		x2 += m_skillInfo->slashLenX();
+	}
+	SlashObject* attackObject = nullptr;
+	GraphHandlesWithAtari* skillHandles = m_graphHandle->getSkillHandle();
+	// 攻撃の方向
+	skillHandles->getGraphHandles()->setReverseX(m_leftDirection);
+	int index = cnt / 5;
+	if (cnt % 5 == 0 && index < 6) {
+		attackObject = new SlashObject(x1, y1, x2, y2,
+			skillHandles->getGraphHandles()->getGraphHandle(index), 5, 0, m_skillInfo);
+		if (index == 0) {
+			pushCharacterSoundQueue(m_skillSound, soundPlayer);
+		}
+		pushCharacterSoundQueue(m_skillInfo->slashStartSoundHandle(), soundPlayer);
 	}
 	if (attackObject != nullptr) {
 		prepareSlashObject(attackObject);

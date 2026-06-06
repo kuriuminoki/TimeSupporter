@@ -401,6 +401,9 @@ CharacterGraphHandle::CharacterGraphHandle(const char* characterName, double dra
 	loadCharacterGraph(dir, characterName, m_deadHandles, "dead", data, m_ex, &atariReader);
 	loadCharacterGraph(dir, characterName, m_initHandles, "init", data, m_ex, &atariReader);
 	loadCharacterGraph(dir, characterName, m_special1Handles, "special1", data, m_ex, &atariReader);
+	loadCharacterGraph(dir, characterName, m_chargeHandles, "charge", data, m_ex, &atariReader);
+	loadCharacterGraph(dir, characterName, m_skillShootHandles, "skillShoot", data, m_ex, &atariReader);
+	loadCharacterGraph(dir, characterName, m_skillHandles, "skill", data, m_ex, &atariReader);
 
 	switchStand();
 }
@@ -566,6 +569,14 @@ void CharacterGraphHandle::switchInit(int index) {
 // 追加画像をセット
 void CharacterGraphHandle::switchSpecial1(int index) {
 	setGraph(m_special1Handles, index);
+}
+// 必殺技チャージ画像をセット
+void CharacterGraphHandle::switchCharge(int index) {
+	setGraph(m_chargeHandles, index);
+}
+// 必殺技画像をセット
+void CharacterGraphHandle::switchSkillShoot(int index) {
+	setGraph(m_skillShootHandles, index);
 }
 
 

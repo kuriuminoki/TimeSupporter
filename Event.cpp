@@ -167,9 +167,6 @@ void Event::createElement(vector<string> param, World* world, SoundPlayer* sound
 	else if (param0 == "BlindWorld") {
 		element = new BlindWorldEvent(world, param);
 	}
-	else if (param0 == "ChangeControlCharacter") {
-		element = new ChangeControlCharacterEvent(world, param);
-	}
 	else if (param0 == "PushCharacter") {
 		element = new PushCharacterEvent(world, param, m_version);
 	}
@@ -723,18 +720,6 @@ void BlindWorldEvent::init() {
 	m_world_p->setBlindFlag(m_flag);
 }
 EVENT_RESULT BlindWorldEvent::play() {
-	return EVENT_RESULT::SUCCESS;
-}
-
-
-// ‘€ìƒLƒƒƒ‰‚Ì•ÏX
-ChangeControlCharacterEvent::ChangeControlCharacterEvent(World* world, std::vector<std::string> param) :
-	EventElement(world)
-{
-	m_name = param[1];
-}
-EVENT_RESULT ChangeControlCharacterEvent::play() {
-	m_world_p->changePlayer(m_world_p->getCharacterWithName(m_name));
 	return EVENT_RESULT::SUCCESS;
 }
 

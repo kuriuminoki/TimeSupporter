@@ -181,6 +181,11 @@ int KeyboardBrain::bulletOrder() {
 	return leftClick();
 }
 
+// ÉXÉLÉã
+int KeyboardBrain::skillOrder() {
+	return controlF();
+}
+
 
 /*
 * Normal AI

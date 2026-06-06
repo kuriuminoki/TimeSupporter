@@ -132,6 +132,11 @@ protected:
 
 	bool m_muteki;
 
+	// 必殺技用
+	int m_skillCnt;
+	int SKILL_CHARGE_CNT = 90;
+	int SKILL_SHOOT_CNT = 30;
+
 protected:
 
 	// actionから呼び出す
@@ -260,6 +265,9 @@ public:
 	// 斬撃攻撃
 	virtual std::vector<Object*>* slashAttack(int gx, int gy) = 0;
 
+	// スキル
+	virtual std::vector<Object*>* skillAttack(int cnt) = 0;
+
 	// スライディング攻撃
 	virtual std::vector<Object*>* slidingAttack() { return nullptr; }
 
@@ -355,6 +363,9 @@ public:
 	// 斬撃攻撃
 	std::vector<Object*>* slashAttack(int gx, int gy);
 
+	// スキル
+	std::vector<Object*>* skillAttack(int cnt);
+
 	// スライディング攻撃
 	std::vector<Object*>* slidingAttack();
 };
@@ -441,6 +452,9 @@ public:
 	// 斬撃攻撃
 	std::vector<Object*>* slashAttack(int gx, int gy);
 
+	// スキル
+	std::vector<Object*>* skillAttack(int cnt) { return nullptr; }
+
 protected:
 	void flightAction();
 
@@ -518,6 +532,9 @@ public:
 
 	// 斬撃攻撃
 	std::vector<Object*>* slashAttack(int gx, int gy) { return nullptr; }
+
+	// スキル
+	std::vector<Object*>* skillAttack(int cnt) { return nullptr; }
 
 	// ダメージ 必要に応じてオーバーライド
 	void damage(int vx, int vy, int damageValue) { }

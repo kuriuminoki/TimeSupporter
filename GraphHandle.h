@@ -262,6 +262,15 @@ private:
 	// 追加画像
 	GraphHandlesWithAtari* m_special1Handles;
 
+	// 必殺技チャージ画像
+	GraphHandlesWithAtari* m_chargeHandles;
+
+	// 必殺技発射画像
+	GraphHandlesWithAtari* m_skillShootHandles;
+
+	// 必殺技エフェクト画像
+	GraphHandlesWithAtari* m_skillHandles;
+
 public:
 	// デフォルト値で初期化
 	CharacterGraphHandle();
@@ -304,6 +313,9 @@ public:
 	inline GraphHandlesWithAtari* getDeadHandle() { return m_deadHandles; }
 	inline GraphHandlesWithAtari* getInitHandle() { return m_initHandles; }
 	inline GraphHandlesWithAtari* getSpecial1Handle() { return m_special1Handles; }
+	inline GraphHandlesWithAtari* getChargeHandle() { return m_chargeHandles; }
+	inline GraphHandlesWithAtari* getSkillShootHandle() { return m_skillShootHandles; }
+	inline GraphHandlesWithAtari* getSkillHandle() { return m_skillHandles; }
 
 	// 画像サイズをセット
 	void setGraphSize();
@@ -356,6 +368,10 @@ public:
 	void switchInit(int index = 0);
 	// 追加画像をセット
 	void switchSpecial1(int index = 0);
+	// 必殺技チャージ画像をセット
+	void switchCharge(int index = 0);
+	// 必殺技画像をセット
+	void switchSkillShoot(int index = 0);
 };
 
 
