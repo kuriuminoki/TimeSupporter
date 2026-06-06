@@ -179,7 +179,7 @@ Game::Game(const char* saveFilePath) {
 	if (TEST_MODE) {
 		m_gameData->setCompleteStageSum(28);
 	}
-	m_selectStagePage = new SelectStagePage(m_gameData->getCompleteStageSum());
+	m_selectStagePage = new SelectStagePage(m_gameData->getCompleteStageSum(), m_gameData->getMoney());
 	m_soundPlayer->setBGM("sound/bgm/ステージ選択.mp3");
 	m_soundPlayer->playBGM();
 
@@ -268,6 +268,8 @@ bool Game::play() {
 				}
 			}
 			m_gameData->updateStory(m_story);
+			m_selectStagePage->setFocusStage(-1);
+			m_selectStagePage->setExp(m_gameData->getMoney());
 			// セーブ (バックアップは更新されない)
 			m_gameData->save();
 			delete m_story;

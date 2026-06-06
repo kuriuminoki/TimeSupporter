@@ -33,10 +33,11 @@ void TitleBackGround::draw() {
 	// ”wŒi‰æ‘œ
 	m_haikeiX--; m_haikeiY++;
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 100);
-	DrawRotaGraph(m_haikeiX, m_haikeiY, m_haikeiEx, 0, m_haikei, TRUE);
-	DrawRotaGraph(m_haikeiX + m_haikeiWide, m_haikeiY, m_haikeiEx, 0, m_haikei, TRUE);
-	DrawRotaGraph(m_haikeiX, m_haikeiY - m_haikeiHeight, m_haikeiEx, 0, m_haikei, TRUE);
-	DrawRotaGraph(m_haikeiX + m_haikeiWide, m_haikeiY - m_haikeiHeight, m_haikeiEx, 0, m_haikei, TRUE);
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 3; j++) {
+			DrawRotaGraph(m_haikeiX + m_haikeiWide * i, m_haikeiY - m_haikeiHeight * j, m_haikeiEx, 0, m_haikei, TRUE);
+		}
+	}
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	if (m_haikeiX <= -m_haikeiWide / 2 && m_haikeiY >= GAME_HEIGHT + m_haikeiHeight / 2) {
 		m_haikeiX += m_haikeiWide;

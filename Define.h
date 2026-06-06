@@ -4,7 +4,7 @@
 #include "DxLib.h"
 
 // フルスクリーンならFALSE
-static int WINDOW = TRUE;
+static int WINDOW = FALSE;
 // マウスを表示するならFALSE
 static int MOUSE_DISP = TRUE;
 
@@ -54,5 +54,7 @@ const int ORANGE = GetColor(255, 165, 0);
 const int DARK_ORANGE = GetColor(80, 50, 0);
 const int YELLOW = GetColor(255, 255, 0);
 const int GREEN = GetColor(0, 255, 0);
+
+extern const char* STAGE_SUBTITLES[28];
 
 #endif
