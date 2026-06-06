@@ -17,12 +17,14 @@ private:
 	int m_focusChapter; // クリックしてフォーカス中にしているチャプター番号(0~)
 	int m_focusStage; // カーソルを合わせているステージ番号(0~)
 	STAGE_KIND m_focusKind;
+	int m_exp;
 
 	// 背景画像
 	int m_backgroundGraph;
 
 	// フォント
 	int m_font;
+	int m_smallFont;
 	int m_fontSize;
 
 	// 1920を基準としたGAME_WIDEの倍率
@@ -39,12 +41,15 @@ private:
 	int m_chapterGraphDx;
 
 public:
-	SelectStagePage(int completeStageSum);
+	SelectStagePage(int completeStageSum, int exp);
 	~SelectStagePage();
 
 	bool play(int handX, int handY);
 
 	void draw(int handX, int handY) const;
+
+	void setFocusStage(int focusStage) { m_focusStage = focusStage; }
+	void setExp(int exp) { m_exp = exp; }
 
 	inline int getFocusStage() const { return m_focusStage; }
 	inline STAGE_KIND getFocusKind() const { return m_focusKind; }
