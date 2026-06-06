@@ -260,9 +260,7 @@ void WorldDrawer::drawBattleField(const Camera* camera, int bright, bool drawSki
 			const int height = 70;
 			const Character* playerCharacter = actions[player]->getCharacter();
 			m_characterDrawer->drawPlayerHpBar(x, y, wide, height, playerCharacter, m_hpBarGraph);
-			if (drawSkillBar) {
-				m_characterDrawer->drawPlayerSkillBar(x, y + height + 10, wide, 30, playerCharacter, m_skillBarGraph);
-			}
+			m_characterDrawer->drawPlayerSkillBar(x, y + height + 10, wide, 30, playerCharacter, m_skillBarGraph);
 		}
 
 		// ’‡ŠÔ‚Ìî•ñ

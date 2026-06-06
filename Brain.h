@@ -54,6 +54,9 @@ public:
 	// ‰“‹——£UŒ‚
 	virtual int bulletOrder() = 0;
 
+	// ƒXƒLƒ‹
+	virtual int skillOrder() = 0;
+
 	// –Ú•W’n“_‚ÖˆÚ“®‚·‚é‚¾‚¯ ’B¬Ï‚İ‚È‚çtrue‚Å‰½‚à‚µ‚È‚¢
 	virtual bool moveGoalOrder(int& right, int& left, int& up, int& down, int& jump) { return true; }
 
@@ -123,6 +126,7 @@ public:
 	int squatOrder();
 	int slashOrder();
 	int bulletOrder();
+	int skillOrder();
 	void setGoalToTarget() {}
 };
 
@@ -152,6 +156,7 @@ public:
 	int squatOrder() { return 0; }
 	int slashOrder() { return 0; }
 	int bulletOrder() { return 0; }
+	int skillOrder() { return 0; }
 	void setGoalToTarget() {}
 };
 
@@ -230,6 +235,7 @@ public:
 	int squatOrder();
 	int slashOrder();
 	int bulletOrder();
+	int skillOrder() { return 0; }
 	void setGoalToTarget();
 
 	// aŒ‚UŒ‚‚ğU‚éÅ‘å‹——£

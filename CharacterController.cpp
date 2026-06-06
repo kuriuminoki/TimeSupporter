@@ -307,6 +307,10 @@ vector<Object*>* NormalController::slashAttack() {
 	return nullptr;
 }
 
+vector<Object*>* NormalController::skillAttack() {
+	return m_characterAction->skillAttack(m_brain->skillOrder());
+}
+
 void NormalController::damage(int vx, int vy, int damageValue) {
 	m_characterAction->damage(vx, vy, damageValue);
 }

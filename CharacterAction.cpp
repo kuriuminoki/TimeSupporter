@@ -420,6 +420,9 @@ void CharacterAction::finishSlash() {
 }
 
 bool CharacterAction::ableDamage() const {
+	if (m_skillCnt >= SKILL_CHARGE_CNT) {
+		return false;
+	}
 	if (m_muteki) {
 		return false;
 	}
@@ -611,7 +614,7 @@ void CharacterAction::afterChangeGraph(int beforeX1, int afterX1, int beforeY1, 
 StickAction::StickAction(Character* character, SoundPlayer* soundPlayer_p):
 	CharacterAction(character, soundPlayer_p)
 {
-
+	m_skillCnt = 0;
 }
 
 void StickAction::action() {
@@ -654,7 +657,15 @@ void StickAction::switchHandle() {
 	else if (m_grand) { // 地面にいるとき
 		switch (m_state) {
 		case CHARACTER_STATE::STAND: //立ち状態
-			if (m_slashCnt > 0) {
+			if (m_skillCnt > 0) {
+				if (m_skillCnt < SKILL_CHARGE_CNT) {
+					m_character_p->switchCharge(m_skillCnt);
+				}
+				else {
+					m_character_p->switchSkillShoot();
+				}
+			}
+			else if (m_slashCnt > 0) {
 				m_character_p->switchSlash(m_slashCnt);
 			}
 			else if (m_landCnt > 0) {
@@ -767,7 +778,7 @@ void StickAction::switchHandle() {
 // 歩く ダメージ中、しゃがみ中、壁ぶつかり中は不可
 void StickAction::walk(bool right, bool left) {
 	// 右へ歩くのをやめる
-	if (!right || m_rightLock || m_state == CHARACTER_STATE::SQUAT || damageFlag()) {
+	if (!right || m_rightLock || m_state == CHARACTER_STATE::SQUAT || damageFlag() || m_skillCnt > 0) {
 		stopMoveRight();
 	}
 	if (m_slashCnt > 0 && !m_attackLeftDirection && (m_rightLock || damageFlag()) && m_vx > 0) {
@@ -777,7 +788,7 @@ void StickAction::walk(bool right, bool left) {
 		finishBullet();
 	}
 	// 左へ歩くのをやめる
-	if (!left || m_leftLock || m_state == CHARACTER_STATE::SQUAT || damageFlag()) {
+	if (!left || m_leftLock || m_state == CHARACTER_STATE::SQUAT || damageFlag() || m_skillCnt > 0) {
 		stopMoveLeft();
 	}
 	if (m_slashCnt > 0 && m_attackLeftDirection && (m_leftLock || damageFlag()) && m_vx < 0) {
@@ -791,11 +802,11 @@ void StickAction::walk(bool right, bool left) {
 	}
 
 	// 右へ歩き始める
-	if (!m_rightLock && ableWalk() && right && (!left || !m_character_p->getLeftDirection())) { // 右へ歩く
+	if (!m_rightLock && ableWalk() && right && (!left || !m_character_p->getLeftDirection()) && m_skillCnt == 0) { // 右へ歩く
 		startMoveRight();
 	}
 	// 左へ歩き始める
-	if (!m_leftLock && ableWalk() && left && (!right || m_character_p->getLeftDirection())) { // 左へ歩く
+	if (!m_leftLock && ableWalk() && left && (!right || m_character_p->getLeftDirection()) && m_skillCnt == 0) { // 左へ歩く
 		startMoveLeft();
 	}
 	// アニメーション用にカウント
@@ -808,10 +819,10 @@ void StickAction::walk(bool right, bool left) {
 void StickAction::move(bool right, bool left, bool up, bool down) {
 	if ((m_state == CHARACTER_STATE::STAND || m_state == CHARACTER_STATE::SQUAT) && m_grand && m_slashCnt == 0 && m_bulletCnt == 0) {
 		// 移動方向へ向く
-		if(left && !right && m_stepCnt == 0 && m_slidingCnt == 0){
+		if(left && !right && m_stepCnt == 0 && m_slidingCnt == 0 && m_skillCnt < SKILL_CHARGE_CNT){
 			m_character_p->setLeftDirection(true);
 		}
-		if (right && !left && m_stepCnt == 0 && m_slidingCnt == 0) {
+		if (right && !left && m_stepCnt == 0 && m_slidingCnt == 0 && m_skillCnt < SKILL_CHARGE_CNT) {
 			m_character_p->setLeftDirection(false);
 		}
 	}
@@ -845,7 +856,7 @@ void StickAction::jump(int cnt) {
 		return;
 	}
 	// 斬撃中はジャンプ不可
-	if (m_slashCnt > 0) { return; }
+	if (m_slashCnt > 0 || m_skillCnt > 0) { return; }
 	// 宙に浮いたらジャンプ中止
 	if (!m_grand) {
 		m_preJumpCnt = -1;
@@ -883,7 +894,7 @@ void StickAction::jump(int cnt) {
 
 // 射撃攻撃
 vector<Object*>* StickAction::bulletAttack(int gx, int gy) {
-	if (damageFlag() && m_boostCnt == 0) {
+	if ((damageFlag() && m_boostCnt == 0) || m_skillCnt > 0) {
 		finishBullet();
 		return nullptr;
 	}
@@ -903,7 +914,7 @@ vector<Object*>* StickAction::bulletAttack(int gx, int gy) {
 
 // 斬撃攻撃
 vector<Object*>* StickAction::slashAttack(int gx, int gy) {
-	if (damageFlag() && m_boostCnt == 0) {
+	if ((damageFlag() && m_boostCnt == 0) || m_skillCnt > 0) {
 		if (m_slashCnt > 0) { finishSlash(); }
 		return nullptr;
 	}
@@ -923,6 +934,32 @@ vector<Object*>* StickAction::slashAttack(int gx, int gy) {
 	}
 	// 攻撃のタイミングじゃないならnullptrが返る
 	return m_character_p->slashAttack(m_attackLeftDirection, m_slashCnt, m_grand, m_soundPlayer_p);
+}
+
+vector<Object*>* StickAction::skillAttack(int cnt) {
+	if (m_character_p->getSkillGage() != m_character_p->SKILL_MAX) {
+		m_skillCnt = 0;
+		return nullptr;
+	}
+	if (!m_grand || m_damageCnt > 0 || m_bulletCnt != 0 || m_slashCnt != 0 || m_slidingCnt != 0 || m_preJumpCnt != -1 || m_state != CHARACTER_STATE::STAND) {
+		m_skillCnt = 0;
+		return nullptr; // 強制的にキャンセルされる
+	}
+	if (m_skillCnt >= SKILL_CHARGE_CNT + SKILL_SHOOT_CNT) {
+		m_skillCnt = 0; // 終了
+		m_character_p->setSkillGage(0);
+	}
+	else if (m_skillCnt < SKILL_CHARGE_CNT && cnt == 0) {
+		m_skillCnt = 0; // キャンセル
+	}
+
+	if (m_skillCnt > 0 || cnt == 1) {
+		m_skillCnt++;
+		if (m_skillCnt >= SKILL_CHARGE_CNT || m_skillCnt == 1) {
+			return m_character_p->skillAttack(m_skillCnt - SKILL_CHARGE_CNT, m_soundPlayer_p);
+		}
+	}
+	return nullptr;
 }
 
 // スライディング攻撃

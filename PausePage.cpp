@@ -201,8 +201,6 @@ void TutorialDisp::draw(int x1, int y1, int x2, int y2) {
 	i += m_fontSize * 2;
 	DrawStringToHandle(x1 + m_fontSize, y1 + i, "斬撃：右クリック", BLACK, m_font_p);
 	i += m_fontSize * 2;
-	DrawStringToHandle(x1 + m_fontSize, y1 + i, "キャラ切り替え：Ｅキー", BLACK, m_font_p);
-	i += m_fontSize * 2;
 	DrawStringToHandle(x1 + m_fontSize, y1 + i, "スキル発動：Ｆキー", BLACK, m_font_p);
 	i += m_fontSize * 2;
 	DrawStringToHandle(x1 + m_fontSize, y1 + i, "会話をスキップ：Ｚキー長押し", BLACK, m_font_p);

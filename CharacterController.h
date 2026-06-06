@@ -100,6 +100,9 @@ public:
 	// 斬撃攻撃
 	virtual std::vector<Object*>* slashAttack() = 0;
 
+	// スキル
+	virtual std::vector<Object*>* skillAttack() = 0;
+
 	// ダメージ
 	virtual void damage(int vx, int vy, int damageValue) = 0;
 
@@ -152,6 +155,9 @@ public:
 
 	// 斬撃攻撃
 	std::vector<Object*>* slashAttack();
+
+	// スキル
+	std::vector<Object*>* skillAttack();
 
 	// ダメ―ジ
 	void damage(int vx, int vy, int damageValue);

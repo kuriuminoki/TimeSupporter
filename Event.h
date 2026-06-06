@@ -626,22 +626,6 @@ public:
 	EVENT_RESULT play();
 };
 
-class ChangeControlCharacterEvent :
-	public EventElement
-{
-private:
-
-	// 変更先のキャラ名
-	std::string m_name;
-
-public:
-
-	ChangeControlCharacterEvent(World* world, std::vector<std::string> param);
-
-	// プレイ
-	EVENT_RESULT play();
-};
-
 // キャラの追加
 class PushCharacterEvent :
 	public EventElement

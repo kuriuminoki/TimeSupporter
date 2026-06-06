@@ -30,33 +30,6 @@ enum class STAGE_KIND {
 
 
 /*
-* 操作するキャラを切り替えるクラス
-*/
-class PlayerChanger {
-private:
-
-	// 今操作しているキャラがＮＰＣだったときのBrain名
-	std::string m_prevBrainName;
-
-	// 今操作しているキャラ
-	const Character* m_nowCharacter_p;
-
-public:
-
-	PlayerChanger(std::vector<CharacterController*> controllers_p, const Character* player_p);
-
-	// 切り替え後のキャラを返す 切り替えできないならnullptr
-	const Character* play(SoundPlayer* soundPlayer_p, std::vector<CharacterController*> controllers_p);
-
-	// 操作キャラを変更
-	void changeCharacter(std::string prevBrainName, const Character* nextCharacter_p);
-
-	inline std::string getPrevBrainName() const { return m_prevBrainName; }
-	inline const Character* getNowPlayer() const { return m_nowCharacter_p; }
-};
-
-
-/*
 * キャラが存在し行動する世界
 */
 class World {
@@ -127,9 +100,7 @@ private:
 	bool m_saeruFlag;
 	bool m_kuroeFlag;
 	bool m_norFlag;
-
-	// キャラ切り替え処理
-	PlayerChanger* m_playerChanger;
+	bool m_elinaFlag;
 
 	// 戦闘のためにキャラを動かすコントローラ Worldがデリートする
 	std::vector<CharacterController*> m_characterControllers;
@@ -299,9 +270,6 @@ public:
 	// ハートたちのＨＰを回復する。
 	void cureHpOfHearts(int value);
 
-	// 今操作しているキャラがハートか
-	std::string getControlCharacterName() const;
-
 	// キャラ追加イベント用
 	void pushCharacter(Character* character, CharacterController* controller);
 
@@ -310,9 +278,6 @@ public:
 
 	// データ管理：カメラの位置をリセット
 	void cameraPointInit();
-
-	// Battle: 操作キャラの切り替え
-	void changePlayer(const Character* nextPlayer);
 
 	// 仲間をプレイヤーの位置へ移動
 	void setPlayerFollowerPoint();
