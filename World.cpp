@@ -111,6 +111,8 @@ World::World() {
 
 	m_money = 0;
 
+	m_lastBoss = false;
+
 }
 
 /*
@@ -896,6 +898,10 @@ void World::atariCharacterAndObject(CharacterController* controller, vector<Obje
 				if (!character->haveDeadGraph()) {
 					if (character->getBossFlag()) {
 						m_bossDeadEffectCnt = 300; // ボスのやられエフェクトの継続時間
+						if (character->getName() == "ラスボス") {
+							m_bossDeadEffectCnt = 600;
+							m_lastBoss = true;
+						}
 					}
 					else {
 						m_animations.push_back(new Animation(x, y, 3, m_bombGraph));
@@ -1061,7 +1067,7 @@ void World::createDamageEffect(int x, int y, int sum) {
 void World::createBossDeadEffect() {
 	if (m_bossDeadEffectCnt > 0) {
 		m_bossDeadEffectCnt--;
-		if (m_bossDeadEffectCnt % 20 == 0) {
+		if (m_bossDeadEffectCnt % 20 == 0 || (m_lastBoss && m_bossDeadEffectCnt % 10 == 0)) {
 			for (unsigned int i = 0; i < m_characters.size(); i++) {
 				if (m_characters[i]->getBossFlag()) {
 					int x1 = m_characters[i]->getX();

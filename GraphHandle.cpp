@@ -141,8 +141,8 @@ void GraphHandles::setReverseY(bool reverse) {
 }
 
 // •`‰æ‚·‚é
-void GraphHandles::draw(int x, int y, int index) {
-	m_handles[index]->draw(x, y);
+void GraphHandles::draw(int x, int y, int index, double ex) {
+	m_handles[index]->draw(x, y, ex);
 }
 
 

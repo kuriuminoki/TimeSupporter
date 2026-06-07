@@ -62,6 +62,16 @@ Character* createCharacter(const char* characterName, int hp, int x, int y, int 
 		character = new Troy(name.c_str(), hp, x, y, groupId);
 		character->setBossFlag(true);
 	}
+	else if (name == "左手") {
+		character = new Valkyria(name.c_str(), hp, x, y, groupId);
+	}
+	else if (name == "右手") {
+		character = new RightArm(name.c_str(), hp, x, y, groupId);
+	}
+	else if (name == "ラスボス") {
+		character = new LastBoss(name.c_str(), hp, x, y, groupId);
+		character->setBossFlag(true);
+	}
 	else {
 		character = new Heart(name.c_str(), hp, x, y, groupId);
 	}
@@ -1266,4 +1276,105 @@ vector<Object*>* Rocket::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soun
 	prepareBulletObject(attackObject2);
 
 	return new std::vector<Object*>{ attackObject, attackObject2 };
+}
+
+
+RightArm::RightArm(const char* name, int hp, int x, int y, int groupId) :
+	SlashOnly(name, hp, x, y, groupId)
+{
+
+}
+RightArm::RightArm(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo) :
+	SlashOnly(name, hp, x, y, groupId, attackInfo)
+{
+
+}
+
+// 立ち斬撃画像をセット
+void RightArm::switchAirSlash(int cnt) {
+	int cntFromStart = m_attackInfo->slashCountSum() + m_attackInfo->slashInterval() - cnt;
+	if (cntFromStart < SLASH_START_CNT) {
+		m_graphHandle->switchAirSlash(0);
+	}
+	else {
+		m_graphHandle->switchAirSlash(1);
+	}
+}
+void RightArm::switchSlash(int cnt) {
+	switchAirSlash(cnt);
+}
+
+// 斬撃攻撃をする
+std::vector<Object*>* RightArm::slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer) {
+	if (m_attackInfo->slashCountSum() + m_attackInfo->slashInterval() - cnt < SLASH_START_CNT) { return nullptr; }
+
+	// 攻撃範囲を決定
+	int x1 = getCenterX();
+	int y1 = getY() + getHeight() - m_attackInfo->slashLenY();
+	int x2 = x1;
+	int y2 = y1 + m_attackInfo->slashLenY();
+	if (leftDirection) { // 左向きに攻撃
+		x2 -= m_attackInfo->slashLenX();
+	}
+	else { // 右向きに攻撃
+		x2 += m_attackInfo->slashLenX();
+	}
+
+	// 攻撃の画像と持続時間(cntを考慮して決定)
+	cnt -= m_attackInfo->slashInterval();
+	int index = 0;
+	int slashCountSum = (m_attackInfo->slashCountSum() - SLASH_START_CNT) / 3; // エフェクト画像一枚当たりの表示時間
+	SlashObject* attackObject = nullptr;
+	GraphHandlesWithAtari* slashHandles = m_graphHandle->getSlashHandle();
+	// 攻撃の方向
+	slashHandles->getGraphHandles()->setReverseX(m_leftDirection);
+	// cntが攻撃のタイミングならオブジェクト生成
+	if (cnt == slashCountSum * 3) {
+		index = 0;
+		attackObject = new SlashObject(x1, y1, x2, y2,
+			slashHandles->getGraphHandles()->getGraphHandle(index), slashCountSum, 0, m_attackInfo);
+		pushCharacterSoundQueue(m_attackInfo->slashStartSoundHandle(), soundPlayer);
+	}
+	else if (cnt == slashCountSum * 2) {
+		index = 1;
+		attackObject = new SlashObject(x1, y1, x2, y2,
+			slashHandles->getGraphHandles()->getGraphHandle(index), slashCountSum, 0, m_attackInfo);
+	}
+	else if (cnt == slashCountSum) {
+		index = 2;
+		attackObject = new SlashObject(x1, y1, x2, y2,
+			slashHandles->getGraphHandles()->getGraphHandle(index), slashCountSum, 0, m_attackInfo);
+	}
+
+	if (attackObject != nullptr) {
+		prepareSlashObject(attackObject);
+	}
+	else {
+		return nullptr;
+	}
+	return new std::vector<Object*>{ attackObject };
+}
+
+LastBoss::LastBoss(const char* name, int hp, int x, int y, int groupId) :
+	Heart(name, hp, x, y, groupId)
+{
+
+}
+LastBoss::LastBoss(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo) :
+	Heart(name, hp, x, y, groupId, attackInfo)
+{
+
+}
+
+// 射撃攻撃をする
+vector<Object*>* LastBoss::bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer) {
+	if (cnt != getBulletRapid()) { return nullptr; }
+	// 弾の作成
+	BulletObject* attackObject;
+	attackObject = new BulletObject(
+		getCenterX(), getCenterY(), m_graphHandle->getBulletHandle()->getGraphHandles()->getGraphHandle(),
+		gx, gy, DEFAULT_BULLET_ENERGY_TIME, m_attackInfo);
+	pushCharacterSoundQueue(m_attackInfo->bulletStartSoundeHandle(), soundPlayer);
+	prepareBulletObject(attackObject);
+	return new std::vector<Object*>{ attackObject };
 }

@@ -81,7 +81,7 @@ public:
 	void setReverseY(bool reverse);
 
 	// •`‰æ‚·‚é
-	void draw(int x, int y, int index);
+	void draw(int x, int y, int index, double ex = 1.0);
 };
 
 

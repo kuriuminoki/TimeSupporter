@@ -154,11 +154,13 @@ protected:
 class ChapterOneED:
 	public Movie
 {
-private:
+protected:
 
 	int m_bright;
 	bool m_toDark;
+	std::string m_credit[7];
 
+private:
 	int m_nowHaikei;
 
 	bool m_elinaFlag;
@@ -168,13 +170,37 @@ private:
 	// 画像
 	GraphHandles* m_walkSaeru;
 	int m_haikei[4];
-	std::string m_credit[7];
 	int m_elina;
 	int m_deadSaeru;
 
 public:
 	ChapterOneED(SoundPlayer* soundPlayer_p);
 	~ChapterOneED();
+
+	// 再生
+	void play();
+
+	// 描画
+	void draw() const;
+};
+
+
+class Chapter7ED :
+	public ChapterOneED
+{
+private:
+	GraphHandles* m_all;
+	Conversation* m_conversation;
+	ConversationDrawer* m_conversationDrawer;
+
+	const int STAFF_CNT = 1180; // スタッフロールが始まる時刻
+	const int FLASH_CNT = 3500;
+
+	int m_staffX;
+
+public:
+	Chapter7ED(SoundPlayer* soundPlayer_p);
+	~Chapter7ED();
 
 	// 再生
 	void play();

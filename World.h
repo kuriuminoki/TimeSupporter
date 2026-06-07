@@ -159,6 +159,7 @@ private:
 
 	// ボスがやられた時のエフェクト中
 	int m_bossDeadEffectCnt;
+	bool m_lastBoss;
 
 	// 所持金
 	const int MAX_MONEY = 999;
