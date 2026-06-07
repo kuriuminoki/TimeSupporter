@@ -330,6 +330,110 @@ void ChapterOneED::draw() const {
 }
 
 
+// エンディング
+Chapter7ED::Chapter7ED(SoundPlayer* soundPlayer_p) :
+	ChapterOneED(soundPlayer_p)
+{
+	string path = "picture/movie/ed/";
+	m_all = new GraphHandles((path + "all").c_str(), 3, m_ex * 0.7, 0, true);
+
+	// 最初の画像設定
+	m_centerX = GAME_WIDE / 2;
+	m_centerY = GAME_HEIGHT / 2;
+	m_animation = new Animation(m_centerX, m_centerY, 3, m_all);
+	m_animation->setLoopFlag(true);
+
+	// BGM
+	m_bgmPath = "sound/music/ED.mp3";
+
+	m_bright = 255;
+	m_toDark = false;
+
+	// 会話
+	m_conversation = new Conversation(156, soundPlayer_p, 300);
+	m_conversationDrawer = new ConversationDrawer(m_conversation);
+	m_conversation->setStartCnt(0);
+
+	m_staffX = GAME_WIDE;
+
+	m_credit[2] = "エンディングテーマ";
+}
+
+Chapter7ED::~Chapter7ED() {
+
+	// 音楽を止める
+	m_soundPlayer_p->deleteBGM();
+
+	delete m_all;
+
+	delete m_conversation;
+	delete m_conversationDrawer;
+}
+
+void Chapter7ED::play() {
+	Movie::play();
+
+	// 会話イベント再生
+	if (m_conversation != nullptr && m_cnt < STAFF_CNT) {
+		m_conversation->play();
+		m_soundPlayer_p->play();
+	}
+	else {
+		m_staffX -= 3 * m_exX;
+	}
+	if (m_cnt == STAFF_CNT) {
+		m_bright = 0;
+	}
+	if (m_bright < 255 && !m_toDark) {
+		m_bright++;
+	}
+	// 終了
+	if (m_cnt == 5200) {
+		m_finishFlag = true;
+	}
+}
+
+void Chapter7ED::draw() const {
+	SetDrawBright(m_bright, m_bright, m_bright);
+
+	if (m_conversation != nullptr && m_cnt < STAFF_CNT) {
+		m_conversationDrawer->draw(true);
+	}
+	else {
+		if (m_cnt >= STAFF_CNT && m_cnt < 2085) {
+			m_all->draw(m_centerX, m_centerY, 0, m_ex * 0.7);
+		}
+		else if (m_cnt < 2100) {
+			m_all->draw(m_centerX, m_centerY, m_cnt / 2 % 2, m_ex * 0.7);
+		}
+		else if (m_cnt < FLASH_CNT) {
+			m_all->draw(m_centerX, m_centerY, 1, m_ex * 0.7);
+		}
+		else if (m_cnt >= FLASH_CNT && m_cnt < FLASH_CNT + 30) {
+			
+		}
+		else {
+			m_all->draw(m_centerX, m_centerY, 2, m_ex * 0.7);
+		}
+		int d = GAME_WIDE * 2 / 3;
+		for (int i = 0; i < 7; i++) {
+			DrawFormatStringToHandle(m_staffX + i * d, GAME_HEIGHT / 2, WHITE, m_textHandle, m_credit[i].c_str());
+			if (i == 2) {
+				DrawFormatStringToHandle(m_staffX + i * d, GAME_HEIGHT / 2 + 50, WHITE, m_textHandle, "「月と狼」");
+				DrawFormatStringToHandle(m_staffX + i * d, GAME_HEIGHT / 2 + 100, WHITE, m_textHandle, "唄：ＫＥＩ（謎の人物Ｋ）");
+				DrawFormatStringToHandle(m_staffX + i * d, GAME_HEIGHT / 2 + 150, WHITE, m_textHandle, "素材提供：魔王魂");
+			}
+		}
+		DrawFormatStringToHandle(max(100 * m_exX, m_staffX + 7 * d), GAME_HEIGHT / 2, YELLOW, m_textHandle, "Thank you for playing!!");
+	}
+
+	SetDrawBright(255, 255, 255);
+	drawframe();
+	// Zキー長押しでスキップの表示
+	drawSkip(m_skipCnt, m_exX, m_exY, m_textHandle);
+}
+
+
 /*
 * 各章のED(共通部分)
 */

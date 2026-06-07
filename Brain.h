@@ -608,4 +608,39 @@ public:
 };
 
 
+class ArmAI :
+	public FlightAI
+{
+private:
+	const int LIMIT_GX1 = -500;
+	const int LIMIT_GX2 = 3500;
+public:
+	static const char* BRAIN_NAME;
+	const char* getBrainName() const { return this->BRAIN_NAME; }
+
+	ArmAI();
+
+	void moveOrder(int& right, int& left, int& up, int& down);
+};
+
+class LastAI :
+	public FlightAI
+{
+private:
+	const int LIMIT_GX1 = 0;
+	const int LIMIT_GX2 = 3000;
+	const int SAERU_DISTANCE = 1500;
+	int m_bulletCnt;
+public:
+	static const char* BRAIN_NAME;
+	const char* getBrainName() const { return this->BRAIN_NAME; }
+
+	LastAI();
+
+	void moveOrder(int& right, int& left, int& up, int& down);
+
+	int bulletOrder();
+};
+
+
 #endif

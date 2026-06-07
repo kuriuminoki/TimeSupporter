@@ -770,4 +770,37 @@ public:
 };
 
 
+class RightArm :
+	public SlashOnly
+{
+private:
+	const int SLASH_START_CNT = 40; // 斬撃攻撃の開始時間
+public:
+	RightArm(const char* name, int hp, int x, int y, int groupId);
+	RightArm(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
+
+	// ボスの初期アニメーションをセット
+	void switchInit(int cnt) { return; }
+
+	// 立ち斬撃画像をセット
+	void switchAirSlash(int cnt);
+	void switchSlash(int cnt);
+
+	// 斬撃攻撃をする
+	std::vector<Object*>* slashAttack(bool leftDirection, int cnt, bool grand, SoundPlayer* soundPlayer);
+};
+
+
+class LastBoss :
+	public Heart
+{
+public:
+	LastBoss(const char* name, int hp, int x, int y, int groupId);
+	LastBoss(const char* name, int hp, int x, int y, int groupId, AttackInfo* attackInfo);
+
+	// 射撃攻撃をする
+	std::vector<Object*>* bulletAttack(int cnt, int gx, int gy, SoundPlayer* soundPlayer);
+};
+
+
 #endif

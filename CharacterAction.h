@@ -495,155 +495,48 @@ public:
 };
 
 
-/*
-* 行動開始前のBoss
-*/
-class BossFreezeAction :
-	public CharacterAction
+class LeftArmAction :
+	public FlightAction
 {
-protected:
+private:
+	// 斬撃攻撃による移動速度
+	const int SLASH_MOVE_SPEED = 25;
 
-	// キャラの画像を変更
-	void switchHandle();
+	bool m_slashNow;
 
 public:
-
 	static const char* ACTION_NAME;
-	virtual const char* getActionName() const { return this->ACTION_NAME; }
+	const char* getActionName() const { return this->ACTION_NAME; }
 
-	BossFreezeAction(Character* character, SoundPlayer* soundPlayer_p);
+	LeftArmAction(Character* character, SoundPlayer* soundPlayer_p);
 
-	// デバッグ
-	void debug(int x, int y, int color) const { }
-	// 行動前の処理 毎フレーム行う
-	void init() { }
+	inline void setSlashNow(bool slashNow) { m_slashNow = slashNow; }
+	void setGrand(bool grand);
 
-	// 物理演算 毎フレーム行う
-	void action() { switchHandle(); }
+	// 斬撃開始の処理
+	void startSlash();
 
-	// 移動 引数は４方向分 キャラによっては斜めに移動できるため。
-	void move(bool right, bool left, bool up, bool down) { }
+	// 斬撃終了の処理
+	void finishSlash();
 
-	// ジャンプ rate%の力で飛び上がる。
-	void jump(int rate) { }
-
-	// 射撃攻撃
-	std::vector<Object*>* bulletAttack(int gx, int gy) { return nullptr; }
-
-	// 斬撃攻撃
-	std::vector<Object*>* slashAttack(int gx, int gy) { return nullptr; }
-
-	// スキル
-	std::vector<Object*>* skillAttack(int cnt) { return nullptr; }
-
-	// ダメージ 必要に応じてオーバーライド
-	void damage(int vx, int vy, int damageValue) { }
-
-	// 射撃開始の処理 必要に応じてオーバーライド
-	void startBullet() { }
-
-	// 射撃終了の処理 必要に応じてオーバーライド
-	void finishBullet() { }
-
-	// 斬撃開始の処理 必要に応じてオーバーライド
-	void startSlash() { }
-
-	// 斬撃終了の処理 必要に応じてオーバーライド
-	void finishSlash() { }
-
-	// 今無敵時間じゃない
-	bool ableDamage() const { return false; }
-
-	// 今攻撃可能状態
-	bool ableAttack() const { return false; }
-
-	// 今歩ける状態
-	bool ableWalk() const { return false; }
-
-	// 方向転換可能 FreezeAI用
-	bool ableChangeDirection() const { return false; }
-
+	// ダメージ
+	void damage(int vx, int vy, int damageValue);
 };
 
 
-/*
-* Boss1: サン
-*/
-class SunAction :
+class LastAction :
 	public FlightAction
 {
 private:
 
-	// ボスの初期アニメーションカウント用
-	int m_initCnt;
-	const int NOT_HIDE_CNT = 80;
-
-	// 初期体力
-	int m_initHp;
-
-	// 無敵状態
-	bool m_hideFlag;
-
-	int m_startAnimeCnt;
-
 public:
 	static const char* ACTION_NAME;
 	const char* getActionName() const { return this->ACTION_NAME; }
 
-	SunAction(Character* character, SoundPlayer* soundPlayer_p, bool duplicationFlag);
+	LastAction(Character* character, SoundPlayer* soundPlayer_p);
 
-	// セッタ
-	inline void setInitCnt(int initCnt) { m_initCnt = initCnt; }
-	inline void setInitHp(int initHp) { m_initHp = initHp; }
-	inline void setHideFlag(int hideFlag) { m_hideFlag = hideFlag; }
-	inline void setStartAnimeCnt(int startAnimeCnt) { m_startAnimeCnt = startAnimeCnt; }
-
-	void action();
-
-protected:
-
-	// 状態に応じて画像セット
-	void switchHandle();
-
-};
-
-
-/*
-* Boss2: アーカイブ
-*/
-class ArchiveAction :
-	public StickAction
-{
-private:
-
-	// 最初のHP表示アニメ用 falseの間は動かない
-	bool m_initCompFlag;
-
-	// 初期体力
-	int m_initHp;
-
-	// 斬撃攻撃による移動速度
-	const int SLASH_MOVE_SPEED = 80;
-
-	int m_slashVx;
-
-public:
-	static const char* ACTION_NAME;
-	const char* getActionName() const { return this->ACTION_NAME; }
-
-	ArchiveAction(Character* character, SoundPlayer* soundPlayer_p, bool duplicationFlag);
-
-	// セッタ
-	inline void setInitCompFlag(bool initCompFlag) { m_initCompFlag = initCompFlag; }
-	inline void setInitHp(int initHp) { m_initHp = initHp; }
-	inline void setSlashVx(int slashVx) { m_slashVx = slashVx; }
-
-	void action();
-
-	void startSlash();
-	void finishSlash();
-
-	bool ableDamage() const;
+	// ダメージ
+	void damage(int vx, int vy, int damageValue);
 };
 
 

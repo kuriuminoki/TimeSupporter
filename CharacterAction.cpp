@@ -14,9 +14,8 @@ const char* StickAction::ACTION_NAME = "StickAction";
 const char* ValkiriaAction::ACTION_NAME = "ValkiriaAction";
 const char* FlightAction::ACTION_NAME = "FlightAction";
 const char* KoharuAction::ACTION_NAME = "KoharuAction";
-const char* SunAction::ACTION_NAME = "SunAction";
-const char* ArchiveAction::ACTION_NAME = "ArchiveAction";
-const char* BossFreezeAction::ACTION_NAME = "BossFreezeAction";
+const char* LeftArmAction::ACTION_NAME = "LeftArmAction";
+const char* LastAction::ACTION_NAME = "LastAction";
 
 // クラス名からCharacterActionを作成する関数
 CharacterAction* createAction(const string actionName, Character* character, SoundPlayer* soundPlayer_p) {
@@ -45,14 +44,11 @@ CharacterAction* createAction(const string actionName, Character* character, Sou
 	else if (tmp == KoharuAction::ACTION_NAME) {
 		action = new KoharuAction(character, soundPlayer_p);
 	}
-	else if (tmp == BossFreezeAction::ACTION_NAME) {
-		action = new BossFreezeAction(character, soundPlayer_p);
+	else if (tmp == LeftArmAction::ACTION_NAME) {
+		action = new LeftArmAction(character, soundPlayer_p);
 	}
-	else if (tmp == SunAction::ACTION_NAME) {
-		action = new SunAction(character, soundPlayer_p, false);
-	}
-	else if (tmp == ArchiveAction::ACTION_NAME) {
-		action = new ArchiveAction(character, soundPlayer_p, false);
+	else if (tmp == LastAction::ACTION_NAME) {
+		action = new LastAction(character, soundPlayer_p);
 	}
 
 	action->setHeavy(heavy);
@@ -1092,7 +1088,7 @@ void FlightAction::switchHandle() {
 		switch (m_state) {
 		case CHARACTER_STATE::STAND: //立ち状態(なにもなしの状態)
 			if (m_slashCnt > 0) {
-				m_character_p->switchAirSlash();
+				m_character_p->switchAirSlash(m_slashCnt);
 			}
 			else if (m_bulletCnt > 0) {
 				if (m_runCnt != -1) {
@@ -1388,198 +1384,87 @@ bool KoharuAction::ableWalk() const {
 
 
 /*
-* 行動開始前のBoss
+* ヴァルキリア用Action 斬撃時に移動する
 */
-BossFreezeAction::BossFreezeAction(Character* character, SoundPlayer* soundPlayer_p) :
-	CharacterAction(character, soundPlayer_p)
-{
-
-}
-
-void BossFreezeAction::switchHandle() {
-	m_character_p->switchSpecial1();
-}
-
-
-/*
-* Boss1: サン
-*/
-SunAction::SunAction(Character* character, SoundPlayer* soundPlayer_p, bool duplicationFlag) :
+LeftArmAction::LeftArmAction(Character* character, SoundPlayer* soundPlayer_p) :
 	FlightAction(character, soundPlayer_p)
 {
-	m_state = CHARACTER_STATE::INIT;
-	m_initCnt = -FPS_N;
-	m_initHp = m_character_p->getHp();
-	if (!duplicationFlag) {
-		m_character_p->setHp(min(1, m_initHp));
-	}
-	m_startAnimeCnt = 0;
+	m_slashNow = false;
 }
 
-void SunAction::action() {
-	// 状態(state)に応じて画像をセット
-	switchHandle();
-	if (m_hideFlag && m_initCnt != 0) {
-		// 隠れ途中
-		m_initCnt--;
-	}
-	else if (!m_hideFlag && m_initCnt != NOT_HIDE_CNT) {
-		// 出現途中
-		m_initCnt++;
-		if (m_state == CHARACTER_STATE::INIT) {
-			m_character_p->setHp(min(m_character_p->getHp() + 10, m_initHp));
-		}
-		if (m_initCnt == NOT_HIDE_CNT && m_character_p->getHp() == m_initHp) {
-			m_state = CHARACTER_STATE::STAND;
-		}
-	}
-	else {
-		m_startAnimeCnt++;
-		// 隠れ・出現の開始
-		if (m_hideFlag) {
-			// 現在隠れ状態
-			m_bulletCnt = 1;
-			slashAction();
-			damageAction();
-			otherAction();
-			moveAction();
-			flightAction();
-			if (m_startAnimeCnt > 300 && (GetRand(120) == 0 || m_startAnimeCnt == 600)) {
-				m_hideFlag = false;
-				m_initCnt = 0;
-				m_startAnimeCnt = 0;
-				m_runVx = 0;
-				m_runVy = 0;
-			}
-		}
-		else {
-			// 現在出現状態
-			bulletAction();
-			slashAction();
-			damageAction();
-			otherAction();
-			if (m_startAnimeCnt > 300 && (GetRand(300) == 0 || m_startAnimeCnt == 600)) {
-				m_hideFlag = true;
-				m_initCnt = NOT_HIDE_CNT - 1;
-				m_startAnimeCnt = 0;
+// 着地 ヴァルキリアは斬撃中に着地しても着地モーションにならない
+void LeftArmAction::setGrand(bool grand) {
+	if (m_vy > 0) { // 着地モーションになる
+		if (m_slashCnt == 0) { // 斬撃中ではない
+			m_landCnt = LAND_TIME;
+			// 効果音
+			if (m_soundPlayer_p != nullptr) {
+				m_soundPlayer_p->pushSoundQueue(m_character_p->getLandSound(),
+					adjustPanSound(m_character_p->getCenterX(),
+						m_soundPlayer_p->getCameraX()));
 			}
 		}
 	}
-}
-
-// 状態に応じて画像セット
-void SunAction::switchHandle() {
-
-	m_prevLeftDirection = false;
-	m_character_p->setLeftDirection(false);
-
-	if (m_initCnt != NOT_HIDE_CNT) {
-		// セット前の画像のサイズ
-		int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
-		bool nowLeftDirection = false;
-		m_character_p->setLeftDirection(false);
-		m_character_p->getAtariArea(&x1, &y1, &x2, &y2);
-
-		// 画像セット
-		if (m_initCnt == 0 && m_hideFlag) {
-			m_character_p->switchSpecial1();
-		}
-		else {
-			m_character_p->switchInit(m_initCnt);
-		}
-
-		m_character_p->setLeftDirection(nowLeftDirection);
-
-		// セット後の画像のサイズ
-		int afterX1 = 0, afterY1 = 0, afterX2 = 0, afterY2 = 0;
-		m_character_p->getAtariArea(&afterX1, &afterY1, &afterX2, &afterY2);
-
-		// サイズ変更による位置調整
-		afterChangeGraph(x1, afterX1, y1, afterY1, x2, afterX2, y2, afterY2);
-	}
-	else {
-		FlightAction::switchHandle();
+	m_grand = grand;
+	finishBoost();
+	if (m_state == CHARACTER_STATE::DAMAGE && m_damageCnt == 0) {
+		m_vx = 0;
+		m_vy = 0;
+		m_state = CHARACTER_STATE::STAND;
 	}
 }
 
-
-/*
-* Boss2: アーカイブ
-*/
-ArchiveAction::ArchiveAction(Character* character, SoundPlayer* soundPlayer_p, bool duplicationFlag) :
-	StickAction(character, soundPlayer_p)
-{
-	m_state = CHARACTER_STATE::INIT;
-	m_initCompFlag = false;
-	m_initHp = m_character_p->getHp();
-	if (!duplicationFlag) {
-		m_character_p->setHp(min(1, m_initHp));
-	}
-	m_jumpCnt = 0;
-	m_slashVx = 0;
-}
-
-void ArchiveAction::action() {
-	if (!m_initCompFlag) {
-		// 状態(state)に応じて画像をセット
-		switchHandle();
-		if (m_state == CHARACTER_STATE::INIT) {
-			m_character_p->setHp(min(m_character_p->getHp() + 10, m_initHp));
-		}
-		if (m_character_p->getHp() == m_initHp) {
-			m_state = CHARACTER_STATE::STAND;
-			m_initCompFlag = true;
-		}
-	}
-	else {
-		if (m_slashVx > 0) {
-			m_slashVx -= 2;
-			if (m_attackLeftDirection) {
-				if (!m_leftLock) {
-					m_vx += 2;
-				}
-			}
-			else {
-				if (!m_rightLock) {
-					m_vx -= 2;
-				}
-			}
-		}
-		StickAction::action();
-		m_landCnt = 0;
-		if (m_state == CHARACTER_STATE::PREJUMP) {
-			m_state = CHARACTER_STATE::STAND;
-		}
-	}
-}
-
-void ArchiveAction::startSlash() {
+void LeftArmAction::startSlash() {
 	if (m_attackLeftDirection) {
 		if (!m_leftLock) {
 			m_vx -= SLASH_MOVE_SPEED;
+			m_slashNow = true;
 		}
 	}
 	else {
 		if (!m_rightLock) {
 			m_vx += SLASH_MOVE_SPEED;
+			m_slashNow = true;
 		}
 	}
-	m_slashVx = SLASH_MOVE_SPEED;
 }
 
-void ArchiveAction::finishSlash() {
-	CharacterAction::finishSlash();
-	if (m_slashVx > 0) {
+void LeftArmAction::finishSlash() {
+	FlightAction::finishSlash();
+	if (m_slashNow) {
 		if (m_attackLeftDirection && !m_leftLock) {
-			m_vx += m_slashVx;
+			m_vx += SLASH_MOVE_SPEED;
 		}
 		else if (!m_rightLock) {
-			m_vx -= m_slashVx;
+			m_vx -= SLASH_MOVE_SPEED;
 		}
 	}
-	m_slashVx = 0;
+	m_slashNow = false;
+	m_muteki = false;
 }
 
-bool ArchiveAction::ableDamage() const {
-	return StickAction::ableDamage() && m_initCompFlag;
+// ダメージを受ける ヴァルキリアは斬撃中はHPが減るだけ
+void LeftArmAction::damage(int vx, int vy, int damageValue) {
+	if (m_slashCnt > 0) {
+		// HP減少
+		m_character_p->damageHp(damageValue / 2);
+		m_muteki = true;
+	}
+	else {
+		FlightAction::damage(vx, vy, damageValue);
+	}
+}
+
+
+LastAction::LastAction(Character* character, SoundPlayer* soundPlayer_p) :
+	FlightAction(character, soundPlayer_p)
+{
+
+}
+
+void LastAction::damage(int vx, int vy, int damageValue) {
+	// 必殺技じゃないと効かない
+	if (abs(vx) >= 40) {
+		FlightAction::damage(vx, vy, damageValue);
+	}
 }
