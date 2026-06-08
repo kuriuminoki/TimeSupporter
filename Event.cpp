@@ -8,6 +8,7 @@
 #include "Text.h"
 #include "Brain.h"
 #include "Animation.h"
+#include "DxLib.h"
 #include <sstream>
 
 using namespace std;
@@ -154,6 +155,9 @@ void Event::createElement(vector<string> param, World* world, SoundPlayer* sound
 	}
 	else if (param0 == "DeadGroup") {
 		element = new DeadGroupEvent(world, param);
+	}
+	else if (param0 == "DeadGroupHalf") {
+		element = new DeadGroupHalfEvent(world, soundPlayer, param);
 	}
 	else if (param0 == "Talk") {
 		element = new TalkEvent(world, soundPlayer, param);
@@ -618,6 +622,57 @@ EVENT_RESULT DeadGroupEvent::play() {
 		return EVENT_RESULT::NOW;
 	}
 	m_cnt++;
+	return EVENT_RESULT::NOW;
+}
+
+
+// ì¡íËÇÃÉOÉãÅ[ÉvÇ™ëSñ≈Ç∑ÇÈÇ‹Ç≈êÌÇ§
+DeadGroupHalfEvent::DeadGroupHalfEvent(World* world, SoundPlayer* soundPlayer, std::vector<std::string> param) :
+	EventElement(world)
+{
+	m_groupId = stoi(param[1]);
+	m_cnt = 0;
+	m_soundPlayer_p = soundPlayer;
+	m_sound = LoadSoundMem("sound/battle/ãŸã}éñë‘î≠ê∂.wav");
+}
+DeadGroupHalfEvent::~DeadGroupHalfEvent() {
+	DeleteSoundMem(m_sound);
+}
+EVENT_RESULT DeadGroupHalfEvent::play() {
+	m_world_p->battle();
+	if (m_cnt > 0) {
+		if (m_cnt < FINISH_CNT / 2 && m_cnt / 2 % 2 == 0) {
+			m_world_p->setGreenFlag(true);
+		}
+		else {
+			m_world_p->setGreenFlag(false);
+		}
+		if (m_cnt == FINISH_CNT / 2) {
+			// ìGÇëSàıì|Ç∑
+			m_world_p->bombGroup(m_groupId);
+		}
+		m_cnt++;
+		if (m_cnt == FINISH_CNT) { return EVENT_RESULT::SUCCESS; }
+		return EVENT_RESULT::NOW;
+	}
+	if (m_world_p->getBrightValue() < 255) {
+		return EVENT_RESULT::NOW;
+	}
+	vector<const CharacterAction*> actions = m_world_p->getActions();
+	int exists = 0;
+	for (unsigned int i = 0; i < actions.size(); i++) {
+		if (actions[i]->getCharacter()->getGroupId() == m_groupId && actions[i]->getCharacter()->getHp() > 0) {
+			exists++;
+		}
+	}
+	if (exists > 3) {
+		return EVENT_RESULT::NOW;
+	}
+	if (m_world_p->getBossDeadEffextCnt() > 0) {
+		return EVENT_RESULT::NOW;
+	}
+	m_cnt++;
+	m_soundPlayer_p->pushSoundQueue(m_sound, 0);
 	return EVENT_RESULT::NOW;
 }
 

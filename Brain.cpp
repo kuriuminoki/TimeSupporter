@@ -1296,7 +1296,7 @@ void ArmAI::moveOrder(int& right, int& left, int& up, int& down) {
 	else if (alreadyGoal && GetRand(39) == 0) {
 		if (m_target_p != nullptr) {
 			// target‚É‚Â‚¢‚Ä‚¢‚­
-			int NEAR_TARGET_X = 400, NEAR_TARGET_Y = 200;
+			int NEAR_TARGET_X = 300, NEAR_TARGET_Y = 200;
 			int targetX1 = 0, targetY1 = 0, targetX2 = 0, targetY2 = 0;
 			m_target_p->getAtariArea(&targetX1, &targetY1, &targetX2, &targetY2);
 			m_gx = (targetX1 + targetX2) / 2 + GetRand(NEAR_TARGET_X) - NEAR_TARGET_X / 2;

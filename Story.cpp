@@ -84,7 +84,10 @@ EVENT_RESULT Story::play() {
 	else {
 		// イベント進行中
 		EVENT_RESULT result = m_nowEvent->play();
-		
+		if (m_world->playerDead() && m_world->getBrightValue() == 0) {
+			return EVENT_RESULT::FAILURE;
+		}
+
 		// イベント失敗
 		if (result == EVENT_RESULT::FAILURE) {
 			return EVENT_RESULT::FAILURE;

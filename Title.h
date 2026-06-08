@@ -86,6 +86,7 @@ private:
 
 	// タイトルの画像
 	int m_titleGraph;
+	double m_ex;
 
 	// オプション画面
 	TitleOption* m_option;

@@ -38,6 +38,8 @@ private:
 	int m_tmpScreenG;
 	int m_tmpScreenB;
 
+	int m_font;
+
 public:
 	GameDrawer(const Game* game);
 

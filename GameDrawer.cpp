@@ -36,16 +36,20 @@ GameDrawer::GameDrawer(const Game* game) {
 	m_noticeX = (int)(m_noticeX * (m_exX / 2 * m_noticeEx));
 	m_noticeY = (int)(m_noticeY * (m_exY / 2 * m_noticeEx));
 	m_noticeX += (int)(10 * m_exX);
+	m_noticeX = GAME_WIDE - m_noticeX;
 	m_noticeY = GAME_HEIGHT - m_noticeY - (int)(10 * m_exY);
 
 	m_tmpScreenR = MakeScreen(GAME_WIDE, GAME_HEIGHT, TRUE);
 	m_tmpScreenG = MakeScreen(GAME_WIDE, GAME_HEIGHT, TRUE);
 	m_tmpScreenB = MakeScreen(GAME_WIDE, GAME_HEIGHT, TRUE);
+
+	m_font = CreateFontToHandle(nullptr, (int)(20 * m_exX), 3);
 }
 
 GameDrawer::~GameDrawer() {
 	delete m_worldDrawer;
 	DeleteFontToHandle(m_skillHandle);
+	DeleteFontToHandle(m_font);
 	DeleteGraph(m_screenEffectHandle);
 	DeleteGraph(m_skillInfoHandle);
 	DeleteGraph(m_skillInfoBackHandle);
@@ -109,6 +113,7 @@ void GameDrawer::draw(int screen) {
 	}
 	else{
 		SetMouseDispFlag(MOUSE_DISP);//マウス表示
+		DrawStringToHandle(30 + m_exX, GAME_HEIGHT - 30 * m_exY, "Qキー: 一時停止", WHITE, m_font);
 	}
 }
 

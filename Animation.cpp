@@ -419,9 +419,9 @@ void Chapter7ED::draw() const {
 		for (int i = 0; i < 7; i++) {
 			DrawFormatStringToHandle(m_staffX + i * d, GAME_HEIGHT / 2, WHITE, m_textHandle, m_credit[i].c_str());
 			if (i == 2) {
-				DrawFormatStringToHandle(m_staffX + i * d, GAME_HEIGHT / 2 + 50, WHITE, m_textHandle, "「月と狼」");
-				DrawFormatStringToHandle(m_staffX + i * d, GAME_HEIGHT / 2 + 100, WHITE, m_textHandle, "唄：ＫＥＩ（謎の人物Ｋ）");
-				DrawFormatStringToHandle(m_staffX + i * d, GAME_HEIGHT / 2 + 150, WHITE, m_textHandle, "素材提供：魔王魂");
+				DrawFormatStringToHandle(m_staffX + i * d, GAME_HEIGHT / 2 + 50 * m_exY, WHITE, m_textHandle, "「月と狼」");
+				DrawFormatStringToHandle(m_staffX + i * d, GAME_HEIGHT / 2 + 100 * m_exY, WHITE, m_textHandle, "唄：ＫＥＩ（謎の人物Ｋ）");
+				DrawFormatStringToHandle(m_staffX + i * d, GAME_HEIGHT / 2 + 150 * m_exY, WHITE, m_textHandle, "素材提供：魔王魂");
 			}
 		}
 		DrawFormatStringToHandle(max(100 * m_exX, m_staffX + 7 * d), GAME_HEIGHT / 2, YELLOW, m_textHandle, "Thank you for playing!!");
@@ -550,11 +550,11 @@ void ChapterEDCommon::draw() const {
 Chapter2ED::Chapter2ED(SoundPlayer* soundPlayer_p):
 	ChapterEDCommon(soundPlayer_p, 2)
 {
-	m_words[0] = "平気よ。ロボットは人より弱いわ。";
-	m_words[1] = "やったー！楽しみにしてるね！！";
-	m_words[2] = "そろそろ状況を変えないとな・・・";
-	m_words[3] = "オレは任務を遂行するだけだ。";
-	m_words[4] = "できるだけ、感情を捨てたらいいんだよ。";
+	m_words[0] = "人の方がロボットなんかより全然強いんだから。";
+	m_words[1] = "やった、楽しみにしてるね。";
+	m_words[2] = "随分俺は気に入られているんだな。";
+	m_words[3] = "オレは任務をこなすだけだ。";
+	m_words[4] = "僕はできるだけ淡々と生きる。";
 	m_chapterTitle = "黒い過去";
 
 	string path = "picture/movie/chapter2ed/";
@@ -609,7 +609,7 @@ void Chapter2ED::play() {
 // 次回予告ムービー
 void Chapter2ED::nextMoviePlay() {
 	if (m_cnt == HARUJION_TIME) {
-		m_animation->setVy(10);
+		m_animation->setVy(10 * m_exY);
 		m_animation->setLoopFlag(true);
 		m_animation->setMovable(true);
 	}
@@ -640,11 +640,11 @@ void Chapter2ED::draw() const {
 Chapter3ED::Chapter3ED(SoundPlayer* soundPlayer_p) :
 	ChapterEDCommon(soundPlayer_p, 3)
 {
-	m_words[0] = "金持ちの嬢ちゃんだろ？大っ嫌いだな。";
-	m_words[1] = "全部、集めることができるか？";
+	m_words[0] = "まあいきなり過ぎるけど、いいかもね。";
+	m_words[1] = "随分と自意識過剰だ、口だけじゃないといいけどな。";
 	m_words[2] = "んあ、あの手が凄かった男ね。";
-	m_words[3] = "まあ、いいんじゃないかな。";
-	m_words[4] = "お前を助けに来たんだよ。";
+	m_words[3] = "自分勝手に生きてきたから他人のことがわからねえんだ。";
+	m_words[4] = "俺は拾えるものは全部拾う主義ってだけだ。";
 	m_chapterTitle = "テイク・ワン";
 
 	string path = "picture/movie/chapter3ed/";
@@ -652,7 +652,7 @@ Chapter3ED::Chapter3ED(SoundPlayer* soundPlayer_p) :
 	// 最初の画像設定
 	m_nextHandles = new GraphHandles((path + "クロエイト次回").c_str(), 2, m_ex * 2.5, 0, true);
 	m_centerX = GAME_WIDE / 2 - 800 * m_exX;
-	m_centerY = GAME_HEIGHT / 2 + 1400 * m_exX;
+	m_centerY = GAME_HEIGHT / 2 + 1400 * m_exY;
 	m_animation = new Animation(m_centerX, m_centerY, 10, m_nextHandles);
 
 	// 会話
@@ -675,7 +675,7 @@ void Chapter3ED::play() {
 void Chapter3ED::nextMoviePlay() {
 	if (m_cnt == HARUJION_TIME) {
 		m_animation->setVx(5 * m_exX);
-		m_animation->setVy(-5 * m_exX);
+		m_animation->setVy(-5 * m_exY);
 		m_animation->setLoopFlag(true);
 		m_animation->setMovable(true);
 	}
@@ -703,10 +703,10 @@ void Chapter3ED::draw() const {
 Chapter4ED::Chapter4ED(SoundPlayer* soundPlayer_p) :
 	ChapterEDCommon(soundPlayer_p, 4)
 {
-	m_words[0] = "・・・とてもそうは思えなかったよ？";
-	m_words[1] = "ああ・・・なるほどな。";
-	m_words[2] = "ハッ、なめんじゃねーよ。";
-	m_words[3] = "私のことはノアと呼んでください。";
+	m_words[0] = "自分のことしか考えない人間どもがっ！！";
+	m_words[1] = "・・・そう思ったんだから仕方ない。";
+	m_words[2] = "ハッ、まあいいけどよ。";
+	m_words[3] = "略して「ノア」とお呼びください。";
 	m_words[4] = "機械なんて叩けば直るでしょ。";
 	m_chapterTitle = "明日、あなたと、ＮＯＴ　ＯＲ？";
 
@@ -715,7 +715,7 @@ Chapter4ED::Chapter4ED(SoundPlayer* soundPlayer_p) :
 	// 最初の画像設定
 	m_nextHandles = new GraphHandles((path + "テイク次回").c_str(), 2, m_ex * 2.5, 0, true);
 	m_centerX = -2000 * m_exX;
-	m_centerY = 100 * m_exX;
+	m_centerY = 100 * m_exY;
 	m_animation = new Animation(m_centerX, m_centerY, 10, m_nextHandles);
 
 	// 会話
@@ -738,7 +738,7 @@ void Chapter4ED::play() {
 void Chapter4ED::nextMoviePlay() {
 	if (m_cnt == HARUJION_TIME) {
 		m_animation->setVx(5 * m_exX);
-		m_animation->setVy(3 * m_exX);
+		m_animation->setVy(3 * m_exY);
 		m_animation->setLoopFlag(false);
 		m_animation->setMovable(true);
 	}
@@ -747,11 +747,11 @@ void Chapter4ED::nextMoviePlay() {
 	}
 	if (m_cnt == HARUJION_TIME + 200) {
 		m_animation->setVx(55 * m_exX);
-		m_animation->setVy(33 * m_exX);
+		m_animation->setVy(33 * m_exY);
 	}
 	if (m_cnt == 4050) {
 		m_animation->setVx(5 * m_exX);
-		m_animation->setVy(3 * m_exX);
+		m_animation->setVy(3 * m_exY);
 		m_animation->setLoopFlag(false);
 	}
 }
@@ -770,10 +770,10 @@ void Chapter4ED::draw() const {
 Chapter5ED::Chapter5ED(SoundPlayer* soundPlayer_p) :
 	ChapterEDCommon(soundPlayer_p, 5)
 {
-	m_words[0] = "――それで、嬉しいの？";
-	m_words[1] = "ハッ、なんだよ調子狂うぜ。";
-	m_words[2] = "救われたことに、違いはない。";
-	m_words[3] = "私が治療をします。";
+	m_words[0] = "みんな本当に、これで嬉しいの？";
+	m_words[1] = "へっ、なんだよ調子狂うぜ。";
+	m_words[2] = "みんなに信頼されて・・・これ以上が必要か？";
+	m_words[3] = "私が覚えている限りその方は記憶の中では存在できます。";
 	m_words[4] = "それがバカだって言ってるのよ！！";
 	m_chapterTitle = "世界の中心はエリーナ";
 
@@ -807,7 +807,7 @@ void Chapter5ED::play() {
 // 次回予告ムービー
 void Chapter5ED::nextMoviePlay() {
 	if (m_cnt == HARUJION_TIME) {
-		m_animation->setVy(4);
+		m_animation->setVy(4 * m_exY);
 		m_animation->setLoopFlag(false);
 		m_animation->setMovable(true);
 	}
@@ -834,10 +834,10 @@ void Chapter5ED::draw() const {
 Chapter6ED::Chapter6ED(SoundPlayer* soundPlayer_p) :
 	ChapterEDCommon(soundPlayer_p, 6)
 {
-	m_words[0] = "ああ、それは約束する。";
-	m_words[1] = "偉そうにすんな！！調子に乗ってんじゃねえよ！！";
+	m_words[0] = "心配するな、俺は必ず期待に応えるさ。";
+	m_words[1] = "お前みたいなやつがいるから、誰も救われない！！";
 	m_words[2] = "それは傲慢だと、言ってて思わないか？";
-	m_words[3] = "私に敗北を渡すのは許さないから。";
+	m_words[3] = "私は負けるのが許せないから。";
 	m_words[4] = "サエル、君がしたいようにすればいいよ。";
 	m_chapterTitle = "タイム・サポーター";
 
@@ -872,7 +872,7 @@ void Chapter6ED::play() {
 // 次回予告ムービー
 void Chapter6ED::nextMoviePlay() {
 	if (m_cnt == HARUJION_TIME) {
-		m_animation->setVy(10);
+		m_animation->setVy(10 * m_exY);
 		m_animation->setLoopFlag(false);
 		m_animation->setMovable(true);
 	}
@@ -881,7 +881,7 @@ void Chapter6ED::nextMoviePlay() {
 	}
 	if (m_cnt == 3900) {
 		m_animation->setVy(0);
-		m_animation->setVx(-16);
+		m_animation->setVx(-16 * m_exX);
 		m_animation->setLoopFlag(false);
 	}
 	if (m_cnt == 4050) {

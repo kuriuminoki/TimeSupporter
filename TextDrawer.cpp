@@ -108,8 +108,8 @@ void ConversationDrawer::draw(bool movieFlag) {
 		}
 		// ‰ï˜b’†
 		else {
-			int dx = m_conversation->getTextAction().getDx();
-			int dy = m_conversation->getTextAction().getDy();
+			int dx = m_conversation->getTextAction().getDx() * m_exX;
+			int dy = m_conversation->getTextAction().getDy() * m_exY;
 
 			// ƒLƒƒƒ‰‚ÌŠç‰æ‘œ
 			drawCharacter(m_conversation->getSpeakerGraph(), m_conversation->getSpeakerPosition(), 255);
@@ -132,7 +132,7 @@ void ConversationDrawer::draw(bool movieFlag) {
 			if (name != "") {
 				textDy = 0;
 				DrawBox(EDGE_X + dx + 1, Y1 + 1 + dy, GAME_WIDE - EDGE_X - 1 + dx, Y1 + TEXT_GRAPH_EDGE + NAME_SIZE + dy, BLACK2, TRUE);
-				DrawStringToHandle(x, Y1 + TEXT_GRAPH_EDGE - 10 * m_exY + dy, name.c_str(), WHITE, m_nameHandle);
+				DrawStringToHandle(x, Y1 + TEXT_GRAPH_EDGE - 18 * m_exY + dy, name.c_str(), WHITE, m_nameHandle);
 			}
 			if (!m_conversation->getNarrationFlag()) {
 				int triangleHeight = 50 * m_exY;
@@ -204,13 +204,13 @@ void ConversationDrawer::drawCharacter(GraphHandle* graph, CHARACTER_POSITION po
 	}
 	int graphWide = 0, graphHeight = 0;
 	double ex = 0.5;
-	int dy = 200 * ex;
+	int dy = 200 * ex * m_exY;
 	GetGraphSize(graph->getHandle(), &graphWide, &graphHeight);
 
 	int positionX = 0;
 	switch (position) {
 	case CHARACTER_POSITION::LEFT:
-		positionX = graphWide / 2 * ex;
+		positionX = graphWide / 2 * ex * m_exX;
 		graph->setReverseX(false);
 		break;
 	case CHARACTER_POSITION::CENTER:
@@ -218,12 +218,12 @@ void ConversationDrawer::drawCharacter(GraphHandle* graph, CHARACTER_POSITION po
 		graph->setReverseX(false);
 		break;
 	case CHARACTER_POSITION::RIGHT:
-		positionX = GAME_WIDE - graphWide / 2 * ex;
+		positionX = GAME_WIDE - graphWide / 2 * ex * m_exX;
 		graph->setReverseX(true);
 		break;
 	}
 
-	graph->draw(positionX * m_exX, GAME_HEIGHT - graphHeight / 2 * ex * m_exY + dy, m_exX * ex);
+	graph->draw(positionX, GAME_HEIGHT - graphHeight / 2 * ex * m_exY + dy, m_exX * ex);
 	SetDrawBright(originalBright, originalBright, originalBright);
 }
 
