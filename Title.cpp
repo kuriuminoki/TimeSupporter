@@ -151,6 +151,9 @@ Title::Title(int* screen) {
 	m_soundPlayer = new SoundPlayer();
 
 	m_titleGraph = LoadGraph("picture/title.png");
+	int titleX, titleY;
+	GetGraphSize(m_titleGraph, &titleX, &titleY);
+	m_ex = min((double)GAME_WIDE / titleX, (double)GAME_HEIGHT / titleY);
 
 	// セーブデータがあるなら音量セット
 	if (m_selectSaveData->saveDataExist()) { 
@@ -262,7 +265,7 @@ void Title::draw() {
 
 	switch (m_state) {
 	case TITLE: // タイトル画面
-		DrawExtendGraph(0, 0, GAME_WIDE, GAME_HEIGHT, m_titleGraph, TRUE);
+		DrawRotaGraph(GAME_WIDE / 2, GAME_HEIGHT / 2, m_ex, 0.0, m_titleGraph, TRUE);
 		m_selectButton->draw(m_handX, m_handY);
 		m_optionButton->draw(m_handX, m_handY);
 		break;

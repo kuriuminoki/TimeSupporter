@@ -64,6 +64,7 @@ WorldDrawer::WorldDrawer(const World* world) {
 	m_eveningHaikei = LoadGraph("picture/stageMaterial/evening.jpg");
 	m_nightHaikei = LoadGraph("picture/stageMaterial/night.jpg");
 	m_enemyNotice = LoadGraph("picture/battleMaterial/enemyNotice.png");
+	m_green = LoadGraph("picture/battleMaterial/green.png");
 	getGameEx(m_exX, m_exY);
 	m_font = CreateFontToHandle(nullptr, (int)(50 * m_exX), 10);
 	m_followerNameFont = CreateFontToHandle(nullptr, (int)(30 * m_exX), 8);
@@ -83,6 +84,7 @@ WorldDrawer::~WorldDrawer() {
 	DeleteGraph(m_eveningHaikei);
 	DeleteGraph(m_nightHaikei);
 	DeleteGraph(m_enemyNotice);
+	DeleteGraph(m_green);
 	DeleteFontToHandle(m_font);
 	DeleteFontToHandle(m_followerNameFont);
 }
@@ -249,6 +251,10 @@ void WorldDrawer::drawBattleField(const Camera* camera, int bright, bool drawSki
 
 		// ƒJƒƒ‰‚ðŽg‚Á‚ÄƒLƒƒƒ‰‚ð•`‰æ
 		m_animationDrawer->drawAnimation(camera);
+	}
+
+	if (m_world->getGreenFlag()) {
+		DrawExtendGraph(0, 0, GAME_WIDE, GAME_HEIGHT, m_green, TRUE);
 	}
 
 	if (m_world->getDispHpInfoFlag()) {

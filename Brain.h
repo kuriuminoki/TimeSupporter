@@ -612,8 +612,8 @@ class ArmAI :
 	public FlightAI
 {
 private:
-	const int LIMIT_GX1 = -500;
-	const int LIMIT_GX2 = 3500;
+	const int LIMIT_GX1 = -900;
+	const int LIMIT_GX2 = 3900;
 public:
 	static const char* BRAIN_NAME;
 	const char* getBrainName() const { return this->BRAIN_NAME; }

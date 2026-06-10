@@ -37,15 +37,15 @@ SelectStagePage::SelectStagePage(int completeStageSum, int exp) {
 	for (int i = 0; i < CHAPTER_SUM; i++) {
 		ostringstream oss;
 		oss << "チャプター" << i + 1 << "：" << CHAPTER_TITLE[i];
-		m_chapterButton.push_back(new Button(oss.str().c_str(), 100, 100 + (70 * i), 1200, 60, WHITE, RED, m_font, BLACK));
+		m_chapterButton.push_back(new Button(oss.str().c_str(), 100 * m_exX, (100 + (70 * i)) * m_exY, 1200 * m_exX, 60 * m_exY, WHITE, RED, m_font, BLACK));
 	}
 	for (int i = 0; i < STAGE_PER_CHAPTER; i++) {
 		ostringstream oss1;
 		oss1 << "ステージ" << i + 1;
-		m_stageButton.push_back(new Button(oss1.str().c_str(), 200, 780 + (70 * i), 500, 60, WHITE, RED, m_font, BLACK));
+		m_stageButton.push_back(new Button(oss1.str().c_str(), 200 * m_exX, (780 + (70 * i)) * m_exY, 500 * m_exX, 60 * m_exY, WHITE, RED, m_font, BLACK));
 		ostringstream oss2;
 		oss2 << "ステージ" << i + 1 << " (裏)";
-		m_typeStageButton.push_back(new Button(oss2.str().c_str(), 750, 780 + (70 * i), 500, 60, WHITE, RED, m_font, BLUE));
+		m_typeStageButton.push_back(new Button(oss2.str().c_str(), 750 * m_exX, (780 + (70 * i)) * m_exY, 500 * m_exX, 60 * m_exY, WHITE, RED, m_font, BLUE));
 	}
 	for (int i = 0; i < CHAPTER_SUM; i++) {
 		ostringstream oss;
@@ -130,7 +130,7 @@ bool SelectStagePage::play(int handX, int handY) {
 void SelectStagePage::draw(int handX, int handY) const {
 
 	if (m_focusChapter != -1) {
-		DrawRotaGraph(GAME_WIDE - 300 + m_chapterGraphDx, GAME_HEIGHT - 500, 0.5 * m_exX, 0.0, m_chapterGraphHandles[m_focusChapter], TRUE);
+		DrawRotaGraph(GAME_WIDE - 300 * m_exX + m_chapterGraphDx * m_exX, GAME_HEIGHT - 500 * m_exY, 0.5 * m_exX, 0.0, m_chapterGraphHandles[m_focusChapter], TRUE);
 	}
 
 	int distChapterSum = selectableChapterSum();
@@ -157,7 +157,7 @@ void SelectStagePage::draw(int handX, int handY) const {
 		}
 	}
 	if (m_focusStage != -1) {
-		DrawBox(0, 600, 1300, 750, GRAY, TRUE);
+		DrawBox(0, 600 * m_exY, 1300 * m_exX, 750 * m_exY, GRAY, TRUE);
 		if (m_focusKind == STAGE_KIND::NORMAL) {
 			int now = 0;
 			int i = 0;
@@ -172,7 +172,7 @@ void SelectStagePage::draw(int handX, int handY) const {
 				}
 
 				// セリフを描画
-				DrawFormatStringToHandle(20, 610 + (i * 30), WHITE, m_smallFont, disp.c_str());
+				DrawFormatStringToHandle(20 * m_exX, (610 + (i * 30)) * m_exY, WHITE, m_smallFont, disp.c_str());
 
 				// 次の行
 				i++;
@@ -181,13 +181,13 @@ void SelectStagePage::draw(int handX, int handY) const {
 
 		}
 		else if (m_focusKind == STAGE_KIND::TYPE) {
-			DrawFormatStringToHandle(20, 610, WHITE, m_smallFont, "レベルアップ用のステージ。");
+			DrawFormatStringToHandle(20 * m_exX, 610 * m_exY, WHITE, m_smallFont, "レベルアップ用のステージ。");
 		}
 	}
-	DrawFormatStringToHandle(10, 10, WHITE, m_font, "ステージ選択");
+	DrawFormatStringToHandle(10 * m_exX, 10 * m_exY, WHITE, m_font, "ステージ選択");
 	ostringstream oss1;
 	oss1 << "EXP: " << m_exp;
-	DrawFormatStringToHandle(800, 10, YELLOW, m_font, oss1.str().c_str());
+	DrawFormatStringToHandle(800 * m_exX, 10 * m_exY, YELLOW, m_font, oss1.str().c_str());
 }
 
 

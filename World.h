@@ -165,6 +165,8 @@ private:
 	const int MAX_MONEY = 999;
 	int m_money;
 
+	bool m_greenFlag;
+
 public:
 	World();
 	World(int fromAreaNum, int toAreaNum, STAGE_KIND stageKind, SoundPlayer* soundPlayer);
@@ -216,6 +218,7 @@ public:
 	inline bool getControlCharacterLock() const { return m_controlCharacterLock; }
 	inline bool getSaeruFlag() const { return m_saeruFlag; }
 	inline bool getKuroeFlag() const { return m_kuroeFlag; }
+	inline bool getGreenFlag() const { return m_greenFlag; }
 
 	// Drawer用のゲッタ
 	std::vector<const CharacterAction*> getActions() const;
@@ -241,6 +244,7 @@ public:
 	inline void setDate(int date) { m_date = date; }
 	inline void setBlindFlag(bool blindFlag) { m_blindFlag = blindFlag; }
 	inline void setMoney(int money) { m_money = money; }
+	inline void setGreenFlag(bool greenFlag) { m_greenFlag = greenFlag; }
 
 	void calcAndSetLevel();
 
@@ -301,6 +305,8 @@ public:
 	// ムービーを流す
 	void moviePlay();
 
+	void bombGroup(int groupId);
+
 private:
 
 	// Battle：カメラの更新
@@ -347,6 +353,8 @@ private:
 
 	// Battle: ボスがやられたときの爆発エフェクト
 	void createBossDeadEffect();
+
+
 
 };
 

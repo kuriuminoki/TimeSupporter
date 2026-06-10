@@ -278,6 +278,10 @@ bool Game::play() {
 			m_soundPlayer->playBGM();
 			return true;
 		}
+		else if (result == EVENT_RESULT::FAILURE) {
+			m_gameoverCnt++;
+			return false;
+		}
 	}
 
 	// セーブ完了通知の処理

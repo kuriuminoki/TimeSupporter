@@ -553,6 +553,33 @@ public:
 	bool skillAble() { return true; }
 };
 
+// 特定のグループが残り3体になるまで戦う
+class DeadGroupHalfEvent :
+	public EventElement
+{
+private:
+
+	// 対象のグループ
+	int m_groupId;
+
+	// 全滅してからクリア判定までの待ち時間
+	const int FINISH_CNT = 240;
+	int m_cnt;
+
+	SoundPlayer* m_soundPlayer_p;
+	int m_sound;
+
+public:
+	DeadGroupHalfEvent(World* world, SoundPlayer* soundPlayer, std::vector<std::string> param);
+	~DeadGroupHalfEvent();
+
+	// プレイ
+	EVENT_RESULT play();
+
+	// ハートのスキル発動が可能かどうか
+	bool skillAble() { return true; }
+};
+
 // 会話イベント
 class TalkEvent :
 	public EventElement

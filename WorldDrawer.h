@@ -83,6 +83,8 @@ private:
 
 	int m_followerNameFont;
 
+	int m_green;
+
 public:
 	WorldDrawer(const World* world);
 

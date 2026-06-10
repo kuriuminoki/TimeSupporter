@@ -113,6 +113,8 @@ World::World() {
 
 	m_lastBoss = false;
 
+	m_greenFlag = false;
+
 }
 
 /*
@@ -1195,6 +1197,24 @@ void World::moviePlay() {
 		// ムービー終了
 		if (m_movie_p->getFinishFlag()) {
 			m_movie_p = nullptr;
+		}
+	}
+}
+
+
+void World::bombGroup(int groupId) {
+	for (unsigned int i = 0; i < m_characters.size(); i++) {
+		if (groupId == m_characters[i]->getGroupId() && m_characters[i]->getHp() > 0) {
+			int targetX1 = 0, targetY1 = 0, targetX2 = 0, targetY2 = 0;
+			m_characters[i]->getAtariArea(&targetX1, &targetY1, &targetX2, &targetY2);
+			// エフェクト作成
+			int x = (targetX1 + targetX2) / 2;
+			int y = (targetY1 + targetY2) / 2;
+			m_animations.push_back(new Animation(x, y, 3, m_bombGraph));
+			m_camera->shakingStart(20, 20);
+			int panPal = adjustPanSound(x, m_camera->getX());
+			m_soundPlayer_p->pushSoundQueue(m_bombSound, panPal);
+			m_characters[i]->setHp(0);
 		}
 	}
 }
