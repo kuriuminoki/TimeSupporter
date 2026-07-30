@@ -233,6 +233,8 @@ protected:
 	const int CHAPTER_TIME = 4100;
 	const int END_TIME = 5400;
 
+	int m_nextImage;
+
 public:
 	ChapterEDCommon(SoundPlayer* soundPlayer_p, int chapterNum);
 	~ChapterEDCommon();

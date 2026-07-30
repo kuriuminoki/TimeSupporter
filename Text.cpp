@@ -193,6 +193,9 @@ Conversation::Conversation(int textNum, SoundPlayer* soundPlayer, int movieSpeed
 
 	m_continueMovie = false;
 
+	m_speakerDx = 0;
+	m_speakerDxGoal = 0;
+
 }
 
 Conversation::~Conversation() {
@@ -420,6 +423,12 @@ bool Conversation::play() {
 				m_soundPlayer_p->pushSoundQueue(m_displaySound);
 			}
 		}
+		if (m_speakerDx < m_speakerDxGoal) {
+			m_speakerDx += SPEAKER_DX_SPEED;
+		}
+		else if (m_speakerDx > m_speakerDxGoal) {
+			m_speakerDx -= SPEAKER_DX_SPEED;
+		}
 	}
 
 	// フキダシのアクション
@@ -439,6 +448,7 @@ void Conversation::loadNextBlock() {
 	char buff[size];
 	// ブロックの1行目
 	string str = "";
+	CHARACTER_POSITION preSpeakerPosition = m_speakerPosition;
 	while (FileRead_eof(m_fp) == 0) {
 		FileRead_gets(buff, size, m_fp);
 		str = buff;
@@ -651,6 +661,8 @@ void Conversation::loadNextBlock() {
 		m_speakerPosition = CHARACTER_POSITION::LEFT;
 		m_listenerGraph_p = nullptr;
 		m_listenerPosition = CHARACTER_POSITION::RIGHT;
+		m_speakerDxGoal = 0;
+		m_speakerDx = 0;
 		loadNextBlock();
 	}
 	else { // 発言
@@ -661,10 +673,14 @@ void Conversation::loadNextBlock() {
 			// ナレーション
 			m_speakerName = "";
 			m_narrationFlag = true;
+			m_speakerDxGoal = 0;
+			m_speakerDx = 0;
 		}
 		else if (str[0] == '*') {
 			m_speakerName = str.substr(1, str.size());
 			m_narrationFlag = true;
+			m_speakerDxGoal = 0;
+			m_speakerDx = 0;
 		}
 		else { // 発言
 			if (str == "@left_l") {
@@ -700,7 +716,6 @@ void Conversation::loadNextBlock() {
 				FileRead_gets(buff, size, m_fp);
 				str = buff;
 			}
-
 			if (str == "@left") {
 				FileRead_gets(buff, size, m_fp);
 				m_speakerPosition = CHARACTER_POSITION::LEFT;
@@ -721,6 +736,21 @@ void Conversation::loadNextBlock() {
 			}
 			else {
 				m_narrationFlag = false;
+			}
+			if (m_speakerPosition != preSpeakerPosition) {
+				if (m_narrationFlag) {
+					m_speakerDxGoal = 0;
+					m_speakerDx = 0;
+				}
+				else if (m_speakerPosition == CHARACTER_POSITION::LEFT) {
+					m_speakerDxGoal = MAX_SPEAKER_DX;
+				}
+				else if (m_speakerPosition == CHARACTER_POSITION::RIGHT) {
+					m_speakerDxGoal = -MAX_SPEAKER_DX;
+				}
+				else {
+					m_speakerDxGoal = 0;
+				}
 			}
 			// 画像
 			FileRead_gets(buff, size, m_fp);

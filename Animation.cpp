@@ -461,6 +461,8 @@ ChapterEDCommon::ChapterEDCommon(SoundPlayer* soundPlayer_p, int chapterNum):
 
 	m_bright = 255;
 
+	m_nextImage = -1;
+
 }
 ChapterEDCommon::~ChapterEDCommon() {
 	if (m_nextHandles != nullptr) {
@@ -471,6 +473,9 @@ ChapterEDCommon::~ChapterEDCommon() {
 	}
 	if (m_conversationDrawer != nullptr) {
 		delete m_conversationDrawer;
+	}
+	if (m_nextImage != -1) {
+		DeleteGraph(m_nextImage);
 	}
 }
 
@@ -535,6 +540,10 @@ void ChapterEDCommon::draw() const {
 	}
 	if (m_cnt > 5000) {
 		DrawFormatStringToHandle(100 * m_exX, 520 * m_exY, GREEN, m_textHandle, m_chapterTitle.c_str());
+		int bright = min((m_cnt - 5000) / 4, 60);
+		SetDrawBright(bright, bright, bright);
+		DrawRotaGraph(GAME_WIDE - 300 * m_exX, GAME_HEIGHT - 500 * m_exY, 0.5 * m_exX, 0.0, m_nextImage, TRUE);
+		SetDrawBright(255, 255, 255);
 	}
 
 	drawframe();
@@ -572,6 +581,8 @@ Chapter2ED::Chapter2ED(SoundPlayer* soundPlayer_p):
 	m_kuroeHandle = LoadGraph("picture/event/クロエイト登場.png");
 	m_kuroeFaceHandle = LoadGraph("picture/event/クロエイトの顔.png");
 	m_kuroeEx = 0.5 * m_exX;
+
+	m_nextImage = LoadGraph("picture/system/chapter3.png");
 
 	m_bright = 0;
 }
@@ -659,6 +670,8 @@ Chapter3ED::Chapter3ED(SoundPlayer* soundPlayer_p) :
 	m_conversation = new Conversation(124, soundPlayer_p, 340);
 	m_conversation->setStartCnt(0);
 	m_conversationDrawer = new ConversationDrawer(m_conversation);
+
+	m_nextImage = LoadGraph("picture/system/chapter4.png");
 }
 
 Chapter3ED::~Chapter3ED() {
@@ -722,6 +735,8 @@ Chapter4ED::Chapter4ED(SoundPlayer* soundPlayer_p) :
 	m_conversation = new Conversation(132, soundPlayer_p, 370);
 	m_conversation->setStartCnt(0);
 	m_conversationDrawer = new ConversationDrawer(m_conversation);
+
+	m_nextImage = LoadGraph("picture/system/chapter5.png");
 }
 
 Chapter4ED::~Chapter4ED() {
@@ -771,7 +786,7 @@ Chapter5ED::Chapter5ED(SoundPlayer* soundPlayer_p) :
 	ChapterEDCommon(soundPlayer_p, 5)
 {
 	m_words[0] = "みんな本当に、これで嬉しいの？";
-	m_words[1] = "へっ、なんだよ調子狂うぜ。";
+	m_words[1] = "一応、お前は「家族」だからな。";
 	m_words[2] = "みんなに信頼されて・・・これ以上が必要か？";
 	m_words[3] = "私が覚えている限りその方は記憶の中では存在できます。";
 	m_words[4] = "それがバカだって言ってるのよ！！";
@@ -788,6 +803,8 @@ Chapter5ED::Chapter5ED(SoundPlayer* soundPlayer_p) :
 	// 会話
 	m_conversation = new Conversation(140, soundPlayer_p, 220);
 	m_conversationDrawer = new ConversationDrawer(m_conversation);
+
+	m_nextImage = LoadGraph("picture/system/chapter6.png");
 
 	m_bright = 0;
 }
@@ -853,6 +870,8 @@ Chapter6ED::Chapter6ED(SoundPlayer* soundPlayer_p) :
 	m_conversation = new Conversation(148, soundPlayer_p, 350);
 	m_conversation->setStartCnt(0);
 	m_conversationDrawer = new ConversationDrawer(m_conversation);
+
+	m_nextImage = LoadGraph("picture/system/chapter7.png");
 
 	m_bright = 0;
 }

@@ -45,6 +45,8 @@ GameData::GameData() {
 
 	m_completeStageSum = 0;
 
+	m_completeExSum = 0;
+
 }
 
 
@@ -77,6 +79,7 @@ bool GameData::save() {
 
 	fwrite(&m_completeStageSum, sizeof(m_completeStageSum), 1, intFp);
 	fwrite(&m_money, sizeof(m_money), 1, intFp);
+	fwrite(&m_completeExSum, sizeof(m_completeExSum), 1, intFp);
 
 	fclose(intFp);
 
@@ -98,6 +101,7 @@ bool GameData::load() {
 
 	fread(&m_completeStageSum, sizeof(m_completeStageSum), 1, intFp);
 	fread(&m_money, sizeof(m_money), 1, intFp);
+	fread(&m_completeExSum, sizeof(m_completeExSum), 1, intFp);
 
 	fclose(intFp);
 	return true;
@@ -179,7 +183,7 @@ Game::Game(const char* saveFilePath) {
 	if (TEST_MODE) {
 		m_gameData->setCompleteStageSum(28);
 	}
-	m_selectStagePage = new SelectStagePage(m_gameData->getCompleteStageSum(), m_gameData->getMoney());
+	m_selectStagePage = new SelectStagePage(m_gameData->getCompleteStageSum(), m_gameData->getCompleteExSum(), m_gameData->getMoney());
 	m_soundPlayer->setBGM("sound/bgm/ステージ選択.mp3");
 	m_soundPlayer->playBGM();
 
@@ -251,9 +255,6 @@ bool Game::play() {
 		if (m_selectStagePage->play(m_handX, m_handY)) {
 			int targetStoryNum = m_selectStagePage->getFocusStage();
 			STAGE_KIND targetKind = m_selectStagePage->getFocusKind();
-			if (TEST_MODE) {
-				//targetStoryNum = 0;
-			}
 			m_story = new Story(targetStoryNum, targetKind, m_gameData, m_soundPlayer);
 		}
 	}
@@ -265,6 +266,12 @@ bool Game::play() {
 				if (m_story->getStoryNum() + 1 > m_gameData->getCompleteStageSum()) {
 					m_gameData->setCompleteStageSum(m_story->getStoryNum() + 1);
 					m_selectStagePage->setCompleteStageSum(m_gameData->getCompleteStageSum());
+				}
+			}
+			else if (m_story->getStageKind() == STAGE_KIND::HARD) {
+				if (m_story->getStoryNum() + 1 > m_gameData->getCompleteExSum()) {
+					m_gameData->setCompleteExSum(m_story->getStoryNum() + 1);
+					m_selectStagePage->setCompleteExSum(m_gameData->getCompleteExSum());
 				}
 			}
 			m_gameData->updateStory(m_story);

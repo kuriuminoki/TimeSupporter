@@ -57,7 +57,10 @@ Story::Story(int storyNum, STAGE_KIND stageKind, GameData* gameData, SoundPlayer
 	m_world->setDate(m_date);
 
 	// eventList.csvをロード
-	m_eventList.push_back(new Event(m_storyNum + 1, m_stageKind, m_world, soundPlayer));
+	if (stageKind == STAGE_KIND::HARD) {
+		stageKind = STAGE_KIND::NORMAL;
+	}
+	m_eventList.push_back(new Event(m_storyNum + 1, stageKind, m_world, soundPlayer));
 
 	// イベントの発火確認
 	checkFire();

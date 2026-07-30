@@ -129,7 +129,12 @@ World::World(int fromAreaNum, int toAreaNum, STAGE_KIND stageKind, SoundPlayer* 
 
 	// 主人公のスタート地点
 	m_areaNum = toAreaNum;
+	m_stageKind = stageKind;
 	m_nextAreaNum = m_areaNum;
+
+	if (stageKind == STAGE_KIND::HARD) {
+		stageKind = STAGE_KIND::NORMAL;
+	}
 
 	// エリアをロード
 	const AreaReader data(fromAreaNum, toAreaNum, stageKind, m_soundPlayer_p);
@@ -325,11 +330,17 @@ void World::calcAndSetLevel() {
 		m_player_p->updateLevel(m_money / 10 + 1, true);
 	}
 	else {
-		m_player_p->updateLevel(TYPE_LEVEL, true);
+		if (m_stageKind == STAGE_KIND::HARD) {
+			m_player_p->updateLevel(99, true);
+		}
+		else {
+			m_player_p->updateLevel(TYPE_LEVEL, true);
+		}
 	}
 	for (unsigned int i = 0; i < m_characters.size(); i++) {
 		if (m_characters[i]->getId() == m_playerId) { continue; }
-		m_characters[i]->updateLevel(m_areaNum, false);
+		const int level = (m_stageKind == STAGE_KIND::HARD) ? 99 : m_areaNum;
+		m_characters[i]->updateLevel(level, false);
 	}
 }
 

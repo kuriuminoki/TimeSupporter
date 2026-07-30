@@ -143,7 +143,7 @@ void ControlBar::draw(int handX, int handY, string appendix) {
 */
 GamePause::GamePause(SoundPlayer* soundPlayer) {
 	m_soundPlayer_p = soundPlayer;
-	m_soundController = new ControlBar(SOUND_X1, SOUND_Y1, SOUND_X2, SOUND_Y2, SOUND_MIN, SOUND_MAX, m_soundPlayer_p->getVolume(), "Sound Volume");
+	m_soundController = new ControlBar(SOUND_X1, SOUND_Y1, SOUND_X2, SOUND_Y2, SOUND_MIN, SOUND_MAX, m_soundPlayer_p->getVolume(), "音量");
 	m_handX = 0;
 	m_handY = 0;
 }
@@ -226,7 +226,7 @@ BattleOption::BattleOption(SoundPlayer* soundPlayer):
 	int y = (int)(TITLE_Y1 * m_exY);
 	int wide = (int)((TITLE_X2 - TITLE_X1) * m_exX);
 	int height = (int)((TITLE_Y2 - TITLE_Y1) * m_exY);
-	m_titleButton = new Button("Back to the title", x, y, wide, height, WHITE, RED, m_font, BLACK);
+	m_titleButton = new Button("タイトルへ戻る", x, y, wide, height, WHITE, RED, m_font, BLACK);
 	m_titleFlag = false;
 
 	m_tutorialDisp = new TutorialDisp(m_font, m_fontSize, m_exX, m_exY);
@@ -272,8 +272,8 @@ void BattleOption::draw() const {
 TitleOption::TitleOption(SoundPlayer* soundPlayer) :
 	GamePause(soundPlayer)
 {
-	m_gameWideController = new ControlBar(WIDE_X1, WIDE_Y1, WIDE_X2, WIDE_Y2, GAME_WIDE_MIN, GAME_WIDE_MAX, GAME_WIDE, "Display resolution (wide)");
-	m_gameHeightController = new ControlBar(HEIGHT_X1, HEIGHT_Y1, HEIGHT_X2, HEIGHT_Y2, GAME_HEIGHT_MIN, GAME_HEIGHT_MAX, GAME_HEIGHT, "Display resolution (height)");
+	m_gameWideController = new ControlBar(WIDE_X1, WIDE_Y1, WIDE_X2, WIDE_Y2, GAME_WIDE_MIN, GAME_WIDE_MAX, GAME_WIDE, "解像度 (横)");
+	m_gameHeightController = new ControlBar(HEIGHT_X1, HEIGHT_Y1, HEIGHT_X2, HEIGHT_Y2, GAME_HEIGHT_MIN, GAME_HEIGHT_MAX, GAME_HEIGHT, "解像度 (縦)");
 	m_newWide = GAME_WIDE;
 	m_newHeight = GAME_HEIGHT;
 
@@ -282,7 +282,7 @@ TitleOption::TitleOption(SoundPlayer* soundPlayer) :
 	m_font = CreateFontToHandle(nullptr, m_fontSize, 3);
 	m_leftButton = new Button("←", m_gameWideController->getLeftX(), (int)((HEIGHT_Y2 + 50) * m_exY), (int)(100 * m_exX), (int)(100 * m_exY), WHITE, GRAY2, m_font, BLACK);
 	m_rightButton = new Button("→", m_gameWideController->getRightX() - (int)(100 * m_exX), (int)((HEIGHT_Y2 + 50) * m_exY), (int)(100 * m_exX), (int)(100 * m_exY), WHITE, GRAY2, m_font, BLACK);
-	m_tmpApplyButton = new Button("Apply", m_gameWideController->getLeftX(), (int)((HEIGHT_Y2 + 170) * m_exY), m_gameWideController->getRightX() - m_gameWideController->getLeftX(), (int)(100 * m_exY), WHITE, GRAY2, m_font, BLACK);
+	m_tmpApplyButton = new Button("テンプレートを適用", m_gameWideController->getLeftX(), (int)((HEIGHT_Y2 + 170) * m_exY), m_gameWideController->getRightX() - m_gameWideController->getLeftX(), (int)(100 * m_exY), WHITE, GRAY2, m_font, BLACK);
 	m_nowTmpIndex = 0;
 
 	// 背景

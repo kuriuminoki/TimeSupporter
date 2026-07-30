@@ -167,6 +167,8 @@ private:
 
 	bool m_greenFlag;
 
+	STAGE_KIND m_stageKind;
+
 public:
 	World();
 	World(int fromAreaNum, int toAreaNum, STAGE_KIND stageKind, SoundPlayer* soundPlayer);

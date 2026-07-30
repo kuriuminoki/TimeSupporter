@@ -108,7 +108,14 @@ void ConversationDrawer::draw(bool movieFlag) {
 		}
 		// ‰ï˜b’†
 		else {
-			int dx = m_conversation->getTextAction().getDx() * m_exX;
+			int speakerDx = 0;
+			if (m_conversation->getSpeakerPosition() == CHARACTER_POSITION::LEFT && !m_conversation->getNarrationFlag()) {
+				speakerDx = 20 * m_exX;
+			}
+			else if (m_conversation->getSpeakerPosition() == CHARACTER_POSITION::RIGHT && !m_conversation->getNarrationFlag()) {
+				speakerDx = -20 * m_exX;
+			}
+			int dx = m_conversation->getTextAction().getDx() * m_exX + speakerDx;
 			int dy = m_conversation->getTextAction().getDy() * m_exY;
 
 			// ƒLƒƒƒ‰‚ÌŠç‰æ‘œ
@@ -223,7 +230,7 @@ void ConversationDrawer::drawCharacter(GraphHandle* graph, CHARACTER_POSITION po
 		break;
 	}
 
-	graph->draw(positionX, GAME_HEIGHT - graphHeight / 2 * ex * m_exY + dy, m_exX * ex);
+	graph->draw(positionX + m_conversation->getSpeakerDx() * m_exX, GAME_HEIGHT - graphHeight / 2 * ex * m_exY + dy, m_exX * ex);
 	SetDrawBright(originalBright, originalBright, originalBright);
 }
 

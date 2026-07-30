@@ -147,7 +147,7 @@ private:
 	unsigned int m_textSpeed;
 
 	// 次のテキストへ行けるようになるまでの時間
-	const unsigned int NEXT_TEXT_ABLE = 45;
+	const unsigned int NEXT_TEXT_ABLE = 30;
 
 	// テキストを飛ばせるようになるまでの時間
 	const unsigned int MOVE_FINAL_ABLE = 5;
@@ -229,6 +229,12 @@ private:
 	// フキダシのアクション
 	TextAction m_textAction;
 
+	// 発言中のキャラのDX
+	int m_speakerDx;
+	int m_speakerDxGoal;
+	const int MAX_SPEAKER_DX = 9;
+	const int SPEAKER_DX_SPEED = 3;
+
 	// 効果音
 	int m_sound;
 	bool m_soundFlag;
@@ -277,6 +283,7 @@ public:
 	inline const Button* getNoButton() const { return m_selectFlag ? m_noButton : nullptr; }
 	inline CHARACTER_POSITION getSpeakerPosition() const { return m_speakerPosition; }
 	inline CHARACTER_POSITION getListenerPosition() const { return m_listenerPosition; }
+	inline int getSpeakerDx() const { return m_speakerDx; }
 
 	// セッタ
 	inline void setStartCnt(int startCnt) { m_startCnt = startCnt; }

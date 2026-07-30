@@ -138,9 +138,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Update();
 		// デバッグ
 		if (debug == TRUE) {
-			Draw(0, 0, BLACK);
+			//Draw(0, 0, BLACK);
 			if (game != nullptr) {
-				game->debug(0, DRAW_FORMAT_STRING_SIZE, BLACK);
+				//game->debug(0, DRAW_FORMAT_STRING_SIZE, BLACK);
 			}
 		}
 		Wait();
