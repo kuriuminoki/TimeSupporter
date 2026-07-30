@@ -5,6 +5,7 @@
 #include <string>
 
 class Button;
+class KeyConfig;
 class SoundPlayer;
 
 
@@ -108,9 +109,9 @@ private:
 	SoundPlayer* m_soundPlayer_p;
 
 	const int SOUND_X1 = 100;
-	const int SOUND_Y1 = 400;
+	const int SOUND_Y1 = 200;
 	const int SOUND_X2 = 600;
-	const int SOUND_Y2 = 600;
+	const int SOUND_Y2 = 280;
 	const int SOUND_MIN = 0;
 	const int SOUND_MAX = 100;
 
@@ -123,40 +124,6 @@ public:
 	void play();
 
 	void draw() const;
-};
-
-
-/*
-* チュートリアルの描画
-*/
-class TutorialDisp {
-private:
-
-	// フォント
-	int m_font_p;
-	int m_fontSize;
-
-	// 1920を基準としたGAME_WIDEの倍率
-	double m_exX;
-	// 1080を基準としたGAME_HEIGHTの倍率
-	double m_exY;
-
-	// 描画範囲 設定しなくてもいい
-	int m_x1, m_y1, m_x2, m_y2;
-
-public:
-
-	TutorialDisp(int font_p, int fontSize, double exX, double exY);
-
-	void setPoint(int x1, int y1, int x2, int y2) {
-		m_x1 = x1;
-		m_y1 = y1;
-		m_x2 = x2;
-		m_y2 = y2;
-	}
-
-	void draw();
-	void draw(int x1, int y1, int x2, int y2);
 };
 
 
@@ -188,11 +155,11 @@ private:
 	Button* m_titleButton;
 	bool m_titleFlag;
 
-	// 操作説明
-	TutorialDisp* m_tutorialDisp;
+	// 操作設定
+	KeyConfig* m_keyConfig_p;
 
 public:
-	BattleOption(SoundPlayer* soundPlayer);
+	BattleOption(SoundPlayer* soundPlayer, KeyConfig* keyConfig_p);
 	~BattleOption();
 
 	void play();
@@ -217,15 +184,15 @@ class TitleOption :
 	int m_newWide;
 	int m_newHeight;
 
-	const int WIDE_X1 = 800;
-	const int WIDE_Y1 = 200;
-	const int WIDE_X2 = 1300;
-	const int WIDE_Y2 = 300;
+	const int WIDE_X1 = 100;
+	const int WIDE_Y1 = 360;
+	const int WIDE_X2 = 600;
+	const int WIDE_Y2 = 440;
 
-	const int HEIGHT_X1 = 800;
-	const int HEIGHT_Y1 = 400;
-	const int HEIGHT_X2 = 1300;
-	const int HEIGHT_Y2 = 500;
+	const int HEIGHT_X1 = 100;
+	const int HEIGHT_Y1 = 520;
+	const int HEIGHT_X2 = 600;
+	const int HEIGHT_Y2 = 600;
 
 	// 解像度のテンプレート
 	// フォント
@@ -248,6 +215,9 @@ class TitleOption :
 
 	// 背景
 	TitleBackGround* m_haikei;
+
+	// キーコンフィグ
+	KeyConfig* m_keyConfig;
 
 public:
 	TitleOption(SoundPlayer* soundPlayer);

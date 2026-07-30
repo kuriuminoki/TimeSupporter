@@ -86,7 +86,7 @@ GraphHandle* Animation::getHandle() const {
 /*
 * 動画の基底クラス
 */
-Movie::Movie(SoundPlayer* soundPlayer_p) {
+Movie::Movie(SoundPlayer* soundPlayer_p, KeyConfig* keyConfig_p) {
 	OWNER_NAME = "Kuriu Minoki";
 	getGameEx(m_exX, m_exY);
 	m_ex = min(m_exX, m_exY);
@@ -95,6 +95,7 @@ Movie::Movie(SoundPlayer* soundPlayer_p) {
 	m_animation = nullptr;
 	m_animationDrawer = new AnimationDrawer(m_animation);
 	m_soundPlayer_p = soundPlayer_p;
+	m_keyConfig_p = keyConfig_p;
 	m_bgmPath = "";
 	m_originalBgmPath = m_soundPlayer_p->getBgmName();
 
@@ -133,7 +134,7 @@ void Movie::play() {
 	}
 
 	// Zキー長押しで終了
-	if (controlZ() > 0) {
+	if (controlZ(m_keyConfig_p) > 0) {
 		if (m_skipCnt++ == FPS_N) {
 			m_finishFlag = true;
 		}
@@ -168,8 +169,8 @@ void Movie::drawframe() const {
 
 
 // オープニング
-ChapterOneED::ChapterOneED(SoundPlayer* soundPlayer_p):
-	Movie(soundPlayer_p)
+ChapterOneED::ChapterOneED(SoundPlayer* soundPlayer_p, KeyConfig* keyConfig_p):
+	Movie(soundPlayer_p, keyConfig_p)
 {
 	string path = "picture/movie/chapter1ed/";
 
@@ -326,13 +327,13 @@ void ChapterOneED::draw() const {
 	drawframe();
 
 	// Zキー長押しでスキップの表示
-	drawSkip(m_skipCnt, m_exX, m_exY, m_textHandle);
+	drawSkip(m_skipCnt, m_exX, m_exY, m_textHandle, m_keyConfig_p);
 }
 
 
 // エンディング
-Chapter7ED::Chapter7ED(SoundPlayer* soundPlayer_p) :
-	ChapterOneED(soundPlayer_p)
+Chapter7ED::Chapter7ED(SoundPlayer* soundPlayer_p, KeyConfig* keyConfig_p) :
+	ChapterOneED(soundPlayer_p, keyConfig_p)
 {
 	string path = "picture/movie/ed/";
 	m_all = new GraphHandles((path + "all").c_str(), 3, m_ex * 0.7, 0, true);
@@ -350,7 +351,7 @@ Chapter7ED::Chapter7ED(SoundPlayer* soundPlayer_p) :
 	m_toDark = false;
 
 	// 会話
-	m_conversation = new Conversation(156, soundPlayer_p, 300);
+	m_conversation = new Conversation(156, soundPlayer_p, keyConfig_p, 300);
 	m_conversationDrawer = new ConversationDrawer(m_conversation);
 	m_conversation->setStartCnt(0);
 
@@ -430,15 +431,15 @@ void Chapter7ED::draw() const {
 	SetDrawBright(255, 255, 255);
 	drawframe();
 	// Zキー長押しでスキップの表示
-	drawSkip(m_skipCnt, m_exX, m_exY, m_textHandle);
+	drawSkip(m_skipCnt, m_exX, m_exY, m_textHandle, m_keyConfig_p);
 }
 
 
 /*
 * 各章のED(共通部分)
 */
-ChapterEDCommon::ChapterEDCommon(SoundPlayer* soundPlayer_p, int chapterNum):
-	Movie(soundPlayer_p)
+ChapterEDCommon::ChapterEDCommon(SoundPlayer* soundPlayer_p, int chapterNum, KeyConfig* keyConfig_p):
+	Movie(soundPlayer_p, keyConfig_p)
 {
 	ostringstream oss;
 	if (chapterNum == 6) {
@@ -549,15 +550,15 @@ void ChapterEDCommon::draw() const {
 	drawframe();
 
 	// Zキー長押しでスキップの表示
-	drawSkip(m_skipCnt, m_exX, m_exY, m_textHandle);
+	drawSkip(m_skipCnt, m_exX, m_exY, m_textHandle, m_keyConfig_p);
 }
 
 
 /*
 * 2章ED
 */
-Chapter2ED::Chapter2ED(SoundPlayer* soundPlayer_p):
-	ChapterEDCommon(soundPlayer_p, 2)
+Chapter2ED::Chapter2ED(SoundPlayer* soundPlayer_p, KeyConfig* keyConfig_p):
+	ChapterEDCommon(soundPlayer_p, 2, keyConfig_p)
 {
 	m_words[0] = "人の方がロボットなんかより全然強いんだから。";
 	m_words[1] = "やった、楽しみにしてるね。";
@@ -575,7 +576,7 @@ Chapter2ED::Chapter2ED(SoundPlayer* soundPlayer_p):
 	m_animation = new Animation(m_centerX, m_centerY, 10, m_nextHandles);
 
 	// 会話
-	m_conversation = new Conversation(116, soundPlayer_p, 450);
+	m_conversation = new Conversation(116, soundPlayer_p, keyConfig_p, 450);
 	m_conversationDrawer = new ConversationDrawer(m_conversation);
 
 	m_kuroeHandle = LoadGraph("picture/event/クロエイト登場.png");
@@ -648,8 +649,8 @@ void Chapter2ED::draw() const {
 /*
 * 3章ED
 */
-Chapter3ED::Chapter3ED(SoundPlayer* soundPlayer_p) :
-	ChapterEDCommon(soundPlayer_p, 3)
+Chapter3ED::Chapter3ED(SoundPlayer* soundPlayer_p, KeyConfig* keyConfig_p) :
+	ChapterEDCommon(soundPlayer_p, 3, keyConfig_p)
 {
 	m_words[0] = "まあいきなり過ぎるけど、いいかもね。";
 	m_words[1] = "随分と自意識過剰だ、口だけじゃないといいけどな。";
@@ -667,7 +668,7 @@ Chapter3ED::Chapter3ED(SoundPlayer* soundPlayer_p) :
 	m_animation = new Animation(m_centerX, m_centerY, 10, m_nextHandles);
 
 	// 会話
-	m_conversation = new Conversation(124, soundPlayer_p, 340);
+	m_conversation = new Conversation(124, soundPlayer_p, keyConfig_p, 340);
 	m_conversation->setStartCnt(0);
 	m_conversationDrawer = new ConversationDrawer(m_conversation);
 
@@ -713,8 +714,8 @@ void Chapter3ED::draw() const {
 /*
 * 4章ED
 */
-Chapter4ED::Chapter4ED(SoundPlayer* soundPlayer_p) :
-	ChapterEDCommon(soundPlayer_p, 4)
+Chapter4ED::Chapter4ED(SoundPlayer* soundPlayer_p, KeyConfig* keyConfig_p) :
+	ChapterEDCommon(soundPlayer_p, 4, keyConfig_p)
 {
 	m_words[0] = "自分のことしか考えない人間どもがっ！！";
 	m_words[1] = "・・・そう思ったんだから仕方ない。";
@@ -732,7 +733,7 @@ Chapter4ED::Chapter4ED(SoundPlayer* soundPlayer_p) :
 	m_animation = new Animation(m_centerX, m_centerY, 10, m_nextHandles);
 
 	// 会話
-	m_conversation = new Conversation(132, soundPlayer_p, 370);
+	m_conversation = new Conversation(132, soundPlayer_p, keyConfig_p, 370);
 	m_conversation->setStartCnt(0);
 	m_conversationDrawer = new ConversationDrawer(m_conversation);
 
@@ -782,8 +783,8 @@ void Chapter4ED::draw() const {
 /*
 * 5章ED
 */
-Chapter5ED::Chapter5ED(SoundPlayer* soundPlayer_p) :
-	ChapterEDCommon(soundPlayer_p, 5)
+Chapter5ED::Chapter5ED(SoundPlayer* soundPlayer_p, KeyConfig* keyConfig_p) :
+	ChapterEDCommon(soundPlayer_p, 5, keyConfig_p)
 {
 	m_words[0] = "みんな本当に、これで嬉しいの？";
 	m_words[1] = "一応、お前は「家族」だからな。";
@@ -801,7 +802,7 @@ Chapter5ED::Chapter5ED(SoundPlayer* soundPlayer_p) :
 	m_animation = new Animation(m_centerX, m_centerY, 30, m_nextHandles);
 
 	// 会話
-	m_conversation = new Conversation(140, soundPlayer_p, 220);
+	m_conversation = new Conversation(140, soundPlayer_p, keyConfig_p, 220);
 	m_conversationDrawer = new ConversationDrawer(m_conversation);
 
 	m_nextImage = LoadGraph("picture/system/chapter6.png");
@@ -848,8 +849,8 @@ void Chapter5ED::draw() const {
 /*
 * 6章ED
 */
-Chapter6ED::Chapter6ED(SoundPlayer* soundPlayer_p) :
-	ChapterEDCommon(soundPlayer_p, 6)
+Chapter6ED::Chapter6ED(SoundPlayer* soundPlayer_p, KeyConfig* keyConfig_p) :
+	ChapterEDCommon(soundPlayer_p, 6, keyConfig_p)
 {
 	m_words[0] = "心配するな、俺は必ず期待に応えるさ。";
 	m_words[1] = "お前みたいなやつがいるから、誰も救われない！！";
@@ -867,7 +868,7 @@ Chapter6ED::Chapter6ED(SoundPlayer* soundPlayer_p) :
 	m_animation = new Animation(m_centerX, m_centerY, 5, m_nextHandles);
 
 	// 会話
-	m_conversation = new Conversation(148, soundPlayer_p, 350);
+	m_conversation = new Conversation(148, soundPlayer_p, keyConfig_p, 350);
 	m_conversation->setStartCnt(0);
 	m_conversationDrawer = new ConversationDrawer(m_conversation);
 

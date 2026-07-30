@@ -114,7 +114,9 @@ void GameDrawer::draw(int screen) {
 	else {
 		SetMouseDispFlag(MOUSE_DISP);//マウス表示
 		if (m_game->getStory() == nullptr || m_worldDrawer->battleNow()) {
-			DrawStringToHandle(30 + m_exX, GAME_HEIGHT - 30 * m_exY, "Qキー: 一時停止", WHITE, m_font);
+			ostringstream oss;
+			oss << m_game->getPauseKeyName() << ": 一時停止";
+			DrawStringToHandle(30 + m_exX, GAME_HEIGHT - 30 * m_exY, oss.str().c_str(), WHITE, m_font);
 		}
 	}
 }

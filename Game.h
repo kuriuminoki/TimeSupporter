@@ -10,6 +10,7 @@ class SelectStagePage;
 class Story;
 class Character;
 class BattleOption;
+class KeyConfig;
 
 
 // セーブデータ
@@ -92,6 +93,9 @@ private:
 	// サウンドプレイヤー
 	SoundPlayer* m_soundPlayer;
 
+	// キーコンフィグ
+	KeyConfig* m_keyConfig;
+
 	// ゲームオーバーの表示
 	int m_gameoverCnt;
 
@@ -123,6 +127,7 @@ public:
 	bool getRebootFlag() const { return m_rebootFlag; }
 	inline int getGameoverCnt() const { return m_gameoverCnt; }
 	inline const GameData* getGameData() const { return m_gameData; }
+	const std::string getPauseKeyName() const;
 
 	// デバッグ
 	void debug(int x, int y, int color) const;

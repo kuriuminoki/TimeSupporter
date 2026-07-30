@@ -14,6 +14,7 @@ class GraphHandle;
 class GraphHandles;
 class Button;
 class FaceGraphHandle;
+class KeyConfig;
 
 
 enum class CHARACTER_POSITION {
@@ -166,6 +167,8 @@ private:
 	// 世界のサウンドプレイヤー
 	SoundPlayer* m_soundPlayer_p;
 
+	KeyConfig* m_keyConfig_p;
+
 	// アニメイベント
 	EventAnime* m_eventAnime;
 
@@ -248,7 +251,7 @@ private:
 	FaceDrawMode m_faceDrawMode;
 
 public:
-	Conversation(int textNum, SoundPlayer* soundPlayer, int movieSpeed = -1);
+	Conversation(int textNum, SoundPlayer* soundPlayer, KeyConfig* keyConfig_p, int movieSpeed = -1);
 	~Conversation();
 
 	// ゲッタ
@@ -263,6 +266,7 @@ public:
 	inline 	std::string getSpeakerName() const { return m_speakerName; }
 	inline int getFinishCnt() const { return m_finishCnt; }
 	inline int getSkipCnt() const { return m_skipCnt; }
+	inline const KeyConfig* getKeyConfig() const { return m_keyConfig_p; }
 	inline int getStartCnt() const { return m_startCnt; }
 	inline bool getFinishFlag() const { return m_finishFlag; }
 	inline int getTextNow() const { return m_textNow; }

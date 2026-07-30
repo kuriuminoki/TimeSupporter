@@ -12,6 +12,7 @@ class CharacterController;
 class Character;
 class Conversation;
 class Movie;
+class KeyConfig;
 
 enum class STAGE_KIND;
 
@@ -79,6 +80,7 @@ private:
 	// 発火後にこれを使ってElement生成
 	World* m_world_p;
 	SoundPlayer* m_soundPlayer_p;
+	KeyConfig* m_keyConfig_p;
 
 	// イベント番号
 	int m_eventNum;
@@ -102,7 +104,7 @@ private:
 	int m_version;
 
 public:
-	Event(int eventNum, STAGE_KIND stageKind, World* world, SoundPlayer* soundPlayer);
+	Event(int eventNum, STAGE_KIND stageKind, World* world, SoundPlayer* soundPlayer, KeyConfig* keyConfig_p);
 	~Event();
 
 	// ゲッタ
@@ -128,7 +130,7 @@ public:
 
 private:
 	void createFire(std::vector<std::string> param, World* world, SoundPlayer* soundPlayer);
-	void createElement(std::vector<std::string> param, World* world, SoundPlayer* soundPlayer);
+	void createElement(std::vector<std::string> param, World* world, SoundPlayer* soundPlayer, KeyConfig* keyConfig_p);
 };
 
 
@@ -356,31 +358,6 @@ public:
 	void setWorld(World* world);
 };
 
-// キャラのAIを変える
-class ChangeBrainEvent :
-	public EventElement
-{
-private:
-
-	// パラメータ
-	std::vector<std::string> m_param;
-
-	// Brainのクラス名
-	std::string m_brainName;
-
-	// 対象のキャラ
-	CharacterController* m_controller_p;
-
-public:
-	ChangeBrainEvent(World* world, std::vector<std::string> param);
-
-	// プレイ
-	EVENT_RESULT play();
-
-	// 世界を設定しなおす
-	void setWorld(World* world);
-};
-
 // キャラのGroupIDを変える
 class ChangeGroupEvent :
 	public EventElement
@@ -589,7 +566,7 @@ private:
 	Conversation* m_conversation;
 
 public:
-	TalkEvent(World* world, SoundPlayer* soundPlayer, std::vector<std::string> param);
+	TalkEvent(World* world, SoundPlayer* soundPlayer, KeyConfig* keyConfig_p, std::vector<std::string> param);
 	~TalkEvent();
 
 	// 初期処理
@@ -611,7 +588,7 @@ private:
 	Movie* m_movie;
 
 public:
-	MovieEvent(World* world, SoundPlayer* soundPlayer, std::vector<std::string> param);
+	MovieEvent(World* world, SoundPlayer* soundPlayer, KeyConfig* keyConfig_p, std::vector<std::string> param);
 	~MovieEvent();
 
 	// 初期化
@@ -648,29 +625,6 @@ public:
 	BlindWorldEvent(World* world, std::vector<std::string> param);
 
 	void init();
-
-	// プレイ
-	EVENT_RESULT play();
-};
-
-// キャラの追加
-class PushCharacterEvent :
-	public EventElement
-{
-private:
-
-	// 追加するキャラの情報
-	std::string m_name;
-	int m_x, m_y;
-	bool m_sound;
-	int m_groupId;
-	std::string m_action;
-	std::string m_brain;
-	std::string m_controller;
-	int m_version;
-
-public:
-	PushCharacterEvent(World* world, std::vector<std::string> param, int version);
 
 	// プレイ
 	EVENT_RESULT play();

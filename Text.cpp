@@ -131,7 +131,7 @@ void TextAction::play() {
 /*
 * 会話イベント
 */
-Conversation::Conversation(int textNum, SoundPlayer* soundPlayer, int movieSpeed) {
+Conversation::Conversation(int textNum, SoundPlayer* soundPlayer, KeyConfig* keyConfig_p, int movieSpeed) {
 
 	m_movieSpeed = movieSpeed;
 	m_movieCnt = 0;
@@ -155,6 +155,7 @@ Conversation::Conversation(int textNum, SoundPlayer* soundPlayer, int movieSpeed
 	m_noButton = new Button("いいえ", (int)(700 * exX), (int)(800 * exY), (int)(200 * exX), (int)(100 * exY), LIGHT_BLUE, BLUE, m_font, BLACK);
 	m_selectFlag = false;
 	m_soundPlayer_p = soundPlayer;
+	m_keyConfig_p = keyConfig_p;
 	m_backGround = -1;
 	m_filterRetroDispFlag = false;
 	m_speakerName = "サエル";
@@ -301,7 +302,7 @@ bool Conversation::play() {
 	}
 
 	// Zキー長押しで終了
-	if (controlZ() > 0 && m_movieSpeed == -1) { 
+	if (controlZ(m_keyConfig_p) > 0 && m_movieSpeed == -1) { 
 		if (m_skipCnt++ == FPS_N) {
 			m_finishFlag = true;
 			return true;

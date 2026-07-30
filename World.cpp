@@ -120,12 +120,14 @@ World::World() {
 /*
 * オブジェクトのロードなど
 */
-World::World(int fromAreaNum, int toAreaNum, STAGE_KIND stageKind, SoundPlayer* soundPlayer) :
+World::World(int fromAreaNum, int toAreaNum, STAGE_KIND stageKind, SoundPlayer* soundPlayer, KeyConfig* keyConfig_p) :
 	World()
 {
 
 	// サウンドプレイヤー
 	m_soundPlayer_p = soundPlayer;
+
+	m_keyConfig_p = keyConfig_p;
 
 	// 主人公のスタート地点
 	m_areaNum = toAreaNum;
@@ -137,7 +139,7 @@ World::World(int fromAreaNum, int toAreaNum, STAGE_KIND stageKind, SoundPlayer* 
 	}
 
 	// エリアをロード
-	const AreaReader data(fromAreaNum, toAreaNum, stageKind, m_soundPlayer_p);
+	const AreaReader data(fromAreaNum, toAreaNum, stageKind, m_soundPlayer_p, m_keyConfig_p);
 	m_camera = data.getCamera();
 	m_focusId = data.getFocusId();
 	m_playerId = data.getPlayerId();
@@ -346,7 +348,7 @@ void World::calcAndSetLevel() {
 
 // ストーリーによる追加キャラクター
 void World::addCharacter(CharacterLoader* characterLoader) {
-	pair<vector<Character*>, vector<CharacterController*> > p = characterLoader->getCharacters(m_camera, m_soundPlayer_p, m_areaNum);
+	pair<vector<Character*>, vector<CharacterController*> > p = characterLoader->getCharacters(m_camera, m_soundPlayer_p, m_keyConfig_p, m_areaNum);
 	// キャラクター
 	m_characters.insert(m_characters.end(), p.first.begin(), p.first.end());
 	// コントローラ
@@ -586,7 +588,7 @@ void World::updateCamera() {
 	// カメラの拡大・縮小
 	// 大きく変更する必要がある場合ほど、大きく拡大率を変更する。
 	double nowEx = m_camera->getEx();
-	int shift = controlLeftShift() + controlRightShift();
+	int shift = controlLeftShift(m_keyConfig_p);
 	if (shift == 1) {
 		bool zoomOutMode = m_camera->getZoomOutMode();
 		m_camera->setZoomOutMode(!zoomOutMode);
@@ -953,7 +955,7 @@ void World::atariCharacterAndDoor(CharacterController* controller, vector<Object
 			if (objects[i]->getAreaNum() == -1) {
 				// ドアじゃない
 				if (objects[i]->getTextNum() != -1) {
-					m_objectConversation = new Conversation(objects[i]->getTextNum(), m_soundPlayer_p);
+					m_objectConversation = new Conversation(objects[i]->getTextNum(), m_soundPlayer_p, m_keyConfig_p);
 				}
 			}
 			else {

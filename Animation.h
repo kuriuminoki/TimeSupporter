@@ -12,6 +12,7 @@ class AnimationDrawer;
 class Character;
 class Conversation;
 class ConversationDrawer;
+class KeyConfig;
 
 class Animation {
 private:
@@ -123,6 +124,9 @@ protected:
 	// サウンドプレイヤー
 	SoundPlayer* m_soundPlayer_p;
 
+	// キーコンフィグ
+	KeyConfig* m_keyConfig_p;
+
 	// BGMのパス
 	std::string m_bgmPath;
 
@@ -130,7 +134,7 @@ protected:
 	std::string m_originalBgmPath;
 
 public:
-	Movie(SoundPlayer* soundPlayer_p);
+	Movie(SoundPlayer* soundPlayer_p, KeyConfig* keyConfig_p);
 	virtual ~Movie();
 
 	// ゲッタ
@@ -174,7 +178,7 @@ private:
 	int m_deadSaeru;
 
 public:
-	ChapterOneED(SoundPlayer* soundPlayer_p);
+	ChapterOneED(SoundPlayer* soundPlayer_p, KeyConfig* keyConfig_p);
 	~ChapterOneED();
 
 	// 再生
@@ -199,7 +203,7 @@ private:
 	int m_staffX;
 
 public:
-	Chapter7ED(SoundPlayer* soundPlayer_p);
+	Chapter7ED(SoundPlayer* soundPlayer_p, KeyConfig* keyConfig_p);
 	~Chapter7ED();
 
 	// 再生
@@ -236,7 +240,7 @@ protected:
 	int m_nextImage;
 
 public:
-	ChapterEDCommon(SoundPlayer* soundPlayer_p, int chapterNum);
+	ChapterEDCommon(SoundPlayer* soundPlayer_p, int chapterNum, KeyConfig* keyConfig_p);
 	~ChapterEDCommon();
 
 	// 再生
@@ -259,7 +263,7 @@ private:
 	double m_kuroeEx;
 
 public:
-	Chapter2ED(SoundPlayer* soundPlayer_p);
+	Chapter2ED(SoundPlayer* soundPlayer_p, KeyConfig* keyConfig_p);
 	~Chapter2ED();
 
 	// 再生
@@ -279,7 +283,7 @@ class Chapter3ED :
 private:
 
 public:
-	Chapter3ED(SoundPlayer* soundPlayer_p);
+	Chapter3ED(SoundPlayer* soundPlayer_p, KeyConfig* keyConfig_p);
 	~Chapter3ED();
 
 	// 再生
@@ -299,7 +303,7 @@ class Chapter4ED :
 private:
 
 public:
-	Chapter4ED(SoundPlayer* soundPlayer_p);
+	Chapter4ED(SoundPlayer* soundPlayer_p, KeyConfig* keyConfig_p);
 	~Chapter4ED();
 
 	// 再生
@@ -319,7 +323,7 @@ class Chapter5ED :
 private:
 
 public:
-	Chapter5ED(SoundPlayer* soundPlayer_p);
+	Chapter5ED(SoundPlayer* soundPlayer_p, KeyConfig* keyConfig_p);
 	~Chapter5ED();
 
 	// 再生
@@ -339,7 +343,7 @@ class Chapter6ED :
 private:
 
 public:
-	Chapter6ED(SoundPlayer* soundPlayer_p);
+	Chapter6ED(SoundPlayer* soundPlayer_p, KeyConfig* keyConfig_p);
 	~Chapter6ED();
 
 	// 再生

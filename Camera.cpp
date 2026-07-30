@@ -24,7 +24,7 @@ Camera::Camera(int x, int y, double ex, int speed) {
 	m_centerY = GAME_HEIGHT / 2;
 	m_shakingWidth = 0;
 	m_shakingTime = 0;
-	m_zoomOutMode = false;
+	m_zoomOutMode = true;
 }
 
 

@@ -5,6 +5,7 @@
 #include "CharacterController.h"
 #include "CharacterAction.h"
 #include "Character.h"
+#include "Control.h"
 #include "Text.h"
 #include "Brain.h"
 #include "Animation.h"
@@ -36,7 +37,7 @@ vector<string> mapParam2vector(map<string, string> paramMap) {
 /*
 * イベント
 */
-Event::Event(int eventNum, STAGE_KIND stageKind, World* world, SoundPlayer* soundPlayer) {
+Event::Event(int eventNum, STAGE_KIND stageKind, World* world, SoundPlayer* soundPlayer, KeyConfig* keyConfig_p) {
 
 	m_eventNum = eventNum;
 	m_nowElement = 0;
@@ -44,6 +45,7 @@ Event::Event(int eventNum, STAGE_KIND stageKind, World* world, SoundPlayer* soun
 
 	m_world_p = world;
 	m_soundPlayer_p = soundPlayer;
+	m_keyConfig_p = keyConfig_p;
 	m_backPrevSave = 0;
 
 	ostringstream oss;
@@ -110,7 +112,7 @@ void Event::createFire(vector<string> param, World* world, SoundPlayer* soundPla
 }
 
 // Elementの作成
-void Event::createElement(vector<string> param, World* world, SoundPlayer* soundPlayer) {
+void Event::createElement(vector<string> param, World* world, SoundPlayer* soundPlayer, KeyConfig* keyConfig_p) {
 	string param0 = param[0];
 	EventElement* element = nullptr;
 
@@ -131,9 +133,6 @@ void Event::createElement(vector<string> param, World* world, SoundPlayer* sound
 	}
 	else if (param0 == "ChangeAction") {
 		element = new ChangeActionEvent(world, param);
-	}
-	else if (param0 == "ChangeBrain") {
-		element = new ChangeBrainEvent(world, param);
 	}
 	else if (param0 == "ChangeGroup") {
 		element = new ChangeGroupEvent(world, param);
@@ -160,19 +159,16 @@ void Event::createElement(vector<string> param, World* world, SoundPlayer* sound
 		element = new DeadGroupHalfEvent(world, soundPlayer, param);
 	}
 	else if (param0 == "Talk") {
-		element = new TalkEvent(world, soundPlayer, param);
+		element = new TalkEvent(world, soundPlayer, keyConfig_p, param);
 	}
 	else if (param0 == "Movie") {
-		element = new MovieEvent(world, soundPlayer, param);
+		element = new MovieEvent(world, soundPlayer, keyConfig_p, param);
 	}
 	else if (param0 == "MoveArea"){
 		element = new MoveAreaEvent(world, param);
 	}
 	else if (param0 == "BlindWorld") {
 		element = new BlindWorldEvent(world, param);
-	}
-	else if (param0 == "PushCharacter") {
-		element = new PushCharacterEvent(world, param, m_version);
 	}
 	else if (param0 == "Wait") {
 		element = new WaitEvent(world, param);
@@ -203,7 +199,7 @@ bool Event::fire() {
 	}
 	
 	// 発火して初めてイベントを作る
-	createElement(mapParam2vector(m_elementsData[m_nowElement++]), m_world_p, m_soundPlayer_p);
+	createElement(mapParam2vector(m_elementsData[m_nowElement++]), m_world_p, m_soundPlayer_p, m_keyConfig_p);
 	return true;
 }
 
@@ -221,7 +217,7 @@ EVENT_RESULT Event::play() {
 		else { 
 			// EventElementは残っているのでまだイベント続く
 			delete m_eventElement;
-			createElement(mapParam2vector(m_elementsData[m_nowElement++]), m_world_p, m_soundPlayer_p);
+			createElement(mapParam2vector(m_elementsData[m_nowElement++]), m_world_p, m_soundPlayer_p, m_keyConfig_p);
 			return EVENT_RESULT::NOW;
 		}
 	}
@@ -382,37 +378,6 @@ EVENT_RESULT ChangeActionEvent::play() {
 void ChangeActionEvent::setWorld(World* world) {
 	EventElement::setWorld(world);
 	m_character_p = m_world_p->getCharacterWithName(m_param[2]);
-}
-
-
-// キャラのBrainを変更する
-ChangeBrainEvent::ChangeBrainEvent(World* world, vector<string> param) :
-	EventElement(world)
-{
-	m_brainName = param[1];
-	m_controller_p = m_world_p->getControllerWithName(param[2]);
-	m_param = param;
-}
-EVENT_RESULT ChangeBrainEvent::play() {
-
-	// 対象のキャラのBrainを変更する
-	Brain* brain = createBrain(m_brainName, m_world_p->getCamera());
-	m_controller_p->setBrain(brain);
-
-	// 追跡対象が必要なBrainは追跡対象を設定
-	if (brain->getBrainName() == FollowNormalAI::BRAIN_NAME ||
-		brain->getBrainName() == FollowParabolaAI::BRAIN_NAME ||
-		brain->getBrainName() == ValkiriaAI::BRAIN_NAME ||
-		brain->getBrainName() == FollowFlightAI::BRAIN_NAME) {
-		Character* follow = m_world_p->getCharacterWithName(m_param[3]);
-		brain->searchFollow(follow);
-	}
-
-	return EVENT_RESULT::SUCCESS;
-}
-void ChangeBrainEvent::setWorld(World* world) {
-	EventElement::setWorld(world);
-	m_controller_p = m_world_p->getControllerWithName(m_param[2]);
 }
 
 
@@ -678,11 +643,11 @@ EVENT_RESULT DeadGroupHalfEvent::play() {
 
 
 // 会話イベント
-TalkEvent::TalkEvent(World* world, SoundPlayer* soundPlayer, std::vector<std::string> param):
+TalkEvent::TalkEvent(World* world, SoundPlayer* soundPlayer, KeyConfig* keyConfig_p, std::vector<std::string> param):
 	EventElement(world)
 {
 	int textNum = stoi(param[1]);
-	m_conversation = new Conversation(textNum, soundPlayer);
+	m_conversation = new Conversation(textNum, soundPlayer, keyConfig_p);
 }
 
 TalkEvent::~TalkEvent() {
@@ -707,29 +672,29 @@ void TalkEvent::setWorld(World* world) {
 
 
 // ムービーイベント
-MovieEvent::MovieEvent(World* world, SoundPlayer* soundPlayer, std::vector<std::string> param) :
+MovieEvent::MovieEvent(World* world, SoundPlayer* soundPlayer, KeyConfig* keyConfig_p, std::vector<std::string> param) :
 	EventElement(world)
 {
 	if (param[1] == "chapterOneED") {
-		m_movie = new ChapterOneED(soundPlayer);
+		m_movie = new ChapterOneED(soundPlayer, keyConfig_p);
 	}
 	else if (param[1] == "chapter2ED") {
-		m_movie = new Chapter2ED(soundPlayer);
+		m_movie = new Chapter2ED(soundPlayer, keyConfig_p);
 	}
 	else if (param[1] == "chapter3ED") {
-		m_movie = new Chapter3ED(soundPlayer);
+		m_movie = new Chapter3ED(soundPlayer, keyConfig_p);
 	}
 	else if (param[1] == "chapter4ED") {
-		m_movie = new Chapter4ED(soundPlayer);
+		m_movie = new Chapter4ED(soundPlayer, keyConfig_p);
 	}
 	else if (param[1] == "chapter5ED") {
-		m_movie = new Chapter5ED(soundPlayer);
+		m_movie = new Chapter5ED(soundPlayer, keyConfig_p);
 	}
 	else if (param[1] == "chapter6ED") {
-		m_movie = new Chapter6ED(soundPlayer);
+		m_movie = new Chapter6ED(soundPlayer, keyConfig_p);
 	}
 	else if (param[1] == "chapter7ED") {
-		m_movie = new Chapter7ED(soundPlayer);
+		m_movie = new Chapter7ED(soundPlayer, keyConfig_p);
 	}
 }
 
@@ -778,34 +743,6 @@ void BlindWorldEvent::init() {
 	m_world_p->setBlindFlag(m_flag);
 }
 EVENT_RESULT BlindWorldEvent::play() {
-	return EVENT_RESULT::SUCCESS;
-}
-
-
-// キャラの追加
-PushCharacterEvent::PushCharacterEvent(World* world, std::vector<std::string> param, int version) :
-	EventElement(world)
-{
-	m_name = param[1];
-	m_x = stoi(param[2]);
-	m_y = stoi(param[3]);
-	m_sound = (bool)stoi(param[4]);
-	m_groupId = stoi(param[5]);
-	m_action = param[6];
-	m_brain = param[7];
-	m_controller = param[8];
-	m_version = version;
-}
-EVENT_RESULT PushCharacterEvent::play() {
-	Character* character = createCharacter(m_name.c_str());
-	character->changeInfoVersion(m_version);
-	character->setGroupId(m_groupId);
-	character->setX(m_x);
-	character->setY(m_y - character->getHeight());
-	CharacterAction* action = createAction(m_action, character, m_sound ? m_world_p->getSoundPlayer() : nullptr);
-	Brain* brain = createBrain(m_brain, m_world_p->getCamera());
-	CharacterController* controller = createController(m_controller, brain, action);
-	m_world_p->pushCharacter(character, controller);
 	return EVENT_RESULT::SUCCESS;
 }
 

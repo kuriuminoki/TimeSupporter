@@ -26,6 +26,8 @@ private:
 
 	int m_dx, m_dy; //文字を表示する座標
 
+	bool m_dispLeft; // 文字を左揃えするならtrue
+
 	int m_graph_handle = -1; //絵
 
 	int m_graph_ex; //絵の拡大率
@@ -46,6 +48,7 @@ public:
 	void setString(std::string new_string);//タグをつけなおす
 	inline void setX(int x) { m_x = x; }
 	inline void setColor(int colorHandle) { m_color = colorHandle; }
+	inline void setDispLeft(bool dispLeft) { m_dispLeft = dispLeft; }
 
 	// ボタンのon/off切り替え
 	void changeFlag(bool f, int new_color);

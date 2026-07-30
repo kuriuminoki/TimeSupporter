@@ -178,6 +178,8 @@ Game::Game(const char* saveFilePath) {
 
 	m_soundPlayer->stopBGM();
 
+	m_keyConfig = new KeyConfig();
+
 	m_story = nullptr;
 
 	if (TEST_MODE) {
@@ -211,6 +213,7 @@ Game::~Game() {
 	}
 	DeleteSoundMem(m_pauseSound);
 	delete m_soundPlayer;
+	delete m_keyConfig;
 }
 
 
@@ -226,9 +229,9 @@ bool Game::play() {
 	}
 
 	// ˆêŽž’âŽ~
-	if (controlQ() == 1) {
+	if (controlQ(m_keyConfig) == 1) {
 		if (m_battleOption == nullptr) {
-			m_battleOption = new BattleOption(m_soundPlayer);
+			m_battleOption = new BattleOption(m_soundPlayer, m_keyConfig);
 			m_soundPlayer->stopBGM();
 		}
 		else {
@@ -237,6 +240,8 @@ bool Game::play() {
 			delete m_battleOption;
 			m_battleOption = nullptr;
 			m_soundPlayer->playBGM();
+			m_keyConfig->save();
+			m_keyConfig->refresh();
 		}
 		m_soundPlayer->pushSoundQueue(m_pauseSound);
 	}
@@ -255,7 +260,7 @@ bool Game::play() {
 		if (m_selectStagePage->play(m_handX, m_handY)) {
 			int targetStoryNum = m_selectStagePage->getFocusStage();
 			STAGE_KIND targetKind = m_selectStagePage->getFocusKind();
-			m_story = new Story(targetStoryNum, targetKind, m_gameData, m_soundPlayer);
+			m_story = new Story(targetStoryNum, targetKind, m_gameData, m_soundPlayer, m_keyConfig);
 		}
 	}
 	else {
@@ -303,4 +308,9 @@ bool Game::play() {
 // •`‰æ‚µ‚Ä‚¢‚¢‚È‚çtrue
 bool Game::ableDraw() {
 	return m_story == nullptr || !m_story->getInitDark();
+}
+
+
+const string Game::getPauseKeyName() const {
+	return m_keyConfig->getPauseKeyName();
 }

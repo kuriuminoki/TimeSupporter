@@ -1,7 +1,11 @@
 #include "Define.h"
+#include "Control.h"
+#include <sstream>
 
-void drawSkip(int cnt, double exX, double exY, int fontHandle) {
-	static const int SKIP_WIDE = 600;
+using namespace std;
+
+void drawSkip(int cnt, double exX, double exY, int fontHandle, const KeyConfig* keyConfig_p) {
+	static const int SKIP_WIDE = 750;
 	static const int SKIP_HEIGHT = 100;
 	if (cnt > 0) {
 		int x2 = GAME_WIDE - 10;
@@ -11,6 +15,8 @@ void drawSkip(int cnt, double exX, double exY, int fontHandle) {
 		int y2 = y1 + (int)(SKIP_HEIGHT * exY);
 		DrawBox(x1, y1, x15, y2, BLACK, TRUE);
 		DrawBox(x15, y1, x2, y2, GRAY, TRUE);
-		DrawStringToHandle(x1 + 5, y1 + 5, "Ｚキー長押しでスキップ", WHITE, fontHandle);
+		ostringstream oss;
+		oss << keyConfig_p->getSkipKeyName() << "長押しでスキップ";
+		DrawStringToHandle(x1 + 5, y1 + 5, oss.str().c_str(), WHITE, fontHandle);
 	}
 }

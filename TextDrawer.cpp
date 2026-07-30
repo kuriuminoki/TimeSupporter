@@ -166,7 +166,7 @@ void ConversationDrawer::draw(bool movieFlag) {
 	SetDrawBright(255, 255, 255);
 
 	// Zキー長押しでスキップの表示
-	drawSkip(m_conversation->getSkipCnt(), m_exX, m_exY, m_textHandle);
+	drawSkip(m_conversation->getSkipCnt(), m_exX, m_exY, m_textHandle, m_conversation->getKeyConfig());
 
 	// 動画としての会話イベントならクリック周りの描画は不要
 	if (movieFlag) {

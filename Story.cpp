@@ -6,6 +6,7 @@
 #include "Sound.h"
 #include "CharacterLoader.h"
 #include "ObjectLoader.h"
+#include "Control.h"
 #include <sstream>
 
 using namespace std;
@@ -30,12 +31,12 @@ vector<string> split(string str, char del) {
 }
 
 
-Story::Story(int storyNum, STAGE_KIND stageKind, GameData* gameData, SoundPlayer* soundPlayer) {
+Story::Story(int storyNum, STAGE_KIND stageKind, GameData* gameData, SoundPlayer* soundPlayer, KeyConfig* keyConfig_p) {
 
 	m_storyNum = storyNum;
 	m_stageKind = stageKind;
 
-	m_world = new World(-1, m_storyNum + 1, m_stageKind, soundPlayer);
+	m_world = new World(-1, m_storyNum + 1, m_stageKind, soundPlayer, keyConfig_p);
 
 	// データを世界に反映
 	m_gameData_p = gameData;
@@ -60,7 +61,7 @@ Story::Story(int storyNum, STAGE_KIND stageKind, GameData* gameData, SoundPlayer
 	if (stageKind == STAGE_KIND::HARD) {
 		stageKind = STAGE_KIND::NORMAL;
 	}
-	m_eventList.push_back(new Event(m_storyNum + 1, stageKind, m_world, soundPlayer));
+	m_eventList.push_back(new Event(m_storyNum + 1, stageKind, m_world, soundPlayer, keyConfig_p));
 
 	// イベントの発火確認
 	checkFire();

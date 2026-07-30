@@ -174,46 +174,9 @@ void GamePause::draw() const {
 
 
 /*
-* チュートリアルの描画
-*/
-TutorialDisp::TutorialDisp(int font_p, int fontSize, double exX, double exY) {
-	m_font_p = font_p;
-	m_fontSize = fontSize;
-	m_exX = exX;
-	m_exY = exY;
-	setPoint(0, 0, 0, 0);
-}
-
-void TutorialDisp::draw() {
-	draw(m_x1, m_y1, m_x2, m_y2);
-}
-
-void TutorialDisp::draw(int x1, int y1, int x2, int y2) {
-	DrawBox(x1, y1, x2, y2, WHITE, TRUE);
-	
-	int i = m_fontSize;
-	DrawStringToHandle(x1 + m_fontSize, y1 + i, "移動：Ａ，Ｄキー", BLACK, m_font_p);
-	i += m_fontSize * 2;
-	DrawStringToHandle(x1 + m_fontSize, y1 + i, "しゃがむ：Ｓキー", BLACK, m_font_p);
-	i += m_fontSize * 2;
-	DrawStringToHandle(x1 + m_fontSize, y1 + i, "ジャンプ：スペースキー", BLACK, m_font_p);
-	i += m_fontSize * 2;
-	DrawStringToHandle(x1 + m_fontSize, y1 + i, "射撃：左クリック（長押しで連射）", BLACK, m_font_p);
-	i += m_fontSize * 2;
-	DrawStringToHandle(x1 + m_fontSize, y1 + i, "斬撃：右クリック", BLACK, m_font_p);
-	i += m_fontSize * 2;
-	DrawStringToHandle(x1 + m_fontSize, y1 + i, "スキル発動：Ｆキー", BLACK, m_font_p);
-	i += m_fontSize * 2;
-	DrawStringToHandle(x1 + m_fontSize, y1 + i, "会話をスキップ：Ｚキー長押し", BLACK, m_font_p);
-	i += m_fontSize * 2;
-	DrawStringToHandle(x1 + m_fontSize, y1 + i, "カメラのモード切り替え：シフトキー", BLACK, m_font_p);
-}
-
-
-/*
 * ゲーム中に開くオプション画面 タイトルに戻るボタンやチュートリアルがある
 */
-BattleOption::BattleOption(SoundPlayer* soundPlayer):
+BattleOption::BattleOption(SoundPlayer* soundPlayer, KeyConfig* keyConfig_p):
 	GamePause(soundPlayer)
 {
 	m_backgroundGraph = LoadGraph("picture/event/black.png");
@@ -229,19 +192,20 @@ BattleOption::BattleOption(SoundPlayer* soundPlayer):
 	m_titleButton = new Button("タイトルへ戻る", x, y, wide, height, WHITE, RED, m_font, BLACK);
 	m_titleFlag = false;
 
-	m_tutorialDisp = new TutorialDisp(m_font, m_fontSize, m_exX, m_exY);
-	m_tutorialDisp->setPoint(GAME_WIDE / 2 - (int)(100 * m_exX), (int)(50 * m_exY), GAME_WIDE - (int)(50 * m_exX), GAME_HEIGHT - (int)(50 * m_exY));
+	m_keyConfig_p = keyConfig_p;
 }
+
 BattleOption::~BattleOption() {
 	delete m_titleButton;
 	DeleteGraph(m_backgroundGraph);
 	DeleteFontToHandle(m_font);
-	delete m_tutorialDisp;
 }
 
 void BattleOption::play() {
 
 	GamePause::play();
+
+	m_keyConfig_p->play(m_handX, m_handY);
 
 	if (leftClick() == 1) {
 		if (m_titleButton->overlap(m_handX, m_handY)) {
@@ -261,7 +225,12 @@ void BattleOption::draw() const {
 
 	m_titleButton->draw(m_handX, m_handY);
 
-	m_tutorialDisp->draw();
+	m_keyConfig_p->draw(m_handX, m_handY);
+
+	DrawBox(0, 0, GAME_WIDE, (int)(80 * m_exY), WHITE, TRUE);
+	ostringstream oss;
+	oss << "一時停止中 (" << m_keyConfig_p->getPauseKeyName() << "で再開)";
+	DrawStringToHandle((int)(10 * m_exX), (int)(10 * m_exY), oss.str().c_str(), BLACK, m_font);
 
 }
 
@@ -287,6 +256,8 @@ TitleOption::TitleOption(SoundPlayer* soundPlayer) :
 
 	// 背景
 	m_haikei = new TitleBackGround();
+
+	m_keyConfig = new KeyConfig();
 }
 
 TitleOption::~TitleOption() {
@@ -297,11 +268,14 @@ TitleOption::~TitleOption() {
 	delete m_rightButton;
 	delete m_tmpApplyButton;
 	delete m_haikei;
+	delete m_keyConfig;
 }
 
 void TitleOption::play() {
 
 	GamePause::play();
+
+	m_keyConfig->play(m_handX, m_handY);
 
 	m_gameWideController->play(m_handX, m_handY);
 	m_gameHeightController->play(m_handX, m_handY);
@@ -331,6 +305,8 @@ void TitleOption::draw() const {
 	m_haikei->draw();
 
 	GamePause::draw();
+
+	m_keyConfig->draw(m_handX, m_handY);
 
 	m_gameWideController->draw(m_handX, m_handY);
 	m_gameHeightController->draw(m_handX, m_handY);

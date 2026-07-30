@@ -36,10 +36,10 @@ const char* ArmAI::BRAIN_NAME = "ArmAI";
 const char* LastAI::BRAIN_NAME = "LastAI";
 
 // クラス名からBrainを作成する関数
-Brain* createBrain(const string brainName, const Camera* camera_p) {
+Brain* createBrain(const string brainName, const Camera* camera_p, KeyConfig* keyConfig_p) {
 	Brain* brain = nullptr;
 	if (brainName == KeyboardBrain::BRAIN_NAME) {
-		brain = new KeyboardBrain(camera_p);
+		brain = new KeyboardBrain(camera_p, keyConfig_p);
 	}
 	else if (brainName == NormalAI::BRAIN_NAME) {
 		brain = new NormalAI();
@@ -136,8 +136,9 @@ Brain::Brain() {
 /*
 * キーボード
 */
-KeyboardBrain::KeyboardBrain(const Camera* camera) {
+KeyboardBrain::KeyboardBrain(const Camera* camera, KeyConfig* keyConfig_p) {
 	m_camera_p = camera;
+	m_keyConfig_p = keyConfig_p;
 }
 
 void KeyboardBrain::bulletTargetPoint(int& x, int& y) {
@@ -163,20 +164,20 @@ bool KeyboardBrain::actionOrder() {
 
 // 移動（上下左右の入力）
 void KeyboardBrain::moveOrder(int& right, int& left, int& up, int& down) {
-	right = controlD();
-	left = controlA();
+	right = controlD(m_keyConfig_p);
+	left = controlA(m_keyConfig_p);
 	up = controlW();
-	down = controlS();
+	down = controlS(m_keyConfig_p);
 }
 
 // ジャンプ
 int KeyboardBrain::jumpOrder() {
-	return controlSpace();
+	return controlSpace(m_keyConfig_p);
 }
 
 // しゃがみ
 int KeyboardBrain::squatOrder() {
-	return controlS();
+	return controlS(m_keyConfig_p);
 }
 
 // 近距離攻撃
@@ -191,7 +192,7 @@ int KeyboardBrain::bulletOrder() {
 
 // スキル
 int KeyboardBrain::skillOrder() {
-	return controlF();
+	return controlF(m_keyConfig_p);
 }
 
 
