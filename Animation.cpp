@@ -87,7 +87,7 @@ GraphHandle* Animation::getHandle() const {
 * 動画の基底クラス
 */
 Movie::Movie(SoundPlayer* soundPlayer_p, KeyConfig* keyConfig_p) {
-	OWNER_NAME = "Kuriu Minoki";
+	OWNER_NAME = "のけもの";
 	getGameEx(m_exX, m_exY);
 	m_ex = min(m_exX, m_exY);
 	m_finishFlag = false;
@@ -187,7 +187,7 @@ ChapterOneED::ChapterOneED(SoundPlayer* soundPlayer_p, KeyConfig* keyConfig_p):
 	m_credit[0] = "企画：" + OWNER_NAME;
 	m_credit[1] = "キャラクターデザイン：" + OWNER_NAME;
 	m_credit[2] = "一章エンディングテーマ";
-	m_credit[3] = "システムプランナー：" + OWNER_NAME;
+	m_credit[3] = "イラスト素材：Freepik";
 	m_credit[4] = "システムグラフィック／ムービー：" + OWNER_NAME;
 	m_credit[5] = "プログラム：" + OWNER_NAME;
 	m_credit[6] = "プロデュース：" + OWNER_NAME;

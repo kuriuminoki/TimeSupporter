@@ -202,6 +202,7 @@ Game::Game(const char* saveFilePath) {
 	}
 
 	m_gameoverCnt = 0;
+	m_storyNumNow = 0;
 }
 
 
@@ -218,6 +219,13 @@ Game::~Game() {
 
 
 bool Game::play() {
+
+	if (GetASyncLoadNum() > 0) {
+		return false;
+	}
+	else {
+		SetUseASyncLoadFlag(FALSE);
+	}
 
 	// ゲームオーバー
 	if (m_gameoverCnt > 0) {
@@ -255,12 +263,16 @@ bool Game::play() {
 		m_soundPlayer->play();
 		return false;
 	}
+
 	if (m_story == nullptr) {
 		GetMousePoint(&m_handX, &m_handY);
 		if (m_selectStagePage->play(m_handX, m_handY)) {
 			int targetStoryNum = m_selectStagePage->getFocusStage();
+			m_storyNumNow = targetStoryNum;
 			STAGE_KIND targetKind = m_selectStagePage->getFocusKind();
+			SetUseASyncLoadFlag(TRUE);
 			m_story = new Story(targetStoryNum, targetKind, m_gameData, m_soundPlayer, m_keyConfig);
+			return false;
 		}
 	}
 	else {

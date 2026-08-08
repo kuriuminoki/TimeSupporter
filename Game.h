@@ -116,6 +116,8 @@ private:
 
 	SelectStagePage* m_selectStagePage;
 
+	int m_storyNumNow;
+
 public:
 	Game(const char* saveFilePath = "savedata/test/");
 	~Game();
@@ -128,6 +130,7 @@ public:
 	inline int getGameoverCnt() const { return m_gameoverCnt; }
 	inline const GameData* getGameData() const { return m_gameData; }
 	const std::string getPauseKeyName() const;
+	inline int getStoryNumNow() const { return m_storyNumNow; }
 
 	// デバッグ
 	void debug(int x, int y, int color) const;

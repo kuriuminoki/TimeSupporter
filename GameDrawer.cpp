@@ -44,6 +44,18 @@ GameDrawer::GameDrawer(const Game* game) {
 	m_tmpScreenB = MakeScreen(GAME_WIDE, GAME_HEIGHT, TRUE);
 
 	m_font = CreateFontToHandle(nullptr, (int)(20 * m_exX), 3);
+
+	for (int i = 0; i < LOADING_HANDLE_SUM; i++) {
+		ostringstream oss;
+		oss << "picture/system/loading" << i + 1 << ".png";
+		m_loadingHandle[i] = LoadGraph(oss.str().c_str());
+	}
+	
+	int wide, height;
+	GetGraphSize(m_loadingHandle[0], &wide, &height);
+	m_ex = min((double)GAME_WIDE / wide, (double)GAME_HEIGHT / height);
+	m_needLoadNum = 0;
+	m_useLoadingNum = 0;
 }
 
 GameDrawer::~GameDrawer() {
@@ -58,35 +70,59 @@ GameDrawer::~GameDrawer() {
 	DeleteGraph(m_tmpScreenR);
 	DeleteGraph(m_tmpScreenG);
 	DeleteGraph(m_tmpScreenB);
+	for (int i = 0; i < LOADING_HANDLE_SUM; i++) {
+		DeleteGraph(m_loadingHandle[i]);
+	}
 }
 
 void GameDrawer::draw(int screen) {
 
-	if (m_game->getStory() == nullptr) {
-		int handX = 0, handY = 0;
-		GetMousePoint(&handX, &handY);
-		m_game->getSelectStagePage()->draw(handX, handY);
-	}
-	else {
-		// ゲームオーバー
-		int gameoverCnt = m_game->getGameoverCnt();
-		if (gameoverCnt > 0) {
-			if ((gameoverCnt < FPS_N && gameoverCnt / 2 % 2 == 0) || gameoverCnt > FPS_N) {
-				DrawRotaGraph(GAME_WIDE / 2, GAME_HEIGHT / 2, min(m_exX, m_exY) * 0.7, 0.0, m_gameoverHandle, TRUE);
+	int aSyncLoadNum = GetASyncLoadNum();
+
+	if (aSyncLoadNum == 0) {
+		if (m_game->getStory() == nullptr) {
+			int handX = 0, handY = 0;
+			GetMousePoint(&handX, &handY);
+			m_game->getSelectStagePage()->draw(handX, handY);
+		}
+		else {
+			// ゲームオーバー
+			int gameoverCnt = m_game->getGameoverCnt();
+			if (gameoverCnt > 0) {
+				if ((gameoverCnt < FPS_N && gameoverCnt / 2 % 2 == 0) || gameoverCnt > FPS_N) {
+					DrawRotaGraph(GAME_WIDE / 2, GAME_HEIGHT / 2, min(m_exX, m_exY) * 0.7, 0.0, m_gameoverHandle, TRUE);
+				}
+
+				return;
 			}
 
-			return;
+			// 世界を描画
+			m_worldDrawer->setWorld(m_game->getStory()->getWorld());
+			m_worldDrawer->draw(false); // TODO: 必殺技バーをスキルバーにするなら引数にロジックを入れる
 		}
 
-		// 世界を描画
-		m_worldDrawer->setWorld(m_game->getStory()->getWorld());
-		m_worldDrawer->draw(false); // TODO: 必殺技バーをスキルバーにするなら引数にロジックを入れる
+		if (filterRetroDispFlag) {
+			filterRetroDisp(screen);
+		}
+		filterRetroDispFlag = false; // フィルタが必要なら毎フレームtrueにする。基本はfalse
 	}
-
-	if (filterRetroDispFlag) {
-		filterRetroDisp(screen);
+	else {
+		if (m_needLoadNum == 0) {
+			m_useLoadingNum = GetRand(LOADING_HANDLE_SUM - 1);
+		}
+		m_needLoadNum = aSyncLoadNum == 0 ? 0 : max(m_needLoadNum, aSyncLoadNum);
+		DrawRotaGraph(GAME_WIDE / 2, GAME_HEIGHT / 2, m_ex, 0.0, m_loadingHandle[m_useLoadingNum], TRUE);
+		const int WIDE = 600 * m_exX;
+		const int X = 50 * m_exX;
+		const int HEIGHT = 50 * m_exY;
+		const int Y = 200 * m_exY;
+		int rate = 100;
+		if (m_needLoadNum > 0) {
+			rate = WIDE * (m_needLoadNum - aSyncLoadNum) / m_needLoadNum;
+		}
+		DrawBox(X, Y, X + rate, Y + HEIGHT, WHITE, TRUE);
+		DrawBox(X + rate, Y, X + WIDE, Y + HEIGHT, BLACK, TRUE);
 	}
-	filterRetroDispFlag = false; // フィルタが必要なら毎フレームtrueにする。基本はfalse
 
 	// セーブ完了通知
 	int noticeSaveDone = m_game->getGameData()->getNoticeSaveDone();
@@ -113,7 +149,7 @@ void GameDrawer::draw(int screen) {
 	}
 	else {
 		SetMouseDispFlag(MOUSE_DISP);//マウス表示
-		if (m_game->getStory() == nullptr || m_worldDrawer->battleNow()) {
+		if (aSyncLoadNum == 0 && (m_game->getStory() == nullptr || m_worldDrawer->battleNow())) {
 			ostringstream oss;
 			oss << m_game->getPauseKeyName() << ": 一時停止";
 			DrawStringToHandle(30 + m_exX, GAME_HEIGHT - 30 * m_exY, oss.str().c_str(), WHITE, m_font);
