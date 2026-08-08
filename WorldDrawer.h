@@ -99,6 +99,8 @@ public:
 	// •`‰æ‚·‚é
 	void draw(bool drawSkillBar);
 
+	bool battleNow();
+
 private:
 
 	void drawBattleField(const Camera* camera, int bright, bool drawSkillBar);

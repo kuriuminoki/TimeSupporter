@@ -10,6 +10,9 @@
 enum class STAGE_KIND;
 
 
+class KeyConfig;
+
+
 int str2color(std::string colorName);
 
 
@@ -118,7 +121,7 @@ private:
 	bool m_filterRetroDispFlag;
 
 public:
-	AreaReader(int fromAreaNum, int toAreaNum, STAGE_KIND stageKind, SoundPlayer* soundPlayer);
+	AreaReader(int fromAreaNum, int toAreaNum, STAGE_KIND stageKind, SoundPlayer* soundPlayer, KeyConfig* keyConfig_p);
 
 	inline Camera* getCamera() const { return m_camera_p; }
 

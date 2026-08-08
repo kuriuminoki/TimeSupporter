@@ -17,6 +17,7 @@ class Conversation;
 class DoorObject;
 class GraphHandles;
 class Item;
+class KeyConfig;
 class Movie;
 class Object;
 class ObjectLoader;
@@ -48,6 +49,9 @@ private:
 
 	// サウンドプレイヤー
 	SoundPlayer* m_soundPlayer_p;
+
+	// キーコンフィグ
+	KeyConfig* m_keyConfig_p;
 
 	// 会話イベント EventElementクラスからもらう
 	Conversation* m_conversation_p;
@@ -167,9 +171,11 @@ private:
 
 	bool m_greenFlag;
 
+	STAGE_KIND m_stageKind;
+
 public:
 	World();
-	World(int fromAreaNum, int toAreaNum, STAGE_KIND stageKind, SoundPlayer* soundPlayer);
+	World(int fromAreaNum, int toAreaNum, STAGE_KIND stageKind, SoundPlayer* soundPlayer, KeyConfig* keyConfig_p);
 	~World();
 
 	//デバッグ

@@ -12,10 +12,11 @@
 using namespace std;
 
 
-SelectStagePage::SelectStagePage(int completeStageSum, int exp) {
+SelectStagePage::SelectStagePage(int completeStageSum, int completeExSum, int exp) {
 	m_focusChapter = -1;
 	m_focusStage = -1;
 	m_completeStageSum = completeStageSum;
+	m_completeExSum = completeExSum;
 	m_exp = exp;
 
 	getGameEx(m_exX, m_exY);
@@ -42,10 +43,12 @@ SelectStagePage::SelectStagePage(int completeStageSum, int exp) {
 	for (int i = 0; i < STAGE_PER_CHAPTER; i++) {
 		ostringstream oss1;
 		oss1 << "ステージ" << i + 1;
-		m_stageButton.push_back(new Button(oss1.str().c_str(), 200 * m_exX, (780 + (70 * i)) * m_exY, 500 * m_exX, 60 * m_exY, WHITE, RED, m_font, BLACK));
+		m_stageButton.push_back(new Button(oss1.str().c_str(), 300 * m_exX, (770 + (70 * i)) * m_exY, 480 * m_exX, 60 * m_exY, WHITE, RED, m_font, BLACK));
 		ostringstream oss2;
 		oss2 << "ステージ" << i + 1 << " (裏)";
-		m_typeStageButton.push_back(new Button(oss2.str().c_str(), 750 * m_exX, (780 + (70 * i)) * m_exY, 500 * m_exX, 60 * m_exY, WHITE, RED, m_font, BLUE));
+		m_typeStageButton.push_back(new Button(oss2.str().c_str(), 800 * m_exX, (770 + (70 * i)) * m_exY, 480 * m_exX, 60 * m_exY, WHITE, RED, m_font, BLUE));
+		oss2 << "EX" << i + 1;
+		m_hardStageButton.push_back(new Button(oss2.str().c_str(), 120 * m_exX, (770 + (70 * i)) * m_exY, 150 * m_exX, 60 * m_exY, LIGHT_RED, RED, m_font, BLACK));
 	}
 	for (int i = 0; i < CHAPTER_SUM; i++) {
 		ostringstream oss;
@@ -62,6 +65,7 @@ SelectStagePage::~SelectStagePage() {
 	for (int i = 0; i < STAGE_PER_CHAPTER; i++) {
 		delete m_stageButton[i];
 		delete m_typeStageButton[i];
+		delete m_hardStageButton[i];
 	}
 	DeleteFontToHandle(m_font);
 	DeleteFontToHandle(m_smallFont);
@@ -73,7 +77,8 @@ SelectStagePage::~SelectStagePage() {
 
 bool SelectStagePage::play(int handX, int handY) {
 	if (m_focusChapter != -1) {
-		int dispStageSum = selectableStageSum();
+		int dispStageSum = selectableStageSum(m_completeStageSum);
+		int dispExSum = m_completeStageSum == 28 ? selectableStageSum(m_completeExSum) : 0;
 		for (int i = 0; i < dispStageSum; i++) {
 			if (m_stageButton[i]->overlap(handX, handY)) {
 				m_focusStage = m_focusChapter * STAGE_PER_CHAPTER + i;
@@ -83,6 +88,11 @@ bool SelectStagePage::play(int handX, int handY) {
 			else if (m_typeStageButton[i] != nullptr && m_typeStageButton[i]->overlap(handX, handY) && m_focusChapter > 0 && m_focusChapter < 6) {
 				m_focusStage = m_focusChapter * STAGE_PER_CHAPTER + i;
 				m_focusKind = STAGE_KIND::TYPE;
+				break;
+			}
+			else if (m_hardStageButton[i]->overlap(handX, handY) && i < dispExSum) {
+				m_focusStage = m_focusChapter * STAGE_PER_CHAPTER + i;
+				m_focusKind = STAGE_KIND::HARD;
 				break;
 			}
 			else {
@@ -138,7 +148,8 @@ void SelectStagePage::draw(int handX, int handY) const {
 		m_chapterButton[i]->draw(handX, handY);
 	}
 	if (m_focusChapter != -1) {
-		int dispStageSum = selectableStageSum();
+		int dispStageSum = selectableStageSum(m_completeStageSum);
+		int dispExSum = m_completeStageSum == 28 ? selectableStageSum(m_completeExSum) : 0;
 		for (int i = 0; i < dispStageSum; i++) {
 			int stage = i + 1 + m_focusChapter * STAGE_PER_CHAPTER;
 			ostringstream oss1;
@@ -146,6 +157,13 @@ void SelectStagePage::draw(int handX, int handY) const {
 			if (stage <= 9) { oss1 << " "; }
 			m_stageButton[i]->setString(oss1.str().c_str());
 			m_stageButton[i]->draw(handX, handY);
+			if (i < dispExSum) {
+				ostringstream oss3;
+				oss3 << "EX" << stage;
+				if (stage <= 9) { oss3 << " "; }
+				m_hardStageButton[i]->setString(oss3.str().c_str());
+				m_hardStageButton[i]->draw(handX, handY);
+			}
 			if (m_focusChapter > 0 && m_focusChapter < 6) {
 				ostringstream oss2;
 				oss2 << "ステージ" << stage;
@@ -158,10 +176,13 @@ void SelectStagePage::draw(int handX, int handY) const {
 	}
 	if (m_focusStage != -1) {
 		DrawBox(0, 600 * m_exY, 1300 * m_exX, 750 * m_exY, GRAY, TRUE);
-		if (m_focusKind == STAGE_KIND::NORMAL) {
+		if (m_focusKind == STAGE_KIND::NORMAL || m_focusKind == STAGE_KIND::HARD) {
 			int now = 0;
 			int i = 0;
 			string desc = STAGE_SUBTITLES[m_focusStage];
+			if (m_focusKind == STAGE_KIND::HARD) {
+				desc = "高難易度のモード。" + desc;
+			}
 			const int size = (int)(desc.size());
 			// セリフ
 			while (now < size) {
@@ -195,12 +216,15 @@ int SelectStagePage::selectableChapterSum() const {
 	return min(m_completeStageSum / STAGE_PER_CHAPTER + 1, CHAPTER_SUM);
 }
 
-int SelectStagePage::selectableStageSum() const {
+int SelectStagePage::selectableStageSum(int completeStageSum) const {
 	if (m_focusChapter == -1) {
 		return 0;
 	}
-	if ((m_focusChapter + 1) * 4 <= m_completeStageSum) {
+	if ((m_focusChapter + 1) * 4 <= completeStageSum) {
 		return STAGE_PER_CHAPTER;
 	}
-	return m_completeStageSum % STAGE_PER_CHAPTER + 1;
+	if (m_focusChapter * 4 > completeStageSum) {
+		return 0;
+	}
+	return completeStageSum % STAGE_PER_CHAPTER + 1;
 }

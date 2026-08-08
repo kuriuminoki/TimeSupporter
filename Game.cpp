@@ -45,6 +45,8 @@ GameData::GameData() {
 
 	m_completeStageSum = 0;
 
+	m_completeExSum = 0;
+
 }
 
 
@@ -77,6 +79,7 @@ bool GameData::save() {
 
 	fwrite(&m_completeStageSum, sizeof(m_completeStageSum), 1, intFp);
 	fwrite(&m_money, sizeof(m_money), 1, intFp);
+	fwrite(&m_completeExSum, sizeof(m_completeExSum), 1, intFp);
 
 	fclose(intFp);
 
@@ -98,6 +101,7 @@ bool GameData::load() {
 
 	fread(&m_completeStageSum, sizeof(m_completeStageSum), 1, intFp);
 	fread(&m_money, sizeof(m_money), 1, intFp);
+	fread(&m_completeExSum, sizeof(m_completeExSum), 1, intFp);
 
 	fclose(intFp);
 	return true;
@@ -174,12 +178,14 @@ Game::Game(const char* saveFilePath) {
 
 	m_soundPlayer->stopBGM();
 
+	m_keyConfig = new KeyConfig();
+
 	m_story = nullptr;
 
 	if (TEST_MODE) {
 		m_gameData->setCompleteStageSum(28);
 	}
-	m_selectStagePage = new SelectStagePage(m_gameData->getCompleteStageSum(), m_gameData->getMoney());
+	m_selectStagePage = new SelectStagePage(m_gameData->getCompleteStageSum(), m_gameData->getCompleteExSum(), m_gameData->getMoney());
 	m_soundPlayer->setBGM("sound/bgm/ステージ選択.mp3");
 	m_soundPlayer->playBGM();
 
@@ -196,6 +202,7 @@ Game::Game(const char* saveFilePath) {
 	}
 
 	m_gameoverCnt = 0;
+	m_storyNumNow = 0;
 }
 
 
@@ -207,10 +214,18 @@ Game::~Game() {
 	}
 	DeleteSoundMem(m_pauseSound);
 	delete m_soundPlayer;
+	delete m_keyConfig;
 }
 
 
 bool Game::play() {
+
+	if (GetASyncLoadNum() > 0) {
+		return false;
+	}
+	else {
+		SetUseASyncLoadFlag(FALSE);
+	}
 
 	// ゲームオーバー
 	if (m_gameoverCnt > 0) {
@@ -222,9 +237,9 @@ bool Game::play() {
 	}
 
 	// 一時停止
-	if (controlQ() == 1) {
+	if (controlQ(m_keyConfig) == 1) {
 		if (m_battleOption == nullptr) {
-			m_battleOption = new BattleOption(m_soundPlayer);
+			m_battleOption = new BattleOption(m_soundPlayer, m_keyConfig);
 			m_soundPlayer->stopBGM();
 		}
 		else {
@@ -233,6 +248,8 @@ bool Game::play() {
 			delete m_battleOption;
 			m_battleOption = nullptr;
 			m_soundPlayer->playBGM();
+			m_keyConfig->save();
+			m_keyConfig->refresh();
 		}
 		m_soundPlayer->pushSoundQueue(m_pauseSound);
 	}
@@ -246,15 +263,16 @@ bool Game::play() {
 		m_soundPlayer->play();
 		return false;
 	}
+
 	if (m_story == nullptr) {
 		GetMousePoint(&m_handX, &m_handY);
 		if (m_selectStagePage->play(m_handX, m_handY)) {
 			int targetStoryNum = m_selectStagePage->getFocusStage();
+			m_storyNumNow = targetStoryNum;
 			STAGE_KIND targetKind = m_selectStagePage->getFocusKind();
-			if (TEST_MODE) {
-				//targetStoryNum = 0;
-			}
-			m_story = new Story(targetStoryNum, targetKind, m_gameData, m_soundPlayer);
+			SetUseASyncLoadFlag(TRUE);
+			m_story = new Story(targetStoryNum, targetKind, m_gameData, m_soundPlayer, m_keyConfig);
+			return false;
 		}
 	}
 	else {
@@ -265,6 +283,12 @@ bool Game::play() {
 				if (m_story->getStoryNum() + 1 > m_gameData->getCompleteStageSum()) {
 					m_gameData->setCompleteStageSum(m_story->getStoryNum() + 1);
 					m_selectStagePage->setCompleteStageSum(m_gameData->getCompleteStageSum());
+				}
+			}
+			else if (m_story->getStageKind() == STAGE_KIND::HARD) {
+				if (m_story->getStoryNum() + 1 > m_gameData->getCompleteExSum()) {
+					m_gameData->setCompleteExSum(m_story->getStoryNum() + 1);
+					m_selectStagePage->setCompleteExSum(m_gameData->getCompleteExSum());
 				}
 			}
 			m_gameData->updateStory(m_story);
@@ -296,4 +320,9 @@ bool Game::play() {
 // 描画していいならtrue
 bool Game::ableDraw() {
 	return m_story == nullptr || !m_story->getInitDark();
+}
+
+
+const string Game::getPauseKeyName() const {
+	return m_keyConfig->getPauseKeyName();
 }

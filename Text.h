@@ -14,6 +14,7 @@ class GraphHandle;
 class GraphHandles;
 class Button;
 class FaceGraphHandle;
+class KeyConfig;
 
 
 enum class CHARACTER_POSITION {
@@ -147,7 +148,7 @@ private:
 	unsigned int m_textSpeed;
 
 	// 次のテキストへ行けるようになるまでの時間
-	const unsigned int NEXT_TEXT_ABLE = 45;
+	const unsigned int NEXT_TEXT_ABLE = 30;
 
 	// テキストを飛ばせるようになるまでの時間
 	const unsigned int MOVE_FINAL_ABLE = 5;
@@ -165,6 +166,8 @@ private:
 
 	// 世界のサウンドプレイヤー
 	SoundPlayer* m_soundPlayer_p;
+
+	KeyConfig* m_keyConfig_p;
 
 	// アニメイベント
 	EventAnime* m_eventAnime;
@@ -229,6 +232,12 @@ private:
 	// フキダシのアクション
 	TextAction m_textAction;
 
+	// 発言中のキャラのDX
+	int m_speakerDx;
+	int m_speakerDxGoal;
+	const int MAX_SPEAKER_DX = 9;
+	const int SPEAKER_DX_SPEED = 3;
+
 	// 効果音
 	int m_sound;
 	bool m_soundFlag;
@@ -242,7 +251,7 @@ private:
 	FaceDrawMode m_faceDrawMode;
 
 public:
-	Conversation(int textNum, SoundPlayer* soundPlayer, int movieSpeed = -1);
+	Conversation(int textNum, SoundPlayer* soundPlayer, KeyConfig* keyConfig_p, int movieSpeed = -1);
 	~Conversation();
 
 	// ゲッタ
@@ -257,6 +266,7 @@ public:
 	inline 	std::string getSpeakerName() const { return m_speakerName; }
 	inline int getFinishCnt() const { return m_finishCnt; }
 	inline int getSkipCnt() const { return m_skipCnt; }
+	inline const KeyConfig* getKeyConfig() const { return m_keyConfig_p; }
 	inline int getStartCnt() const { return m_startCnt; }
 	inline bool getFinishFlag() const { return m_finishFlag; }
 	inline int getTextNow() const { return m_textNow; }
@@ -277,6 +287,7 @@ public:
 	inline const Button* getNoButton() const { return m_selectFlag ? m_noButton : nullptr; }
 	inline CHARACTER_POSITION getSpeakerPosition() const { return m_speakerPosition; }
 	inline CHARACTER_POSITION getListenerPosition() const { return m_listenerPosition; }
+	inline int getSpeakerDx() const { return m_speakerDx; }
 
 	// セッタ
 	inline void setStartCnt(int startCnt) { m_startCnt = startCnt; }

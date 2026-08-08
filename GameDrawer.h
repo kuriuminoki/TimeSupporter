@@ -40,6 +40,13 @@ private:
 
 	int m_font;
 
+	// ÉçÅ[ÉhâÊñ 
+	static const int LOADING_HANDLE_SUM = 5;
+	int m_loadingHandle[LOADING_HANDLE_SUM];
+	double m_ex;
+	int m_needLoadNum;
+	int m_useLoadingNum;
+
 public:
 	GameDrawer(const Game* game);
 

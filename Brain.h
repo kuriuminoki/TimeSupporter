@@ -8,6 +8,7 @@
 class Character;
 class CharacterAction;
 class Camera;
+class KeyConfig;
 
 
 // Controllerに命令するクラス（キーボード＆マウスやＡＩ）
@@ -94,7 +95,7 @@ public:
 
 
 // クラス名からBrainを作成する関数
-Brain* createBrain(const std::string brainName, const Camera* camera_p);
+Brain* createBrain(const std::string brainName, const Camera* camera_p, KeyConfig* keyConfig_p);
 
 
 /*
@@ -107,11 +108,13 @@ private:
 	// カメラ
 	const Camera* m_camera_p;
 
+	const KeyConfig* m_keyConfig_p;
+
 public:
 	static const char* BRAIN_NAME;
 	const char* getBrainName() const { return this->BRAIN_NAME; }
 
-	KeyboardBrain(const Camera* camera);
+	KeyboardBrain(const Camera* camera, KeyConfig* keyConfig_p);
 
 	void debug(int x, int y, int color) const;
 

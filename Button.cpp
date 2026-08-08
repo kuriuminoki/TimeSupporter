@@ -16,6 +16,7 @@ Button::Button(string tag, int x, int y, int wide, int height, int color, int co
 	m_font = font;
 	m_font_color = font_color;
 	setString(tag);
+	m_dispLeft = false;
 }
 
 //ボタンの描画 下にラベルの文字列も表示できる
@@ -29,7 +30,12 @@ void Button::draw(int hand_x, int hand_y) const {
 	DrawRotaGraph(m_x + (m_wide / 2), m_y + (m_height / 2), m_graph_ex, 0, m_graph_handle, TRUE, FALSE);
 	SetDrawBright(255,255,255);
 	//文字の描画
-	DrawStringToHandle(m_dx, m_dy, m_tag.c_str(), m_font_color, m_font);
+	if (m_dispLeft) {
+		DrawStringToHandle(m_x, m_dy, m_tag.c_str(), m_font_color, m_font);
+	}
+	else {
+		DrawStringToHandle(m_dx, m_dy, m_tag.c_str(), m_font_color, m_font);
+	}
 }
 
 //ボタンのオン・オフ

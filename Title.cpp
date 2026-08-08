@@ -172,9 +172,9 @@ Title::Title(int* screen) {
 	double exX, exY;
 	getGameEx(exX, exY);
 	m_font = CreateFontToHandle(nullptr, (int)(50 * exX), 3);
-	m_selectButton = new Button("Game Start", (int)(100 * exX), (int)(800 * exY), (int)(920 * exX), (int)(80 * exY), GRAY2, BLUE, m_font, BLACK);
-	m_optionButton = new Button("Setting", (int)(100 * exX), (int)(900 * exY), (int)(920 * exX), (int)(80 * exY), GRAY2, BLUE, m_font, BLACK);
-	m_cancelButton = new Button("Backward", (int)(50 * exX), (int)(50 * exY), (int)(300 * exX), (int)(100 * exY), GRAY2, WHITE, m_font, BLACK);
+	m_selectButton = new Button("ゲームスタート", (int)(100 * exX), (int)(800 * exY), (int)(920 * exX), (int)(80 * exY), GRAY2, BLUE, m_font, BLACK);
+	m_optionButton = new Button("設定", (int)(100 * exX), (int)(900 * exY), (int)(920 * exX), (int)(80 * exY), GRAY2, BLUE, m_font, BLACK);
+	m_cancelButton = new Button("戻る", (int)(50 * exX), (int)(30 * exY), (int)(300 * exX), (int)(80 * exY), GRAY2, WHITE, m_font, BLACK);
 
 	// オプション画面
 	m_option = new TitleOption(m_soundPlayer);

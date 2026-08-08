@@ -11,6 +11,7 @@ class World;
 class SoundPlayer;
 class CharacterLoader;
 class ObjectLoader;
+class KeyConfig;
 
 enum class EVENT_RESULT;
 enum class STAGE_KIND;
@@ -49,7 +50,7 @@ private:
 	ObjectLoader* m_objectLoader;
 
 public:
-	Story(int storyNum, STAGE_KIND stageKind, GameData* gameData, SoundPlayer* soundPlayer);
+	Story(int storyNum, STAGE_KIND stageKind, GameData* gameData, SoundPlayer* soundPlayer, KeyConfig* keyConfig_p);
 	~Story();
 
 	void debug(int x, int y, int color);

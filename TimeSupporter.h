@@ -14,6 +14,7 @@ private:
 	static const int CHAPTER_SUM = 7;
 	static const int STAGE_PER_CHAPTER = 4;
 	int m_completeStageSum; // セーブデータと同期させる
+	int m_completeExSum;
 	int m_focusChapter; // クリックしてフォーカス中にしているチャプター番号(0~)
 	int m_focusStage; // カーソルを合わせているステージ番号(0~)
 	STAGE_KIND m_focusKind;
@@ -35,13 +36,14 @@ private:
 	std::vector<Button*> m_chapterButton;
 	std::vector<Button*> m_stageButton;
 	std::vector<Button*> m_typeStageButton;
+	std::vector<Button*> m_hardStageButton;
 
 	std::vector<int> m_chapterGraphHandles;
 	const int CHAPTER_GRAPH_MAX_DX = 1000;
 	int m_chapterGraphDx;
 
 public:
-	SelectStagePage(int completeStageSum, int exp);
+	SelectStagePage(int completeStageSum, int completeExSum, int exp);
 	~SelectStagePage();
 
 	bool play(int handX, int handY);
@@ -55,10 +57,11 @@ public:
 	inline STAGE_KIND getFocusKind() const { return m_focusKind; }
 
 	void setCompleteStageSum(int completeStageSum) { m_completeStageSum = completeStageSum; }
+	void setCompleteExSum(int completeExSum) { m_completeExSum = completeExSum; }
 
 private:
 	int selectableChapterSum() const;
-	int selectableStageSum() const;
+	int selectableStageSum(int completeStageSum) const;
 };
 
 

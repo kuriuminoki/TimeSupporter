@@ -304,3 +304,8 @@ void WorldDrawer::drawBattleField(const Camera* camera, int bright, bool drawSki
 		}
 	}
 }
+
+
+bool WorldDrawer::battleNow() {
+	return m_world->getMovie() == nullptr && m_world->getConversation() == nullptr;
+}

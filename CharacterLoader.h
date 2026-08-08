@@ -11,6 +11,7 @@
 class Character;
 class CharacterController;
 class Camera;
+class KeyConfig;
 class SoundPlayer;
 
 
@@ -34,7 +35,7 @@ public:
 	void addCharacter(std::map<std::string, std::string> dataMap);
 
 	// “Á’è‚ÌƒGƒŠƒA‚Ì’Ç‰ÁƒLƒƒƒ‰‚Ìvector‚ğæ“¾<Character, Controller>
-	std::pair<std::vector<Character*>, std::vector<CharacterController*> > getCharacters(Camera* camera_p, SoundPlayer* soundPlayer_p, int areaNum = -1);
+	std::pair<std::vector<Character*>, std::vector<CharacterController*> > getCharacters(Camera* camera_p, SoundPlayer* soundPlayer_p, KeyConfig* keyConfig_p, int areaNum = -1);
 };
 
 

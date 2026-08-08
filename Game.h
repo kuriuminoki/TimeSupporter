@@ -10,6 +10,7 @@ class SelectStagePage;
 class Story;
 class Character;
 class BattleOption;
+class KeyConfig;
 
 
 // セーブデータ
@@ -27,6 +28,8 @@ private:
 
 	// クリアしたステージ数
 	int m_completeStageSum;
+
+	int m_completeExSum;
 
 	// 音量
 	int m_soundVolume;
@@ -55,6 +58,7 @@ public:
 	// ゲッタ
 	inline bool getExist() const { return m_exist; }
 	inline int getCompleteStageSum() const { return m_completeStageSum; }
+	inline int getCompleteExSum() const { return m_completeExSum; }
 	inline int getSoundVolume() const { return m_soundVolume; }
 	inline int getMoney() const { return m_money; }
 	inline const char* getSaveFilePath() const { return m_saveFilePath.c_str(); }
@@ -62,6 +66,7 @@ public:
 
 	// セッタ
 	inline void setCompleteStageSum(int completeStageSum) { m_completeStageSum = completeStageSum; }
+	inline void setCompleteExSum(int completeExSum) { m_completeExSum = completeExSum; }
 	inline void setSoundVolume(int soundVolume) { m_soundVolume = soundVolume; }
 	inline void setNoticeSaveDone(int noticeSaveDone) { m_noticeSaveDone = noticeSaveDone; }
 
@@ -88,6 +93,9 @@ private:
 	// サウンドプレイヤー
 	SoundPlayer* m_soundPlayer;
 
+	// キーコンフィグ
+	KeyConfig* m_keyConfig;
+
 	// ゲームオーバーの表示
 	int m_gameoverCnt;
 
@@ -108,6 +116,8 @@ private:
 
 	SelectStagePage* m_selectStagePage;
 
+	int m_storyNumNow;
+
 public:
 	Game(const char* saveFilePath = "savedata/test/");
 	~Game();
@@ -119,6 +129,8 @@ public:
 	bool getRebootFlag() const { return m_rebootFlag; }
 	inline int getGameoverCnt() const { return m_gameoverCnt; }
 	inline const GameData* getGameData() const { return m_gameData; }
+	const std::string getPauseKeyName() const;
+	inline int getStoryNumNow() const { return m_storyNumNow; }
 
 	// デバッグ
 	void debug(int x, int y, int color) const;

@@ -86,8 +86,8 @@ GraphHandle* Animation::getHandle() const {
 /*
 * 動画の基底クラス
 */
-Movie::Movie(SoundPlayer* soundPlayer_p) {
-	OWNER_NAME = "Kuriu Minoki";
+Movie::Movie(SoundPlayer* soundPlayer_p, KeyConfig* keyConfig_p) {
+	OWNER_NAME = "のけもの";
 	getGameEx(m_exX, m_exY);
 	m_ex = min(m_exX, m_exY);
 	m_finishFlag = false;
@@ -95,6 +95,7 @@ Movie::Movie(SoundPlayer* soundPlayer_p) {
 	m_animation = nullptr;
 	m_animationDrawer = new AnimationDrawer(m_animation);
 	m_soundPlayer_p = soundPlayer_p;
+	m_keyConfig_p = keyConfig_p;
 	m_bgmPath = "";
 	m_originalBgmPath = m_soundPlayer_p->getBgmName();
 
@@ -133,7 +134,7 @@ void Movie::play() {
 	}
 
 	// Zキー長押しで終了
-	if (controlZ() > 0) {
+	if (controlZ(m_keyConfig_p) > 0) {
 		if (m_skipCnt++ == FPS_N) {
 			m_finishFlag = true;
 		}
@@ -168,8 +169,8 @@ void Movie::drawframe() const {
 
 
 // オープニング
-ChapterOneED::ChapterOneED(SoundPlayer* soundPlayer_p):
-	Movie(soundPlayer_p)
+ChapterOneED::ChapterOneED(SoundPlayer* soundPlayer_p, KeyConfig* keyConfig_p):
+	Movie(soundPlayer_p, keyConfig_p)
 {
 	string path = "picture/movie/chapter1ed/";
 
@@ -186,7 +187,7 @@ ChapterOneED::ChapterOneED(SoundPlayer* soundPlayer_p):
 	m_credit[0] = "企画：" + OWNER_NAME;
 	m_credit[1] = "キャラクターデザイン：" + OWNER_NAME;
 	m_credit[2] = "一章エンディングテーマ";
-	m_credit[3] = "システムプランナー：" + OWNER_NAME;
+	m_credit[3] = "イラスト素材：Freepik";
 	m_credit[4] = "システムグラフィック／ムービー：" + OWNER_NAME;
 	m_credit[5] = "プログラム：" + OWNER_NAME;
 	m_credit[6] = "プロデュース：" + OWNER_NAME;
@@ -326,13 +327,13 @@ void ChapterOneED::draw() const {
 	drawframe();
 
 	// Zキー長押しでスキップの表示
-	drawSkip(m_skipCnt, m_exX, m_exY, m_textHandle);
+	drawSkip(m_skipCnt, m_exX, m_exY, m_textHandle, m_keyConfig_p);
 }
 
 
 // エンディング
-Chapter7ED::Chapter7ED(SoundPlayer* soundPlayer_p) :
-	ChapterOneED(soundPlayer_p)
+Chapter7ED::Chapter7ED(SoundPlayer* soundPlayer_p, KeyConfig* keyConfig_p) :
+	ChapterOneED(soundPlayer_p, keyConfig_p)
 {
 	string path = "picture/movie/ed/";
 	m_all = new GraphHandles((path + "all").c_str(), 3, m_ex * 0.7, 0, true);
@@ -350,7 +351,7 @@ Chapter7ED::Chapter7ED(SoundPlayer* soundPlayer_p) :
 	m_toDark = false;
 
 	// 会話
-	m_conversation = new Conversation(156, soundPlayer_p, 300);
+	m_conversation = new Conversation(156, soundPlayer_p, keyConfig_p, 300);
 	m_conversationDrawer = new ConversationDrawer(m_conversation);
 	m_conversation->setStartCnt(0);
 
@@ -430,15 +431,15 @@ void Chapter7ED::draw() const {
 	SetDrawBright(255, 255, 255);
 	drawframe();
 	// Zキー長押しでスキップの表示
-	drawSkip(m_skipCnt, m_exX, m_exY, m_textHandle);
+	drawSkip(m_skipCnt, m_exX, m_exY, m_textHandle, m_keyConfig_p);
 }
 
 
 /*
 * 各章のED(共通部分)
 */
-ChapterEDCommon::ChapterEDCommon(SoundPlayer* soundPlayer_p, int chapterNum):
-	Movie(soundPlayer_p)
+ChapterEDCommon::ChapterEDCommon(SoundPlayer* soundPlayer_p, int chapterNum, KeyConfig* keyConfig_p):
+	Movie(soundPlayer_p, keyConfig_p)
 {
 	ostringstream oss;
 	if (chapterNum == 6) {
@@ -461,6 +462,8 @@ ChapterEDCommon::ChapterEDCommon(SoundPlayer* soundPlayer_p, int chapterNum):
 
 	m_bright = 255;
 
+	m_nextImage = -1;
+
 }
 ChapterEDCommon::~ChapterEDCommon() {
 	if (m_nextHandles != nullptr) {
@@ -471,6 +474,9 @@ ChapterEDCommon::~ChapterEDCommon() {
 	}
 	if (m_conversationDrawer != nullptr) {
 		delete m_conversationDrawer;
+	}
+	if (m_nextImage != -1) {
+		DeleteGraph(m_nextImage);
 	}
 }
 
@@ -535,20 +541,24 @@ void ChapterEDCommon::draw() const {
 	}
 	if (m_cnt > 5000) {
 		DrawFormatStringToHandle(100 * m_exX, 520 * m_exY, GREEN, m_textHandle, m_chapterTitle.c_str());
+		int bright = min((m_cnt - 5000) / 4, 60);
+		SetDrawBright(bright, bright, bright);
+		DrawRotaGraph(GAME_WIDE - 300 * m_exX, GAME_HEIGHT - 500 * m_exY, 0.5 * m_exX, 0.0, m_nextImage, TRUE);
+		SetDrawBright(255, 255, 255);
 	}
 
 	drawframe();
 
 	// Zキー長押しでスキップの表示
-	drawSkip(m_skipCnt, m_exX, m_exY, m_textHandle);
+	drawSkip(m_skipCnt, m_exX, m_exY, m_textHandle, m_keyConfig_p);
 }
 
 
 /*
 * 2章ED
 */
-Chapter2ED::Chapter2ED(SoundPlayer* soundPlayer_p):
-	ChapterEDCommon(soundPlayer_p, 2)
+Chapter2ED::Chapter2ED(SoundPlayer* soundPlayer_p, KeyConfig* keyConfig_p):
+	ChapterEDCommon(soundPlayer_p, 2, keyConfig_p)
 {
 	m_words[0] = "人の方がロボットなんかより全然強いんだから。";
 	m_words[1] = "やった、楽しみにしてるね。";
@@ -566,12 +576,14 @@ Chapter2ED::Chapter2ED(SoundPlayer* soundPlayer_p):
 	m_animation = new Animation(m_centerX, m_centerY, 10, m_nextHandles);
 
 	// 会話
-	m_conversation = new Conversation(116, soundPlayer_p, 450);
+	m_conversation = new Conversation(116, soundPlayer_p, keyConfig_p, 450);
 	m_conversationDrawer = new ConversationDrawer(m_conversation);
 
 	m_kuroeHandle = LoadGraph("picture/event/クロエイト登場.png");
 	m_kuroeFaceHandle = LoadGraph("picture/event/クロエイトの顔.png");
 	m_kuroeEx = 0.5 * m_exX;
+
+	m_nextImage = LoadGraph("picture/system/chapter3.png");
 
 	m_bright = 0;
 }
@@ -637,8 +649,8 @@ void Chapter2ED::draw() const {
 /*
 * 3章ED
 */
-Chapter3ED::Chapter3ED(SoundPlayer* soundPlayer_p) :
-	ChapterEDCommon(soundPlayer_p, 3)
+Chapter3ED::Chapter3ED(SoundPlayer* soundPlayer_p, KeyConfig* keyConfig_p) :
+	ChapterEDCommon(soundPlayer_p, 3, keyConfig_p)
 {
 	m_words[0] = "まあいきなり過ぎるけど、いいかもね。";
 	m_words[1] = "随分と自意識過剰だ、口だけじゃないといいけどな。";
@@ -656,9 +668,11 @@ Chapter3ED::Chapter3ED(SoundPlayer* soundPlayer_p) :
 	m_animation = new Animation(m_centerX, m_centerY, 10, m_nextHandles);
 
 	// 会話
-	m_conversation = new Conversation(124, soundPlayer_p, 340);
+	m_conversation = new Conversation(124, soundPlayer_p, keyConfig_p, 340);
 	m_conversation->setStartCnt(0);
 	m_conversationDrawer = new ConversationDrawer(m_conversation);
+
+	m_nextImage = LoadGraph("picture/system/chapter4.png");
 }
 
 Chapter3ED::~Chapter3ED() {
@@ -700,8 +714,8 @@ void Chapter3ED::draw() const {
 /*
 * 4章ED
 */
-Chapter4ED::Chapter4ED(SoundPlayer* soundPlayer_p) :
-	ChapterEDCommon(soundPlayer_p, 4)
+Chapter4ED::Chapter4ED(SoundPlayer* soundPlayer_p, KeyConfig* keyConfig_p) :
+	ChapterEDCommon(soundPlayer_p, 4, keyConfig_p)
 {
 	m_words[0] = "自分のことしか考えない人間どもがっ！！";
 	m_words[1] = "・・・そう思ったんだから仕方ない。";
@@ -719,9 +733,11 @@ Chapter4ED::Chapter4ED(SoundPlayer* soundPlayer_p) :
 	m_animation = new Animation(m_centerX, m_centerY, 10, m_nextHandles);
 
 	// 会話
-	m_conversation = new Conversation(132, soundPlayer_p, 370);
+	m_conversation = new Conversation(132, soundPlayer_p, keyConfig_p, 370);
 	m_conversation->setStartCnt(0);
 	m_conversationDrawer = new ConversationDrawer(m_conversation);
+
+	m_nextImage = LoadGraph("picture/system/chapter5.png");
 }
 
 Chapter4ED::~Chapter4ED() {
@@ -767,11 +783,11 @@ void Chapter4ED::draw() const {
 /*
 * 5章ED
 */
-Chapter5ED::Chapter5ED(SoundPlayer* soundPlayer_p) :
-	ChapterEDCommon(soundPlayer_p, 5)
+Chapter5ED::Chapter5ED(SoundPlayer* soundPlayer_p, KeyConfig* keyConfig_p) :
+	ChapterEDCommon(soundPlayer_p, 5, keyConfig_p)
 {
 	m_words[0] = "みんな本当に、これで嬉しいの？";
-	m_words[1] = "へっ、なんだよ調子狂うぜ。";
+	m_words[1] = "一応、お前は「家族」だからな。";
 	m_words[2] = "みんなに信頼されて・・・これ以上が必要か？";
 	m_words[3] = "私が覚えている限りその方は記憶の中では存在できます。";
 	m_words[4] = "それがバカだって言ってるのよ！！";
@@ -786,8 +802,10 @@ Chapter5ED::Chapter5ED(SoundPlayer* soundPlayer_p) :
 	m_animation = new Animation(m_centerX, m_centerY, 30, m_nextHandles);
 
 	// 会話
-	m_conversation = new Conversation(140, soundPlayer_p, 220);
+	m_conversation = new Conversation(140, soundPlayer_p, keyConfig_p, 220);
 	m_conversationDrawer = new ConversationDrawer(m_conversation);
+
+	m_nextImage = LoadGraph("picture/system/chapter6.png");
 
 	m_bright = 0;
 }
@@ -831,8 +849,8 @@ void Chapter5ED::draw() const {
 /*
 * 6章ED
 */
-Chapter6ED::Chapter6ED(SoundPlayer* soundPlayer_p) :
-	ChapterEDCommon(soundPlayer_p, 6)
+Chapter6ED::Chapter6ED(SoundPlayer* soundPlayer_p, KeyConfig* keyConfig_p) :
+	ChapterEDCommon(soundPlayer_p, 6, keyConfig_p)
 {
 	m_words[0] = "心配するな、俺は必ず期待に応えるさ。";
 	m_words[1] = "お前みたいなやつがいるから、誰も救われない！！";
@@ -850,9 +868,11 @@ Chapter6ED::Chapter6ED(SoundPlayer* soundPlayer_p) :
 	m_animation = new Animation(m_centerX, m_centerY, 5, m_nextHandles);
 
 	// 会話
-	m_conversation = new Conversation(148, soundPlayer_p, 350);
+	m_conversation = new Conversation(148, soundPlayer_p, keyConfig_p, 350);
 	m_conversation->setStartCnt(0);
 	m_conversationDrawer = new ConversationDrawer(m_conversation);
+
+	m_nextImage = LoadGraph("picture/system/chapter7.png");
 
 	m_bright = 0;
 }

@@ -8,7 +8,7 @@ using namespace std;
 
 // 音量調節
 void changeSoundVolume(int volume, int soundHandle) {
-	ChangeVolumeSoundMem(255 * (volume) / 100, soundHandle);
+	ChangeVolumeSoundMem(min(255, 255 * (volume) / 100), soundHandle);
 }
 
 // カメラのパンを調整する。
@@ -54,6 +54,9 @@ void SoundPlayer::setBGM(std::string bgmName) {
 	m_bgmHandle = LoadSoundMem(bgmName.c_str());
 	// 音量調整
 	changeSoundVolume(m_volume, m_bgmHandle);
+	if (bgmName == "sound/bgm/悲しい3.mp3" || bgmName == "sound/bgm/ピアノ2.mp3") {
+		changeSoundVolume(m_volume + 15, m_bgmHandle);
+	}
 }
 
 // BGMを再生

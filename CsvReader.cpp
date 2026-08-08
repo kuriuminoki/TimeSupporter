@@ -2,6 +2,7 @@
 #include "Character.h"
 #include "CharacterAction.h"
 #include "CharacterController.h"
+#include "Control.h"
 #include "Object.h"
 #include "Camera.h"
 #include "Brain.h"
@@ -177,7 +178,7 @@ CsvReader2::CsvReader2(const char* fileName) {
 * Character等をnewするため、このクラスをnewした後はgetして削除すること。
 * このクラスでnewされたCharacter等はこのクラスで削除しない。
 */
-AreaReader::AreaReader(int fromAreaNum, int toAreaNum, STAGE_KIND stageKind, SoundPlayer* soundPlayer) {
+AreaReader::AreaReader(int fromAreaNum, int toAreaNum, STAGE_KIND stageKind, SoundPlayer* soundPlayer, KeyConfig* keyConfig_p) {
 	m_fromAreaNum = fromAreaNum;
 	m_soundPlayer_p = soundPlayer;
 
@@ -212,7 +213,7 @@ AreaReader::AreaReader(int fromAreaNum, int toAreaNum, STAGE_KIND stageKind, Sou
 	for (unsigned int i = 0; i < data.size(); i++) {
 		characterLoader.addCharacter(data[i]);
 	}
-	pair<vector<Character*>, vector<CharacterController*> > cp = characterLoader.getCharacters(m_camera_p, soundPlayer);
+	pair<vector<Character*>, vector<CharacterController*> > cp = characterLoader.getCharacters(m_camera_p, soundPlayer, keyConfig_p);
 	m_characters = cp.first;
 	m_characterControllers = cp.second;
 	m_focusId = characterLoader.getFocusId();

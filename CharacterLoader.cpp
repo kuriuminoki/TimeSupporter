@@ -7,6 +7,7 @@
 #include "CsvReader.h"
 #include "Sound.h"
 #include "Camera.h"
+#include "Control.h"
 
 
 using namespace std;
@@ -29,7 +30,7 @@ void CharacterLoader::addCharacter(map<string, string> dataMap) {
 }
 
 // 特定のエリアの追加オブジェクトのvectorを取得
-pair<vector<Character*>, vector<CharacterController*> > CharacterLoader::getCharacters(Camera* camera_p, SoundPlayer* soundPlayer_p, int areaNum) {
+pair<vector<Character*>, vector<CharacterController*> > CharacterLoader::getCharacters(Camera* camera_p, SoundPlayer* soundPlayer_p, KeyConfig* keyConfig_p, int areaNum) {
 
 	pair<vector<Character*>, vector<CharacterController*> > res;
 
@@ -73,7 +74,7 @@ pair<vector<Character*>, vector<CharacterController*> > CharacterLoader::getChar
 		CharacterAction* action = createAction(actionName, character, soundPlayer);
 
 		// Brainを作成
-		Brain* brain = createBrain(brainName, camera_p);
+		Brain* brain = createBrain(brainName, camera_p, keyConfig_p);
 
 		// コントローラを作成
 		CharacterController* controller = nullptr;

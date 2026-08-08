@@ -73,24 +73,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// ゲーム中ならtrue タイトル画面ならfalse
 	bool gamePlay = false;
 
-	// TODO: 消す
-	SoundPlayer* soundPlayer = new SoundPlayer();
-	soundPlayer->setVolume(40);
-	Movie* movie = new Chapter7ED(soundPlayer);
-	const bool MOVIE_TEST = false;
-
 	while (SetDrawScreen(screen) == 0 && ProcessMessage() == 0 && ClearDrawScreen() == 0)
 	{
 		updateKey();
 		mouseClick();
 
 		/////メイン////
-		if (MOVIE_TEST) {
-			// TODO: 消す
-			movie->play();
-			movie->draw();
-		}
-		else if (gamePlay) {
+		if (gamePlay) {
 			if (game->play()) {
 				//InitGraphが実行されたのでDrawerも作り直し
 				delete gameDrawer;
@@ -138,9 +127,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Update();
 		// デバッグ
 		if (debug == TRUE) {
-			Draw(0, 0, BLACK);
+			//Draw(0, 0, BLACK);
 			if (game != nullptr) {
-				game->debug(0, DRAW_FORMAT_STRING_SIZE, BLACK);
+				//game->debug(0, DRAW_FORMAT_STRING_SIZE, BLACK);
 			}
 		}
 		Wait();
