@@ -287,7 +287,7 @@ void KeyConfig::play(int mouseX, int mouseY) {
 			if (m_buttons[i]->overlap(mouseX, mouseY)) {
 				// Š„‚è“–‚ÄŠJŽn
 				if (m_focusConfigIndex != -1) {
-					m_buttons[m_focusConfigIndex]->changeFlag(true, WHITE);
+					refresh();
 				}
 				m_focusConfigIndex = i;
 				m_buttons[m_focusConfigIndex]->changeFlag(false, GRAY);
