@@ -807,9 +807,6 @@ void Conversation::loadAllFace(string path) {
 	while (FileRead_eof(fp) == 0) {
 		FileRead_gets(buff, size, fp);
 		speakerName = buff;
-		if (speakerName[0] == '*') {
-			speakerName = speakerName.substr(1, speakerName.size());
-		}
 		for (int i = 0; i < speakerNameSum; i++) {
 			if (names[i] == speakerName) {
 				FileRead_gets(buff, size, fp);
